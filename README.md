@@ -1,6 +1,9 @@
 # HKUST COMP3111 Software Engineering (Spring 2018)
 
-This is the modified README for the dev-kpor branch
+Team Name: Project404
 
-Sorry. This is the second attempt to make changes.
+Team Members:
 
+• OR Ka Po (kpor@connect.ust.hk), Team Leader
+• Chiu Ka Wa (kwchiuab@connect.ust.hk)
+• Leung Ka Wai Aidan (kwaleung@connect.ust.hk)
