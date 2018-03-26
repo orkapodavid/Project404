@@ -4,6 +4,8 @@ Team Name: Project404
 
 Team Members:
 
-• OR Ka Po (kpor@connect.ust.hk), Team Leader
-• Chiu Ka Wa (kwchiuab@connect.ust.hk)
-• Leung Ka Wai Aidan (kwaleung@connect.ust.hk)
+<ul>
+<li>OR Ka Po (kpor@connect.ust.hk), Team Leader</li>
+<li>Chiu Ka Wa (kwchiuab@connect.ust.hk)</li>
+<li>Leung Ka Wai Aidan (kwaleung@connect.ust.hk)</li>
+</ul>
