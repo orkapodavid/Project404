@@ -12,10 +12,14 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -38,7 +42,7 @@ public class Main extends Application {
 	private static final int SCENE_NUM = 2;
 	private static final int SCENE_MAIN_SCREEN = 0;
 	private static final int SCENE_LINE_CHART = 1;
-	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Team Name]", "Sample Line Chart Screen" };
+	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Project404]", "Sample Line Chart Screen" };
 	private Stage stage = null;
 	private Scene[] scenes = null;
 
@@ -48,7 +52,9 @@ public class Main extends Application {
 
 	// Screen 1: paneMainScreen
 	private Button btSampleLineChartData, btSampleLineChartDataV2, btSampleLineChart;
-	private Label lbSampleDataTable, lbMainScreenTitle;
+	private Label lbSampleDataTable;
+	private MenuBar menuBar;
+	private Menu FileIO;
 
 	// Screen 2: paneSampleLineChartScreen
 	private LineChart<Number, Number> lineChart = null;
@@ -208,29 +214,38 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneMainScreen() {
+		
+		FileIO = new Menu("File");
+		MenuItem Save = new MenuItem("Save");
+		MenuItem Load = new MenuItem("Load");
+		FileIO.getItems().addAll(Save,Load);
+		menuBar = new MenuBar();
 
-		lbMainScreenTitle = new Label("COMP3111 Chart");
 		btSampleLineChartData = new Button("Sample 1");
 		btSampleLineChartDataV2 = new Button("Sample 2");
 		btSampleLineChart = new Button("Sample Line Chart");
 		lbSampleDataTable = new Label("DataTable: empty");
 
 		// Layout the UI components
-
+		
+		menuBar.getMenus().add(FileIO);
+		menuBar.setPrefHeight(10);
+		VBox menuContainer = new VBox(menuBar);
+		
 		HBox hc = new HBox(20);
 		hc.setAlignment(Pos.CENTER);
 		hc.getChildren().addAll(btSampleLineChartData, btSampleLineChartDataV2);
-
+		
 		VBox container = new VBox(20);
-		container.getChildren().addAll(lbMainScreenTitle, hc, lbSampleDataTable, new Separator(), btSampleLineChart);
+		container.getChildren().addAll( hc, lbSampleDataTable, new Separator(), btSampleLineChart);
 		container.setAlignment(Pos.CENTER);
 
 		BorderPane pane = new BorderPane();
+		pane.setTop(menuContainer);
 		pane.setCenter(container);
 
 		// Apply style to the GUI components
 		btSampleLineChart.getStyleClass().add("menu-button");
-		lbMainScreenTitle.getStyleClass().add("menu-title");
 		pane.getStyleClass().add("screen-background");
 
 		return pane;
