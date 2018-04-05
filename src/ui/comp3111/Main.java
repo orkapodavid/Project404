@@ -33,23 +33,18 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-	// Attribute: DataTable
-	// In this sample application, a single data table is provided
-	// You need to extend it to handle multiple data tables
-	// Hint: Use java.util.List interface and its implementation classes (e.g.
-	// java.util.ArrayList)
-
 	private ArrayList<DataTable> DataSets = new ArrayList<DataTable>();
 	private int DataSetCount = 0;
 
 	// Attributes: Scene and Stage
-	private static final int SCENE_NUM = 4;
+	private static final int SCENE_NUM = 5;
 	private static final int SCENE_MAIN_SCREEN = 0;
 	private static final int SCENE_CREATE_CHART = 1;
 	private static final int SCENE_SPLIT_DATA = 2;
 	private static final int SCENE_FILTER_DATA = 3;
+	private static final int SCENE_SHOW_CHART = 4;
 	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Project404]", "Create Chart", "Split Data",
-			"Filter Data" };
+			"Filter Data" ,"Chart"};
 	private Stage stage = null;
 	private Scene[] scenes = null;
 
@@ -62,10 +57,21 @@ public class Main extends Application {
 	private ListView<String> dataList;
 	private ListView<String> chartList;
 
-	// Screen 2: paneCreateChartScrenn
+	// Screen 2: paneCreateChartScreen
+	private Label chartHeader = null;
+	private Button chartCancel = null;
+	private Button chartComfirm = null;
+	// Screen 3: paneSplitDataScreen
 	private Label splitHeader = null;
-	private Label filterHeader =null;
-	private Label chartHeader =null;
+	private Button splitCancel = null;
+	private Button splitComfirm = null;
+	// Screen 4: paneFilterDataScreen
+	private Label filterHeader = null;
+	private Button filterCancel = null;
+	private Button filterComfirm = null;
+	//Screen 5: paneShowChartScreen
+	private Label showChartHeader = null;
+	private Button showChartComfirm = null;
 
 	/**
 	 * create all scenes in this application
@@ -76,6 +82,7 @@ public class Main extends Application {
 		scenes[SCENE_CREATE_CHART] = new Scene(paneCreateChartScreen(), 520, 500);
 		scenes[SCENE_SPLIT_DATA] = new Scene(paneSplitDataScreen(), 520, 500);
 		scenes[SCENE_FILTER_DATA] = new Scene(paneFilterDataScreen(), 520, 500);
+		scenes[SCENE_SHOW_CHART] = new Scene(paneShowChartScreen(),520,500);
 		for (Scene s : scenes) {
 			if (s != null)
 				// Assumption: all scenes share the same stylesheet
@@ -90,6 +97,7 @@ public class Main extends Application {
 	 */
 	private void initEventHandlers() {
 		initMainScreenHandlers();
+		initSubScreenHandlers();
 	}
 
 	/**
@@ -111,6 +119,31 @@ public class Main extends Application {
 			splitHeader.setText(checkSelectedDataSet());
 			putSceneOnStage(SCENE_SPLIT_DATA);
 		});
+		showChartButton.setOnAction(e->{
+			putSceneOnStage(SCENE_SHOW_CHART);
+		});
+	}
+
+	/**
+	 * Initialize event handlers of the sub screen
+	 */
+	private void initSubScreenHandlers() {
+		//create chart screen
+		chartCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		//split data screen
+		splitCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		//filter data screen
+		filterCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		//show chart screen
+		showChartComfirm.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
 	}
 
 	/**
@@ -119,11 +152,19 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneCreateChartScreen() {
-		
+
 		chartHeader = new Label();
 		chartHeader.getStyleClass().add("Header");
+		chartCancel = new Button("Cancel");
+		chartComfirm = new Button("Comfirm");
+
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().addAll(chartCancel,chartComfirm);
+
 		BorderPane pane = new BorderPane();
 		pane.setTop(chartHeader);
+		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
 		pane.getStyleClass().add("screen-background");
@@ -137,11 +178,19 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneFilterDataScreen() {
-		
+
 		filterHeader = new Label();
 		filterHeader.getStyleClass().add("Header");
+		filterComfirm = new Button("Comfirm");
+		filterCancel = new Button("Cancel");
+
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().addAll(filterCancel,filterComfirm);
+
 		BorderPane pane = new BorderPane();
 		pane.setTop(filterHeader);
+		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
 		pane.getStyleClass().add("screen-background");
@@ -155,17 +204,51 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneSplitDataScreen() {
-		
+
 		splitHeader = new Label();
 		splitHeader.getStyleClass().add("Header");
+		splitComfirm = new Button("Comfirm");
+		splitCancel = new Button("Cancel");
+
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().addAll(splitCancel,splitComfirm);
+		
 		BorderPane pane = new BorderPane();
 		pane.setTop(splitHeader);
+		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
 		pane.getStyleClass().add("screen-background");
 
 		return pane;
 	}
+	
+	/**
+	 * Create the show chart screen and layout its UI components
+	 * 
+	 * @return a Pane component to be displayed on a scene
+	 */
+	private Pane paneShowChartScreen() {
+
+		showChartHeader = new Label();
+		showChartHeader.getStyleClass().add("Header");
+		showChartComfirm = new Button("Back");
+
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().add(showChartComfirm);
+
+		BorderPane pane = new BorderPane();
+		pane.setTop(showChartHeader);
+		pane.setBottom(actionButtons);
+
+		// Apply CSS to style the GUI components
+		pane.getStyleClass().add("screen-background");
+
+		return pane;
+	}
+
 
 	/**
 	 * Creates the main screen and layout its UI components
@@ -232,7 +315,6 @@ public class Main extends Application {
 		if (sceneID < 0 || sceneID >= SCENE_NUM)
 			return;
 
-		stage.hide();
 		stage.setTitle(SCENE_TITLES[sceneID]);
 		stage.setScene(scenes[sceneID]);
 		stage.setResizable(true);
