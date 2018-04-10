@@ -1,10 +1,13 @@
 package ui.comp3111;
 
 import java.util.ArrayList;
+
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
 import core.comp3111.SampleDataGenerator;
+import core.comp3111.ImportExportCSV;
+
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -36,6 +39,8 @@ public class Main extends Application {
 	private ArrayList<DataTable> DataSets = new ArrayList<DataTable>();
 	private int DataSetCount = 0;
 
+	private ImportExportCSV importexporter;
+	
 	// Attributes: Scene and Stage
 	private static final int SCENE_NUM = 5;
 	private static final int SCENE_MAIN_SCREEN = 0;
@@ -100,12 +105,20 @@ public class Main extends Application {
 		initSubScreenHandlers();
 	}
 
+	private void initObjects() {
+		importexporter = new ImportExportCSV();
+	}
+	
+	
 	/**
 	 * Initialize event handlers of the main screen
 	 */
 	private void initMainScreenHandlers() {
 		importButton.setOnAction(e -> {
-			testadd();
+			importexporter.importCSV();
+		});
+		exportButton.setOnAction(e -> {
+			importexporter.exportCSV();
 		});
 		chartButton.setOnAction(e -> {
 			chartHeader.setText(checkSelectedDataSet());
@@ -330,6 +343,7 @@ public class Main extends Application {
 		try {
 
 			stage = primaryStage; // keep a stage reference as an attribute
+			initObjects(); // create objects
 			initScenes(); // initialize the scenes
 			initEventHandlers(); // link up the event handlers
 			putSceneOnStage(SCENE_MAIN_SCREEN); // show the main screen
