@@ -1,10 +1,12 @@
 package ui.comp3111;
 
+import java.util.ArrayList;
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
 import core.comp3111.SampleDataGenerator;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -12,6 +14,10 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -27,42 +33,56 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-	// Attribute: DataTable
-	// In this sample application, a single data table is provided
-	// You need to extend it to handle multiple data tables
-	// Hint: Use java.util.List interface and its implementation classes (e.g.
-	// java.util.ArrayList)
-	private DataTable sampleDataTable = null;
+	private ArrayList<DataTable> DataSets = new ArrayList<DataTable>();
+	private int DataSetCount = 0;
 
 	// Attributes: Scene and Stage
-	private static final int SCENE_NUM = 2;
+	private static final int SCENE_NUM = 5;
 	private static final int SCENE_MAIN_SCREEN = 0;
-	private static final int SCENE_LINE_CHART = 1;
-	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Team Name]", "Sample Line Chart Screen" };
+	private static final int SCENE_CREATE_CHART = 1;
+	private static final int SCENE_SPLIT_DATA = 2;
+	private static final int SCENE_FILTER_DATA = 3;
+	private static final int SCENE_SHOW_CHART = 4;
+	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Project404]", "Create Chart", "Split Data",
+			"Filter Data" ,"Chart"};
 	private Stage stage = null;
 	private Scene[] scenes = null;
 
-	// To keep this application more structural,
+	// To keep this application more structural
 	// The following UI components are used to keep references after invoking
 	// createScene()
 
 	// Screen 1: paneMainScreen
-	private Button btSampleLineChartData, btSampleLineChartDataV2, btSampleLineChart;
-	private Label lbSampleDataTable, lbMainScreenTitle;
+	private Button importButton, exportButton, filterButton, chartButton, showChartButton, splitButton;
+	private ListView<String> dataList;
+	private ListView<String> chartList;
 
-	// Screen 2: paneSampleLineChartScreen
-	private LineChart<Number, Number> lineChart = null;
-	private NumberAxis xAxis = null;
-	private NumberAxis yAxis = null;
-	private Button btLineChartBackMain = null;
+	// Screen 2: paneCreateChartScreen
+	private Label chartHeader = null;
+	private Button chartCancel = null;
+	private Button chartComfirm = null;
+	// Screen 3: paneSplitDataScreen
+	private Label splitHeader = null;
+	private Button splitCancel = null;
+	private Button splitComfirm = null;
+	// Screen 4: paneFilterDataScreen
+	private Label filterHeader = null;
+	private Button filterCancel = null;
+	private Button filterComfirm = null;
+	//Screen 5: paneShowChartScreen
+	private Label showChartHeader = null;
+	private Button showChartComfirm = null;
 
 	/**
 	 * create all scenes in this application
 	 */
 	private void initScenes() {
 		scenes = new Scene[SCENE_NUM];
-		scenes[SCENE_MAIN_SCREEN] = new Scene(paneMainScreen(), 400, 500);
-		scenes[SCENE_LINE_CHART] = new Scene(paneLineChartScreen(), 800, 600);
+		scenes[SCENE_MAIN_SCREEN] = new Scene(paneMainScreen(), 520, 500);
+		scenes[SCENE_CREATE_CHART] = new Scene(paneCreateChartScreen(), 520, 500);
+		scenes[SCENE_SPLIT_DATA] = new Scene(paneSplitDataScreen(), 520, 500);
+		scenes[SCENE_FILTER_DATA] = new Scene(paneFilterDataScreen(), 520, 500);
+		scenes[SCENE_SHOW_CHART] = new Scene(paneShowChartScreen(),520,500);
 		for (Scene s : scenes) {
 			if (s != null)
 				// Assumption: all scenes share the same stylesheet
@@ -77,124 +97,74 @@ public class Main extends Application {
 	 */
 	private void initEventHandlers() {
 		initMainScreenHandlers();
-		initLineChartScreenHandlers();
-	}
-
-	/**
-	 * Initialize event handlers of the line chart screen
-	 */
-	private void initLineChartScreenHandlers() {
-
-		// click handler
-		btLineChartBackMain.setOnAction(e -> {
-			putSceneOnStage(SCENE_MAIN_SCREEN);
-		});
-	}
-
-	/**
-	 * Populate sample data table values to the chart view
-	 */
-	private void populateSampleDataTableValuesToChart(String seriesName) {
-
-		// Get 2 columns
-		DataColumn xCol = sampleDataTable.getCol("X");
-		DataColumn yCol = sampleDataTable.getCol("Y");
-
-		// Ensure both columns exist and the type is number
-		if (xCol != null && yCol != null && xCol.getTypeName().equals(DataType.TYPE_NUMBER)
-				&& yCol.getTypeName().equals(DataType.TYPE_NUMBER)) {
-
-			lineChart.setTitle("Sample Line Chart");
-			xAxis.setLabel("X");
-			yAxis.setLabel("Y");
-
-			// defining a series
-			XYChart.Series series = new XYChart.Series();
-
-			series.setName(seriesName);
-
-			// populating the series with data
-			// As we have checked the type, it is safe to downcast to Number[]
-			Number[] xValues = (Number[]) xCol.getData();
-			Number[] yValues = (Number[]) yCol.getData();
-
-			// In DataTable structure, both length must be the same
-			int len = xValues.length;
-
-			for (int i = 0; i < len; i++) {
-				series.getData().add(new XYChart.Data(xValues[i], yValues[i]));
-			}
-
-			// clear all previous series
-			lineChart.getData().clear();
-
-			// add the new series as the only one series for this line chart
-			lineChart.getData().add(series);
-
-		}
-
+		initSubScreenHandlers();
 	}
 
 	/**
 	 * Initialize event handlers of the main screen
 	 */
 	private void initMainScreenHandlers() {
-
-		// click handler
-		btSampleLineChartData.setOnAction(e -> {
-
-			// In this example, we invoke SampleDataGenerator to generate sample data
-			sampleDataTable = SampleDataGenerator.generateSampleLineData();
-			lbSampleDataTable.setText(String.format("SampleDataTable: %d rows, %d columns", sampleDataTable.getNumRow(),
-					sampleDataTable.getNumCol()));
-
-			populateSampleDataTableValuesToChart("Sample 1");
-
+		importButton.setOnAction(e -> {
+			testadd();
 		});
-
-		// click handler
-		btSampleLineChartDataV2.setOnAction(e -> {
-
-			// In this example, we invoke SampleDataGenerator to generate sample data
-			sampleDataTable = SampleDataGenerator.generateSampleLineDataV2();
-			lbSampleDataTable.setText(String.format("SampleDataTable: %d rows, %d columns", sampleDataTable.getNumRow(),
-					sampleDataTable.getNumCol()));
-
-			populateSampleDataTableValuesToChart("Sample 2");
-
+		chartButton.setOnAction(e -> {
+			chartHeader.setText(checkSelectedDataSet());
+			putSceneOnStage(SCENE_CREATE_CHART);
 		});
-
-		// click handler
-		btSampleLineChart.setOnAction(e -> {
-			putSceneOnStage(SCENE_LINE_CHART);
+		filterButton.setOnAction(e -> {
+			filterHeader.setText(checkSelectedDataSet());
+			putSceneOnStage(SCENE_FILTER_DATA);
 		});
-
+		splitButton.setOnAction(e -> {
+			splitHeader.setText(checkSelectedDataSet());
+			putSceneOnStage(SCENE_SPLIT_DATA);
+		});
+		showChartButton.setOnAction(e->{
+			putSceneOnStage(SCENE_SHOW_CHART);
+		});
 	}
 
 	/**
-	 * Create the line chart screen and layout its UI components
+	 * Initialize event handlers of the sub screen
+	 */
+	private void initSubScreenHandlers() {
+		//create chart screen
+		chartCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		//split data screen
+		splitCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		//filter data screen
+		filterCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		//show chart screen
+		showChartComfirm.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+	}
+
+	/**
+	 * Create the create chart screen and layout its UI components
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
-	private Pane paneLineChartScreen() {
+	private Pane paneCreateChartScreen() {
 
-		xAxis = new NumberAxis();
-		yAxis = new NumberAxis();
-		lineChart = new LineChart<Number, Number>(xAxis, yAxis);
+		chartHeader = new Label();
+		chartHeader.getStyleClass().add("Header");
+		chartCancel = new Button("Cancel");
+		chartComfirm = new Button("Comfirm");
 
-		btLineChartBackMain = new Button("Back");
-
-		xAxis.setLabel("undefined");
-		yAxis.setLabel("undefined");
-		lineChart.setTitle("An empty line chart");
-
-		// Layout the UI components
-		VBox container = new VBox(20);
-		container.getChildren().addAll(lineChart, btLineChartBackMain);
-		container.setAlignment(Pos.CENTER);
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().addAll(chartCancel,chartComfirm);
 
 		BorderPane pane = new BorderPane();
-		pane.setCenter(container);
+		pane.setTop(chartHeader);
+		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
 		pane.getStyleClass().add("screen-background");
@@ -203,34 +173,129 @@ public class Main extends Application {
 	}
 
 	/**
+	 * Create the Filter Data screen and layout its UI components
+	 * 
+	 * @return a Pane component to be displayed on a scene
+	 */
+	private Pane paneFilterDataScreen() {
+
+		filterHeader = new Label();
+		filterHeader.getStyleClass().add("Header");
+		filterComfirm = new Button("Comfirm");
+		filterCancel = new Button("Cancel");
+
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().addAll(filterCancel,filterComfirm);
+
+		BorderPane pane = new BorderPane();
+		pane.setTop(filterHeader);
+		pane.setBottom(actionButtons);
+
+		// Apply CSS to style the GUI components
+		pane.getStyleClass().add("screen-background");
+
+		return pane;
+	}
+
+	/**
+	 * Create the Split Data screen and layout its UI components
+	 * 
+	 * @return a Pane component to be displayed on a scene
+	 */
+	private Pane paneSplitDataScreen() {
+
+		splitHeader = new Label();
+		splitHeader.getStyleClass().add("Header");
+		splitComfirm = new Button("Comfirm");
+		splitCancel = new Button("Cancel");
+
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().addAll(splitCancel,splitComfirm);
+		
+		BorderPane pane = new BorderPane();
+		pane.setTop(splitHeader);
+		pane.setBottom(actionButtons);
+
+		// Apply CSS to style the GUI components
+		pane.getStyleClass().add("screen-background");
+
+		return pane;
+	}
+	
+	/**
+	 * Create the show chart screen and layout its UI components
+	 * 
+	 * @return a Pane component to be displayed on a scene
+	 */
+	private Pane paneShowChartScreen() {
+
+		showChartHeader = new Label();
+		showChartHeader.getStyleClass().add("Header");
+		showChartComfirm = new Button("Back");
+
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().add(showChartComfirm);
+
+		BorderPane pane = new BorderPane();
+		pane.setTop(showChartHeader);
+		pane.setBottom(actionButtons);
+
+		// Apply CSS to style the GUI components
+		pane.getStyleClass().add("screen-background");
+
+		return pane;
+	}
+
+
+	/**
 	 * Creates the main screen and layout its UI components
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneMainScreen() {
 
-		lbMainScreenTitle = new Label("COMP3111 Chart");
-		btSampleLineChartData = new Button("Sample 1");
-		btSampleLineChartDataV2 = new Button("Sample 2");
-		btSampleLineChart = new Button("Sample Line Chart");
-		lbSampleDataTable = new Label("DataTable: empty");
+		MenuBar menuBar = new MenuBar();
+		Menu FileIO = new Menu("File");
+		MenuItem Save = new MenuItem("Save");
+		MenuItem Load = new MenuItem("Load");
+		FileIO.getItems().addAll(Save, Load);
+		menuBar.getMenus().add(FileIO);
+
+		dataList = new ListView<String>();
+		chartList = new ListView<String>();
+		chartList.getItems().addAll("Chart1", "Chart2");
+
+		importButton = new Button("Import");
+		exportButton = new Button("Export");
+		filterButton = new Button("Filter Data");
+		splitButton = new Button("Split Data");
+		chartButton = new Button("Create Chart");
+		showChartButton = new Button("Show Chart");
 
 		// Layout the UI components
 
 		HBox hc = new HBox(20);
 		hc.setAlignment(Pos.CENTER);
-		hc.getChildren().addAll(btSampleLineChartData, btSampleLineChartDataV2);
+		hc.getChildren().addAll(dataList, chartList);
+
+		HBox buttons = new HBox(20);
+		buttons.setAlignment(Pos.CENTER);
+		buttons.getChildren().addAll(importButton, exportButton, filterButton, splitButton, chartButton,
+				showChartButton);
 
 		VBox container = new VBox(20);
-		container.getChildren().addAll(lbMainScreenTitle, hc, lbSampleDataTable, new Separator(), btSampleLineChart);
+		container.getChildren().addAll(hc, new Separator(), buttons);
 		container.setAlignment(Pos.CENTER);
 
 		BorderPane pane = new BorderPane();
+		pane.setTop(menuBar);
 		pane.setCenter(container);
 
 		// Apply style to the GUI components
-		btSampleLineChart.getStyleClass().add("menu-button");
-		lbMainScreenTitle.getStyleClass().add("menu-title");
+		// btSampleLineChart.getStyleClass().add("comfirm-button");
 		pane.getStyleClass().add("screen-background");
 
 		return pane;
@@ -250,7 +315,6 @@ public class Main extends Application {
 		if (sceneID < 0 || sceneID >= SCENE_NUM)
 			return;
 
-		stage.hide();
 		stage.setTitle(SCENE_TITLES[sceneID]);
 		stage.setScene(scenes[sceneID]);
 		stage.setResizable(true);
@@ -283,5 +347,16 @@ public class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		launch(args);
+	}
+
+	public void testadd() {
+		DataTable t = new DataTable();
+		DataSets.add(t);
+		String name = "DataSet" + DataSetCount++;
+		dataList.getItems().add(name);
+	}
+
+	private String checkSelectedDataSet() {
+		return "Selected DataSet: DataSet" + dataList.getSelectionModel().getSelectedIndex();
 	}
 }
