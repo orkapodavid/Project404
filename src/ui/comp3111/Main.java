@@ -1,11 +1,13 @@
 package ui.comp3111;
 
+import javafx.geometry.Insets;
 import java.util.ArrayList;
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
 import core.comp3111.SampleDataGenerator;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,6 +15,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
@@ -23,6 +27,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -61,6 +66,16 @@ public class Main extends Application {
 	private Label chartHeader = null;
 	private Button chartCancel = null;
 	private Button chartComfirm = null;
+	private Label chartSelectType= null;
+	private ComboBox<String> chartTypes = null;
+	private Label chartSelectXaxisLabel= null;
+	private ComboBox<String> chartSelectXaxis = null;
+	private Label chartSelectYaxisLabel= null;
+	private ComboBox<String> chartSelectYaxis = null;
+	private Label chartSelectTextLabel= null;
+	private ComboBox<String> chartSelectTextCol = null;
+	private Label chartSelectNumLabel= null;
+	private ComboBox<String> chartSelectNumCol = null;
 	// Screen 3: paneSplitDataScreen
 	private Label splitHeader = null;
 	private Button splitCancel = null;
@@ -152,23 +167,101 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneCreateChartScreen() {
-
+		
+		Font labelFont = new Font(20);
 		chartHeader = new Label();
 		chartHeader.getStyleClass().add("Header");
 		chartCancel = new Button("Cancel");
 		chartComfirm = new Button("Comfirm");
-
-		HBox actionButtons = new HBox(20);
+		
+		chartSelectType = new Label("Create: ");
+		chartSelectType.setFont(labelFont);
+		chartTypes = new ComboBox<>();
+		chartTypes.getItems().addAll("Line Chart","Pie Chart");
+		chartTypes.setValue("Line Chart");
+		
+		chartSelectXaxis = new ComboBox<>();
+		chartSelectXaxis.getItems().addAll("sample1","sample2");
+		chartSelectYaxis = new ComboBox<>();
+		chartSelectYaxis.getItems().addAll("sample1","sample2");
+		chartSelectTextCol = new ComboBox<>();
+		chartSelectTextCol.getItems().addAll("sample1","sample2");
+		chartSelectNumCol = new ComboBox<>();
+		chartSelectNumCol.getItems().addAll("sample1","sample2");
+		
+		chartSelectXaxisLabel = new Label("X-axis: ");
+		chartSelectXaxisLabel.setFont(labelFont);
+		chartSelectYaxisLabel = new Label("Y-axis: ");
+		chartSelectYaxisLabel.setFont(labelFont);
+		chartSelectTextLabel = new Label("Text Label: ");
+		chartSelectTextLabel.setFont(labelFont);
+		chartSelectNumLabel = new Label("Numerical Column: ");
+		chartSelectNumLabel.setFont(labelFont);
+		
+		HBox actionButtons = new HBox();
+		actionButtons.setSpacing(10);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
 		actionButtons.getChildren().addAll(chartCancel,chartComfirm);
-
-		BorderPane pane = new BorderPane();
-		pane.setTop(chartHeader);
+		
+		HBox selectionBoxes = new HBox();
+		selectionBoxes.setSpacing(10); 
+		selectionBoxes.setAlignment(Pos.TOP_LEFT);
+		selectionBoxes.getChildren().addAll(chartSelectType,chartTypes);
+		
+		HBox lineChartXSelectionBoxes = new HBox();
+		lineChartXSelectionBoxes.setSpacing(10); 
+		lineChartXSelectionBoxes.setAlignment(Pos.TOP_LEFT);
+		lineChartXSelectionBoxes.getChildren().addAll(chartSelectXaxisLabel,chartSelectXaxis);
+		
+		HBox lineChartYSelectionBoxes = new HBox();
+		lineChartYSelectionBoxes.setSpacing(10); 
+		lineChartYSelectionBoxes.setAlignment(Pos.TOP_LEFT);
+		lineChartYSelectionBoxes.getChildren().addAll(chartSelectYaxisLabel,chartSelectYaxis);
+		
+		HBox pieChartTSelectionBoxes = new HBox();
+		pieChartTSelectionBoxes.setSpacing(10); 
+		pieChartTSelectionBoxes.setAlignment(Pos.TOP_LEFT);
+		pieChartTSelectionBoxes.getChildren().addAll(chartSelectTextLabel,chartSelectTextCol);
+		
+		HBox pieChartNSelectionBoxes = new HBox();
+		pieChartNSelectionBoxes.setSpacing(10); 
+		pieChartNSelectionBoxes.setAlignment(Pos.TOP_LEFT);
+		pieChartNSelectionBoxes.getChildren().addAll(chartSelectNumLabel,chartSelectNumCol);
+		
+		boolean h = true;
+		if(!h) {
+			chartSelectTextLabel.getStyleClass().add("combo-box-base:disabled");
+			chartSelectTextLabel.setDisable(true);
+			chartSelectTextCol.getStyleClass().add("combo-box-base:disabled");
+			chartSelectTextCol.setDisable(true);
+			chartSelectNumLabel.getStyleClass().add("combo-box-base:disabled");
+			chartSelectNumLabel.setDisable(true);
+			chartSelectNumCol.getStyleClass().add("combo-box-base:disabled");
+			chartSelectNumCol.setDisable(true);
+		}else {
+			chartSelectXaxis.getStyleClass().add("combo-box-base:disabled");
+			chartSelectXaxis.setDisable(true);
+			chartSelectYaxis.getStyleClass().add("combo-box-base:disabled");
+			chartSelectYaxis.setDisable(true);
+			chartSelectXaxisLabel.getStyleClass().add("combo-box-base:disabled");
+			chartSelectXaxisLabel.setDisable(true);
+			chartSelectYaxisLabel.getStyleClass().add("combo-box-base:disabled");
+			chartSelectYaxisLabel.setDisable(true);
+		}
+			
+		VBox container = new VBox();
+		container.setSpacing(10); 
+		container.setAlignment(Pos.TOP_LEFT);
+		container.getChildren().addAll(selectionBoxes,lineChartXSelectionBoxes,lineChartYSelectionBoxes,pieChartTSelectionBoxes,pieChartNSelectionBoxes);
+		
+		BorderPane pane= new BorderPane();
+		pane.setPadding(new Insets(30, 30, 10, 20));
+		pane.setTop(container);
 		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
 		pane.getStyleClass().add("screen-background");
-
+		
 		return pane;
 	}
 
