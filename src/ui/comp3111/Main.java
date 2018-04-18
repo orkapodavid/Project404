@@ -7,8 +7,12 @@ import core.comp3111.DataTable;
 import core.comp3111.DataType;
 import core.comp3111.SampleDataGenerator;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -63,6 +67,7 @@ public class Main extends Application {
 	private ListView<String> chartList;
 
 	// Screen 2: paneCreateChartScreen
+	private String currentChartName = null;
 	private Label chartHeader = null;
 	private Button chartCancel = null;
 	private Button chartComfirm = null;
@@ -84,10 +89,14 @@ public class Main extends Application {
 	private Label filterHeader = null;
 	private Button filterCancel = null;
 	private Button filterComfirm = null;
-	//Screen 5: paneShowChartScreen
+	// Screen 5: paneShowChartScreen
 	private Label showChartHeader = null;
 	private Button showChartComfirm = null;
-
+	// Screen 6: paneSampleLineChartScreen
+	private LineChart<Number, Number> lineChart = null;
+	private NumberAxis xAxis = null;
+	private NumberAxis yAxis = null;
+	private Button btLineChartBackMain = null;
 	/**
 	 * create all scenes in this application
 	 */
@@ -113,6 +122,7 @@ public class Main extends Application {
 	private void initEventHandlers() {
 		initMainScreenHandlers();
 		initSubScreenHandlers();
+		initCreateChartHandlers();
 	}
 
 	/**
@@ -160,6 +170,24 @@ public class Main extends Application {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
 	}
+	
+	/**
+	 * Initialize event handlers of the sub screen
+	 */
+	private void initCreateChartHandlers() {
+		//create chart screen
+		chartCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		// Add a ChangeListener to the Button chartComfirm
+		chartComfirm.setOnAction(new EventHandler<ActionEvent>() {
+
+	        @Override
+	        public void handle(ActionEvent event) {
+	            System.out.println("Hello World!");
+	        }
+	    });
+	}
 
 	/**
 	 * Create the create chart screen and layout its UI components
@@ -176,9 +204,8 @@ public class Main extends Application {
 		
 		chartSelectType = new Label("Create: ");
 		chartSelectType.setFont(labelFont);
-		chartTypes = new ComboBox<>();
+		chartTypes = new ComboBox<String>();
 		chartTypes.getItems().addAll("Line Chart","Pie Chart");
-		chartTypes.setValue("Line Chart");
 		
 		chartSelectXaxis = new ComboBox<>();
 		chartSelectXaxis.getItems().addAll("sample1","sample2");
@@ -188,6 +215,7 @@ public class Main extends Application {
 		chartSelectTextCol.getItems().addAll("sample1","sample2");
 		chartSelectNumCol = new ComboBox<>();
 		chartSelectNumCol.getItems().addAll("sample1","sample2");
+		
 		
 		chartSelectXaxisLabel = new Label("X-axis: ");
 		chartSelectXaxisLabel.setFont(labelFont);
@@ -227,32 +255,75 @@ public class Main extends Application {
 		pieChartNSelectionBoxes.setSpacing(10); 
 		pieChartNSelectionBoxes.setAlignment(Pos.TOP_LEFT);
 		pieChartNSelectionBoxes.getChildren().addAll(chartSelectNumLabel,chartSelectNumCol);
-		
-		boolean h = true;
-		if(!h) {
-			chartSelectTextLabel.getStyleClass().add("combo-box-base:disabled");
-			chartSelectTextLabel.setDisable(true);
-			chartSelectTextCol.getStyleClass().add("combo-box-base:disabled");
-			chartSelectTextCol.setDisable(true);
-			chartSelectNumLabel.getStyleClass().add("combo-box-base:disabled");
-			chartSelectNumLabel.setDisable(true);
-			chartSelectNumCol.getStyleClass().add("combo-box-base:disabled");
-			chartSelectNumCol.setDisable(true);
-		}else {
-			chartSelectXaxis.getStyleClass().add("combo-box-base:disabled");
-			chartSelectXaxis.setDisable(true);
-			chartSelectYaxis.getStyleClass().add("combo-box-base:disabled");
-			chartSelectYaxis.setDisable(true);
-			chartSelectXaxisLabel.getStyleClass().add("combo-box-base:disabled");
-			chartSelectXaxisLabel.setDisable(true);
-			chartSelectYaxisLabel.getStyleClass().add("combo-box-base:disabled");
-			chartSelectYaxisLabel.setDisable(true);
-		}
 			
 		VBox container = new VBox();
 		container.setSpacing(10); 
 		container.setAlignment(Pos.TOP_LEFT);
 		container.getChildren().addAll(selectionBoxes,lineChartXSelectionBoxes,lineChartYSelectionBoxes,pieChartTSelectionBoxes,pieChartNSelectionBoxes);
+		
+		// Default choice is "Line Chart"
+		chartTypes.getSelectionModel().selectFirst();
+		chartSelectTextLabel.getStyleClass().add("combo-box-base:disabled");
+		chartSelectTextLabel.setDisable(true);
+		chartSelectTextCol.getStyleClass().add("combo-box-base:disabled");
+		chartSelectTextCol.setDisable(true);
+		chartSelectNumLabel.getStyleClass().add("combo-box-base:disabled");
+		chartSelectNumLabel.setDisable(true);
+		chartSelectNumCol.getStyleClass().add("combo-box-base:disabled");
+		chartSelectNumCol.setDisable(true);
+		
+		// Add a ChangeListener to the ComboBox chartTypes
+		chartTypes.getSelectionModel().selectedItemProperty().addListener(new ChangeListener <String>()
+		{
+			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue){
+				if(newValue == "Line Chart") {
+					chartSelectTextLabel.getStyleClass().add("combo-box-base:disabled");
+					chartSelectTextLabel.setDisable(true);
+					chartSelectTextCol.getStyleClass().add("combo-box-base:disabled");
+					chartSelectTextCol.setDisable(true);
+					chartSelectNumLabel.getStyleClass().add("combo-box-base:disabled");
+					chartSelectNumLabel.setDisable(true);
+					chartSelectNumCol.getStyleClass().add("combo-box-base:disabled");
+					chartSelectNumCol.setDisable(true);
+					
+					chartSelectXaxis.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectXaxis.setDisable(false);
+					chartSelectYaxis.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectYaxis.setDisable(false);
+					chartSelectXaxisLabel.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectXaxisLabel.setDisable(false);
+					chartSelectYaxisLabel.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectYaxisLabel.setDisable(false);
+				}else {
+					chartSelectXaxis.getStyleClass().add("combo-box-base:disabled");
+					chartSelectXaxis.setDisable(true);
+					chartSelectYaxis.getStyleClass().add("combo-box-base:disabled");
+					chartSelectYaxis.setDisable(true);
+					chartSelectXaxisLabel.getStyleClass().add("combo-box-base:disabled");
+					chartSelectXaxisLabel.setDisable(true);
+					chartSelectYaxisLabel.getStyleClass().add("combo-box-base:disabled");
+					chartSelectYaxisLabel.setDisable(true);
+					
+					chartSelectTextLabel.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectTextLabel.setDisable(false);
+					chartSelectTextCol.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectTextCol.setDisable(false);
+					chartSelectNumLabel.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectNumLabel.setDisable(false);
+					chartSelectNumCol.getStyleClass().removeAll("combo-box-base:disabled");
+					chartSelectNumCol.setDisable(false);
+				}	
+			}
+		});
+
+		// Add a ChangeListener to the Button chartComfirm
+		chartComfirm.setOnAction(new EventHandler<ActionEvent>() {
+
+	        @Override
+	        public void handle(ActionEvent event) {
+	            System.out.println("Hello World!");
+	        }
+	    });
 		
 		BorderPane pane= new BorderPane();
 		pane.setPadding(new Insets(30, 30, 10, 20));
@@ -264,7 +335,84 @@ public class Main extends Application {
 		
 		return pane;
 	}
+	/**
+	 * Populate sample data table values to the chart view
+	 */
+	private void initLineChart() {
 
+		
+		if(currentChartName == null) {
+			return;
+		}
+		String dataIndex = currentChartName.substring(7, -1);
+		System.out.println("dataIndex = " + dataIndex);
+		DataTable dTable = DataSets.get(Integer.valueOf(dataIndex));
+		// Get 2 columns
+		DataColumn xCol = dTable.getCol("X");
+		DataColumn yCol = dTable.getCol("Y");
+
+		// Ensure both columns exist and the type is number
+		if (xCol != null && yCol != null && xCol.getTypeName().equals(DataType.TYPE_NUMBER)
+				&& yCol.getTypeName().equals(DataType.TYPE_NUMBER)) {
+
+			lineChart.setTitle("Sample Line Chart");
+			xAxis.setLabel("X");
+			yAxis.setLabel("Y");
+
+			// defining a series
+			XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
+
+			series.setName(currentChartName);
+
+			// populating the series with data
+			// As we have checked the type, it is safe to downcast to Number[]
+			Number[] xValues = (Number[]) xCol.getData();
+			Number[] yValues = (Number[]) yCol.getData();
+
+			// In DataTable structure, both length must be the same
+			int len = xValues.length;
+
+			for (int i = 0; i < len; i++) {
+				series.getData().add( new XYChart.Data<Number, Number>(xValues[i], yValues[i]));
+			}
+
+			// clear all previous series
+			lineChart.getData().clear();
+
+			// add the new series as the only one series for this line chart
+			lineChart.getData().add(series);
+
+		}
+
+	}
+	/**
+	 * Create the line chart screen and layout its UI components
+	 * 
+	 * @return a Pane component to be displayed on a scene
+	 */
+	private Pane paneLineChartScreen() {
+
+		xAxis = new NumberAxis();
+		yAxis = new NumberAxis();
+		lineChart = new LineChart<Number, Number>(xAxis, yAxis);
+
+		btLineChartBackMain = new Button("Back");
+
+		initLineChart();
+
+		// Layout the UI components
+		VBox container = new VBox(20);
+		container.getChildren().addAll(lineChart, btLineChartBackMain);
+		container.setAlignment(Pos.CENTER);
+
+		BorderPane pane = new BorderPane();
+		pane.setCenter(container);
+
+		// Apply CSS to style the GUI components
+		pane.getStyleClass().add("screen-background");
+
+		return pane;
+	}
 	/**
 	 * Create the Filter Data screen and layout its UI components
 	 * 
@@ -358,18 +506,28 @@ public class Main extends Application {
 		menuBar.getMenus().add(FileIO);
 
 		dataList = new ListView<String>();
+		dataList.getSelectionModel().selectFirst();
 		chartList = new ListView<String>();
 		chartList.getItems().addAll("Chart1", "Chart2");
-
 		importButton = new Button("Import");
 		exportButton = new Button("Export");
 		filterButton = new Button("Filter Data");
 		splitButton = new Button("Split Data");
 		chartButton = new Button("Create Chart");
 		showChartButton = new Button("Show Chart");
-
+		
+		// Add ChangeListener to the ListView dataList
+		dataList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>()
+		{
+			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue)
+			{
+				currentChartName = newValue;
+				
+			}
+		});
+		
 		// Layout the UI components
-
+		
 		HBox hc = new HBox(20);
 		hc.setAlignment(Pos.CENTER);
 		hc.getChildren().addAll(dataList, chartList);
@@ -443,7 +601,7 @@ public class Main extends Application {
 	}
 
 	public void testadd() {
-		DataTable t = new DataTable();
+		DataTable t = SampleDataGenerator.generateSampleLineData();
 		DataSets.add(t);
 		String name = "DataSet" + DataSetCount++;
 		dataList.getItems().add(name);
