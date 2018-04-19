@@ -8,6 +8,7 @@ import java.util.Map;
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
+import core.comp3111.lineChartClass;
 import core.comp3111.SampleDataGenerator;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -48,7 +49,9 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
 	private Map<String, DataTable> DataSets = new HashMap<String, DataTable>();
+	private Map<String, lineChartClass> charts = new HashMap<String, lineChartClass>();
 	private int DataSetCount = 0;
+	private int lineChartCount = 0;
 
 	// Attributes: Scene and Stage
 	private static final int SCENE_NUM = 5;
@@ -58,7 +61,7 @@ public class Main extends Application {
 	private static final int SCENE_FILTER_DATA = 3;
 	private static final int SCENE_SHOW_CHART = 4;
 	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Project404]", "Create Chart", "Split Data",
-			"Filter Data" ,"Chart"};
+			"Filter Data", "Chart" };
 	private Stage stage = null;
 	private Scene[] scenes = null;
 
@@ -81,16 +84,16 @@ public class Main extends Application {
 	private DataTable currentDataTable = null;
 	private Button chartCancel = null;
 	private Button chartComfirm = null;
-	private Label chartSelectDataset= null;
-	private Label chartSelect= null;
+	private Label chartSelectDataset = null;
+	private Label chartSelect = null;
 	private ComboBox<String> chartTypes = null;
-	private Label chartSelectXaxisLabel= null;
+	private Label chartSelectXaxisLabel = null;
 	private ComboBox<String> chartSelectXaxis = null;
-	private Label chartSelectYaxisLabel= null;
+	private Label chartSelectYaxisLabel = null;
 	private ComboBox<String> chartSelectYaxis = null;
-	private Label chartSelectTextLabel= null;
+	private Label chartSelectTextLabel = null;
 	private ComboBox<String> chartSelectTextCol = null;
-	private Label chartSelectNumLabel= null;
+	private Label chartSelectNumLabel = null;
 	private ComboBox<String> chartSelectNumCol = null;
 	private Alert noSelectedColAlert = null;
 	// Screen 3: paneSplitDataScreen
@@ -107,7 +110,7 @@ public class Main extends Application {
 	private NumberAxis yAxis = null;
 	private Label showChartHeader = null;
 	private Button showChartBack = null;
-	
+
 	/**
 	 * create all scenes in this application
 	 */
@@ -117,7 +120,7 @@ public class Main extends Application {
 		scenes[SCENE_CREATE_CHART] = new Scene(paneCreateChartScreen(), 520, 500);
 		scenes[SCENE_SPLIT_DATA] = new Scene(paneSplitDataScreen(), 520, 500);
 		scenes[SCENE_FILTER_DATA] = new Scene(paneFilterDataScreen(), 520, 500);
-		scenes[SCENE_SHOW_CHART] = new Scene(paneShowChartScreen(),520,500);
+		scenes[SCENE_SHOW_CHART] = new Scene(paneShowChartScreen(), 520, 500);
 		for (Scene s : scenes) {
 			if (s != null)
 				// Assumption: all scenes share the same stylesheet
@@ -137,18 +140,19 @@ public class Main extends Application {
 		initShowChartHandlers();
 		initAlertMsg();
 	}
-	
+
 	private void initAlertMsg() {
 		noDatasetAlert = new Alert(AlertType.INFORMATION);
 		noDatasetAlert.setTitle("Reminder Dialog");
 		noDatasetAlert.setHeaderText(null);
 		noDatasetAlert.setContentText("No dataset is available. Please import a dataset.");
-		
+
 		noSelectedColAlert = new Alert(AlertType.WARNING);
 		noSelectedColAlert.setTitle("Warning Dialog");
 		noSelectedColAlert.setHeaderText(null);
 		noSelectedColAlert.setContentText("Incomplete selection of data columns. Please complete your slection");
 	}
+
 	/**
 	 * Initialize event handlers of the main screen
 	 */
@@ -156,21 +160,19 @@ public class Main extends Application {
 		importButton.setOnAction(e -> {
 			testadd();
 		});
-		
+
 		// Add ChangeListener to the ListView dataList
-		dataList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>()
-		{
-			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue)
-			{
+		dataList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
 				currentDatasetName = newValue;
-				
+
 			}
 		});
-		
+
 		chartButton.setOnAction(e -> {
 			currentDatasetName = null;
 			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
-			if(currentDatasetName != null) {
+			if (currentDatasetName != null) {
 				chartSelectDataset.setText("Selected Dataset: " + currentDatasetName);
 				currentDataTable = DataSets.get(currentDatasetName);
 				chartSelectXaxis.getItems().addAll(currentDataTable.getAllNumColName());
@@ -178,12 +180,12 @@ public class Main extends Application {
 				chartSelectTextCol.getItems().addAll(currentDataTable.getAllTextColName());
 				chartSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
 				putSceneOnStage(SCENE_CREATE_CHART);
-			}else {
+			} else {
 				noDatasetAlert.showAndWait();
 			}
-			
+
 		});
-		
+
 		filterButton.setOnAction(e -> {
 			filterHeader.setText(checkSelectedDataSet());
 			putSceneOnStage(SCENE_FILTER_DATA);
@@ -192,7 +194,15 @@ public class Main extends Application {
 			splitHeader.setText(checkSelectedDataSet());
 			putSceneOnStage(SCENE_SPLIT_DATA);
 		});
-		showChartButton.setOnAction(e->{
+		showChartButton.setOnAction(e -> {
+			String name = chartList.getSelectionModel().getSelectedItem();
+			if (lineChart.getData().get(0) != charts.get(name).getSeries()) {
+				lineChart.getData().clear();
+				lineChart.getData().add(charts.get(name).getSeries());
+			}
+			lineChart.setTitle(charts.get(name).getTitle());
+			xAxis.setLabel(charts.get(name).getXAxisName());
+			yAxis.setLabel(charts.get(name).getYAxisName());
 			putSceneOnStage(SCENE_SHOW_CHART);
 		});
 	}
@@ -201,68 +211,65 @@ public class Main extends Application {
 	 * Initialize event handlers of the sub screen
 	 */
 	private void initSubScreenHandlers() {
-		//create chart screen
+		// create chart screen
 		chartCancel.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
-		//split data screen
+		// split data screen
 		splitCancel.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
-		//filter data screen
+		// filter data screen
 		filterCancel.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
 	}
-	
+
 	/**
 	 * Initialize event handlers of the sub screen - SCENE_CREATE_CHART
 	 */
 	private void initCreateChartHandlers() {
-		//create chart screen
+		// create chart screen
 		chartCancel.setOnAction(e -> {
 			chartSelectXaxis.getItems().clear();
 			chartSelectYaxis.getItems().clear();
 			chartSelectNumCol.getItems().clear();
 			chartSelectTextCol.getItems().clear();
-			putSceneOnStage(SCENE_MAIN_SCREEN);		
+			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
-		
+
 		// Add a ChangeListener to the Button chartComfirm
 		chartComfirm.setOnAction(new EventHandler<ActionEvent>() {
 
-	        @Override
-	        public void handle(ActionEvent event) {
-	        	if(isLineChart) {
-	        		chartXaxisName = null;
-	        		chartYaxisName = null;
-	        		chartXaxisName = chartSelectXaxis.getValue();
-	        		chartYaxisName = chartSelectYaxis.getValue();
-	        		if(chartXaxisName != null && chartYaxisName != null) {
-	        			chartSelectXaxis.getItems().clear();
-		    			chartSelectYaxis.getItems().clear();
-		        		initLineChart();
-	        		}else {
-	        			noSelectedColAlert.showAndWait();
-	        			return;
-	        		}
-	        		
-	        	}else {
-	        		chartNumColName = chartSelectNumCol.getValue();
-	        		chartTextColName = chartSelectTextCol.getValue();
-	        		chartSelectNumCol.getItems().clear();
-	    			chartSelectTextCol.getItems().clear();
-	        	}
-	        	
-	        	putSceneOnStage(SCENE_SHOW_CHART);
-	        }
-	    });
-		
+			@Override
+			public void handle(ActionEvent event) {
+				if (isLineChart) {
+					chartXaxisName = chartSelectXaxis.getValue();
+					chartYaxisName = chartSelectYaxis.getValue();
+					if (chartXaxisName != null && chartYaxisName != null) {
+						chartSelectXaxis.getItems().clear();
+						chartSelectYaxis.getItems().clear();
+						initLineChart();
+					} else {
+						noSelectedColAlert.showAndWait();
+						return;
+					}
+
+				} else {
+					chartNumColName = chartSelectNumCol.getValue();
+					chartTextColName = chartSelectTextCol.getValue();
+					chartSelectNumCol.getItems().clear();
+					chartSelectTextCol.getItems().clear();
+				}
+
+				putSceneOnStage(SCENE_SHOW_CHART);
+			}
+		});
+
 		// Add a ChangeListener to the ComboBox chartTypes
-		chartTypes.getSelectionModel().selectedItemProperty().addListener(new ChangeListener <String>()
-		{
-			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue){
-				if(newValue == "Line Chart") {
+		chartTypes.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+				if (newValue == "Line Chart") {
 					isLineChart = true;
 					chartSelectTextLabel.getStyleClass().add("combo-box-base:disabled");
 					chartSelectTextLabel.setDisable(true);
@@ -272,7 +279,7 @@ public class Main extends Application {
 					chartSelectNumLabel.setDisable(true);
 					chartSelectNumCol.getStyleClass().add("combo-box-base:disabled");
 					chartSelectNumCol.setDisable(true);
-					
+
 					chartSelectXaxis.getStyleClass().removeAll("combo-box-base:disabled");
 					chartSelectXaxis.setDisable(false);
 					chartSelectYaxis.getStyleClass().removeAll("combo-box-base:disabled");
@@ -281,7 +288,7 @@ public class Main extends Application {
 					chartSelectXaxisLabel.setDisable(false);
 					chartSelectYaxisLabel.getStyleClass().removeAll("combo-box-base:disabled");
 					chartSelectYaxisLabel.setDisable(false);
-				}else {
+				} else {
 					isLineChart = false;
 					chartSelectXaxis.getStyleClass().add("combo-box-base:disabled");
 					chartSelectXaxis.setDisable(true);
@@ -291,7 +298,7 @@ public class Main extends Application {
 					chartSelectXaxisLabel.setDisable(true);
 					chartSelectYaxisLabel.getStyleClass().add("combo-box-base:disabled");
 					chartSelectYaxisLabel.setDisable(true);
-					
+
 					chartSelectTextLabel.getStyleClass().removeAll("combo-box-base:disabled");
 					chartSelectTextLabel.setDisable(false);
 					chartSelectTextCol.getStyleClass().removeAll("combo-box-base:disabled");
@@ -300,26 +307,26 @@ public class Main extends Application {
 					chartSelectNumLabel.setDisable(false);
 					chartSelectNumCol.getStyleClass().removeAll("combo-box-base:disabled");
 					chartSelectNumCol.setDisable(false);
-				}	
+				}
 			}
 		});
-				
+
 	}
-	
+
 	/**
 	 * Initialize event handlers of the sub screen - SCENE_SHOW_CHART
 	 */
 	private void initShowChartHandlers() {
-		//show chart screen
+		// show chart screen
 		showChartBack.setOnAction(new EventHandler<ActionEvent>() {
 
-	        @Override
-	        public void handle(ActionEvent event) {
-	        	// clear all previous series
-	    		lineChart.getData().clear();
-	    		putSceneOnStage(SCENE_MAIN_SCREEN);
-	        }
-	    });
+			@Override
+			public void handle(ActionEvent event) {
+				// clear all previous series
+				// lineChart.getData().clear();
+				putSceneOnStage(SCENE_MAIN_SCREEN);
+			}
+		});
 	}
 
 	/**
@@ -328,23 +335,23 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneCreateChartScreen() {
-		
+
 		Font labelFont = new Font(20);
 		chartCancel = new Button("Cancel");
 		chartComfirm = new Button("Comfirm");
-		
+
 		chartSelectDataset = new Label();
 		chartSelectDataset.getStyleClass().add("Header");
 		chartSelect = new Label("Select type of chart");
 		chartSelect.setFont(labelFont);
 		chartTypes = new ComboBox<String>();
-		chartTypes.getItems().addAll("Line Chart","Pie Chart");
-		
+		chartTypes.getItems().addAll("Line Chart", "Pie Chart");
+
 		chartSelectXaxis = new ComboBox<>();
 		chartSelectYaxis = new ComboBox<>();
 		chartSelectTextCol = new ComboBox<>();
 		chartSelectNumCol = new ComboBox<>();
-		
+
 		chartSelectXaxisLabel = new Label("X-axis: ");
 		chartSelectXaxisLabel.setFont(labelFont);
 		chartSelectYaxisLabel = new Label("Y-axis: ");
@@ -353,42 +360,43 @@ public class Main extends Application {
 		chartSelectTextLabel.setFont(labelFont);
 		chartSelectNumLabel = new Label("Numerical Column: ");
 		chartSelectNumLabel.setFont(labelFont);
-		
+
 		HBox actionButtons = new HBox();
 		actionButtons.setSpacing(10);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
-		actionButtons.getChildren().addAll(chartCancel,chartComfirm);
-		
+		actionButtons.getChildren().addAll(chartCancel, chartComfirm);
+
 		HBox selectionBoxes = new HBox();
-		selectionBoxes.setSpacing(10); 
+		selectionBoxes.setSpacing(10);
 		selectionBoxes.setAlignment(Pos.TOP_LEFT);
-		selectionBoxes.getChildren().addAll(chartSelect,chartTypes);
-		
+		selectionBoxes.getChildren().addAll(chartSelect, chartTypes);
+
 		HBox lineChartXSelectionBoxes = new HBox();
-		lineChartXSelectionBoxes.setSpacing(10); 
+		lineChartXSelectionBoxes.setSpacing(10);
 		lineChartXSelectionBoxes.setAlignment(Pos.TOP_LEFT);
-		lineChartXSelectionBoxes.getChildren().addAll(chartSelectXaxisLabel,chartSelectXaxis);
-		
+		lineChartXSelectionBoxes.getChildren().addAll(chartSelectXaxisLabel, chartSelectXaxis);
+
 		HBox lineChartYSelectionBoxes = new HBox();
-		lineChartYSelectionBoxes.setSpacing(10); 
+		lineChartYSelectionBoxes.setSpacing(10);
 		lineChartYSelectionBoxes.setAlignment(Pos.TOP_LEFT);
-		lineChartYSelectionBoxes.getChildren().addAll(chartSelectYaxisLabel,chartSelectYaxis);
-		
+		lineChartYSelectionBoxes.getChildren().addAll(chartSelectYaxisLabel, chartSelectYaxis);
+
 		HBox pieChartTSelectionBoxes = new HBox();
-		pieChartTSelectionBoxes.setSpacing(10); 
+		pieChartTSelectionBoxes.setSpacing(10);
 		pieChartTSelectionBoxes.setAlignment(Pos.TOP_LEFT);
-		pieChartTSelectionBoxes.getChildren().addAll(chartSelectTextLabel,chartSelectTextCol);
-		
+		pieChartTSelectionBoxes.getChildren().addAll(chartSelectTextLabel, chartSelectTextCol);
+
 		HBox pieChartNSelectionBoxes = new HBox();
-		pieChartNSelectionBoxes.setSpacing(10); 
+		pieChartNSelectionBoxes.setSpacing(10);
 		pieChartNSelectionBoxes.setAlignment(Pos.TOP_LEFT);
-		pieChartNSelectionBoxes.getChildren().addAll(chartSelectNumLabel,chartSelectNumCol);
-			
+		pieChartNSelectionBoxes.getChildren().addAll(chartSelectNumLabel, chartSelectNumCol);
+
 		VBox container = new VBox();
-		container.setSpacing(10); 
+		container.setSpacing(10);
 		container.setAlignment(Pos.TOP_LEFT);
-		container.getChildren().addAll(chartSelectDataset, selectionBoxes,lineChartXSelectionBoxes,lineChartYSelectionBoxes,pieChartTSelectionBoxes,pieChartNSelectionBoxes);
-		
+		container.getChildren().addAll(chartSelectDataset, selectionBoxes, lineChartXSelectionBoxes,
+				lineChartYSelectionBoxes, pieChartTSelectionBoxes, pieChartNSelectionBoxes);
+
 		// Default choice is "Line Chart"
 		chartTypes.getSelectionModel().selectFirst();
 		isLineChart = true;
@@ -400,27 +408,27 @@ public class Main extends Application {
 		chartSelectNumLabel.setDisable(true);
 		chartSelectNumCol.getStyleClass().add("combo-box-base:disabled");
 		chartSelectNumCol.setDisable(true);
-		
-		BorderPane pane= new BorderPane();
+
+		BorderPane pane = new BorderPane();
 		pane.setPadding(new Insets(30, 30, 10, 20));
 		pane.setTop(container);
 		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
 		pane.getStyleClass().add("screen-background");
-		
+
 		return pane;
 	}
+
 	/**
 	 * Populate sample data table values to the chart view
 	 */
 	private void initLineChart() {
 
-		
-		if(currentDatasetName == null) {
+		if (currentDatasetName == null) {
 			return;
 		}
-		
+
 		// Get 2 columns
 		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
 		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
@@ -447,11 +455,26 @@ public class Main extends Application {
 			int len = xValues.length;
 
 			for (int i = 0; i < len; i++) {
-				series.getData().add( new XYChart.Data<Number, Number>(xValues[i], yValues[i]));
+				series.getData().add(new XYChart.Data<Number, Number>(xValues[i], yValues[i]));
 			}
-			
+
 			// add the new series as the only one series for this line chart
-			lineChart.getData().add(series);
+			if (lineChart.getData().size() == 0)
+				lineChart.getData().add(series);
+
+			else if (lineChart.getData().get(0) != series) {
+				lineChart.getData().clear();
+				lineChart.getData().add(series);
+			}
+
+			// put linechart data into map
+			lineChartClass t = new lineChartClass();
+			t.setSeries(series);
+			t.setAxisName(chartXaxisName, chartYaxisName);
+			t.setTitle("Sample Line Chart");
+			String name = "LineChart" + lineChartCount++;
+			charts.put(name, t);
+			chartList.getItems().add(name);
 		}
 	}
 
@@ -467,19 +490,19 @@ public class Main extends Application {
 		lineChart = new LineChart<Number, Number>(xAxis, yAxis);
 
 		// Layout the UI components
-		
+
 		showChartHeader = new Label();
 		showChartHeader.getStyleClass().add("Header");
 		showChartBack = new Button("Back");
-		
+
 		VBox chartContainer = new VBox(20);
 		chartContainer.getChildren().addAll(lineChart);
 		chartContainer.setAlignment(Pos.CENTER);
-		
+
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
 		actionButtons.getChildren().add(showChartBack);
-		
+
 		BorderPane pane = new BorderPane();
 		pane.setTop(showChartHeader);
 		pane.setCenter(chartContainer);
@@ -487,9 +510,10 @@ public class Main extends Application {
 
 		// Apply CSS to style the GUI components
 		pane.getStyleClass().add("screen-background");
-		
+
 		return pane;
 	}
+
 	/**
 	 * Create the Filter Data screen and layout its UI components
 	 * 
@@ -504,7 +528,7 @@ public class Main extends Application {
 
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
-		actionButtons.getChildren().addAll(filterCancel,filterComfirm);
+		actionButtons.getChildren().addAll(filterCancel, filterComfirm);
 
 		BorderPane pane = new BorderPane();
 		pane.setTop(filterHeader);
@@ -530,8 +554,8 @@ public class Main extends Application {
 
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
-		actionButtons.getChildren().addAll(splitCancel,splitComfirm);
-		
+		actionButtons.getChildren().addAll(splitCancel, splitComfirm);
+
 		BorderPane pane = new BorderPane();
 		pane.setTop(splitHeader);
 		pane.setBottom(actionButtons);
@@ -541,8 +565,6 @@ public class Main extends Application {
 
 		return pane;
 	}
-	
-
 
 	/**
 	 * Creates the main screen and layout its UI components
@@ -561,17 +583,15 @@ public class Main extends Application {
 		dataList = new ListView<String>();
 		dataList.getSelectionModel().selectFirst();
 		chartList = new ListView<String>();
-		chartList.getItems().addAll("Chart1", "Chart2");
 		importButton = new Button("Import");
 		exportButton = new Button("Export");
 		filterButton = new Button("Filter Data");
 		splitButton = new Button("Split Data");
 		chartButton = new Button("Create Chart");
 		showChartButton = new Button("Show Chart");
-		
-		
+
 		// Layout the UI components
-		
+
 		HBox hc = new HBox(20);
 		hc.setAlignment(Pos.CENTER);
 		hc.getChildren().addAll(dataList, chartList);
