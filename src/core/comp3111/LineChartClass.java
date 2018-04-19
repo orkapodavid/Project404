@@ -2,13 +2,13 @@ package core.comp3111;
 
 import javafx.scene.chart.XYChart;
 
-public class lineChartClass implements Chart {
+public class LineChartClass implements Chart {
 	
-	public lineChartClass() {
+	public LineChartClass() {
 		series = null;
 		xAxisName = "";
 		yAxisName = "";
-		Title = "";
+		title = "";
 	}
 
 	public void setSeries(XYChart.Series<Number, Number> m_series) {
@@ -28,7 +28,7 @@ public class lineChartClass implements Chart {
 	}
 	
 	public String getTitle() {
-		return Title;
+		return title;
 	}
 
 	public void setAxisName(String x, String y) {
@@ -36,11 +36,11 @@ public class lineChartClass implements Chart {
 		yAxisName = y;
 	}
 	public void setTitle(String m_title) {
-		Title = m_title;
+		title = m_title;
 	}
 	
 	private XYChart.Series<Number, Number> series;
 	private String xAxisName;
 	private String yAxisName;
-	private String Title;
+	private String title;
 }
