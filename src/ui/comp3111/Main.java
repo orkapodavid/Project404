@@ -8,7 +8,8 @@ import java.util.Map;
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
-import core.comp3111.lineChartClass;
+import core.comp3111.LineChartClass;
+import core.comp3111.PieChartClass;
 import core.comp3111.SampleDataGenerator;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -21,6 +22,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -49,19 +51,21 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
 	private Map<String, DataTable> DataSets = new HashMap<String, DataTable>();
-	private Map<String, lineChartClass> charts = new HashMap<String, lineChartClass>();
+	private Map<String, LineChartClass> lineChartsMap = new HashMap<String, LineChartClass>();
+	private Map<String, PieChartClass> pieChartsMap = new HashMap<String, PieChartClass>();
 	private int DataSetCount = 0;
 	private int lineChartCount = 0;
 
 	// Attributes: Scene and Stage
-	private static final int SCENE_NUM = 5;
+	private static final int SCENE_NUM = 6;
 	private static final int SCENE_MAIN_SCREEN = 0;
 	private static final int SCENE_CREATE_CHART = 1;
 	private static final int SCENE_SPLIT_DATA = 2;
 	private static final int SCENE_FILTER_DATA = 3;
-	private static final int SCENE_SHOW_CHART = 4;
+	private static final int SCENE_SHOW_LINECHART = 4;
+	private static final int SCENE_SHOW_PIECHART = 5;
 	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Project404]", "Create Chart", "Split Data",
-			"Filter Data", "Chart" };
+			"Filter Data", "Line Chart", "Pie Chart"};
 	private Stage stage = null;
 	private Scene[] scenes = null;
 
@@ -74,6 +78,7 @@ public class Main extends Application {
 	private ListView<String> dataList;
 	private ListView<String> chartList;
 	private Alert noDatasetAlert = null;
+	private Alert noChartAlert = null;
 	// Screen 2: paneCreateChartScreen
 	private Boolean isLineChart = null;
 	private String chartXaxisName = null;
@@ -104,13 +109,17 @@ public class Main extends Application {
 	private Label filterHeader = null;
 	private Button filterCancel = null;
 	private Button filterComfirm = null;
-	// Screen 5: paneShowChartScreen
+	// Screen 5: paneShowLineChartScreen
 	private LineChart<Number, Number> lineChart = null;
 	private NumberAxis xAxis = null;
 	private NumberAxis yAxis = null;
-	private Label showChartHeader = null;
-	private Button showChartBack = null;
-
+	private Label showLineChartHeader = null;
+	private Button showLineChartBack = null;
+	// Screen 6: paneShowPieChartScreen
+	private PieChart pieChart = null;
+	private Button showPieChartBack = null;
+	private Label showPieChartHeader = null;
+	
 	/**
 	 * create all scenes in this application
 	 */
@@ -120,7 +129,8 @@ public class Main extends Application {
 		scenes[SCENE_CREATE_CHART] = new Scene(paneCreateChartScreen(), 520, 500);
 		scenes[SCENE_SPLIT_DATA] = new Scene(paneSplitDataScreen(), 520, 500);
 		scenes[SCENE_FILTER_DATA] = new Scene(paneFilterDataScreen(), 520, 500);
-		scenes[SCENE_SHOW_CHART] = new Scene(paneShowChartScreen(), 520, 500);
+		scenes[SCENE_SHOW_LINECHART] = new Scene(paneShowLineChartScreen(), 520, 500);
+		scenes[SCENE_SHOW_PIECHART] = new Scene(paneShowPieChartScreen(), 520, 500);
 		for (Scene s : scenes) {
 			if (s != null)
 				// Assumption: all scenes share the same stylesheet
@@ -151,7 +161,13 @@ public class Main extends Application {
 		noSelectedColAlert.setTitle("Warning Dialog");
 		noSelectedColAlert.setHeaderText(null);
 		noSelectedColAlert.setContentText("Incomplete selection of data columns. Please complete your slection");
+		
+		noChartAlert = new Alert(AlertType.INFORMATION);
+		noChartAlert.setTitle("Reminder Dialog");
+		noChartAlert.setHeaderText(null);
+		noChartAlert.setContentText("No chart is available. Please create a chart.");
 	}
+	
 
 	/**
 	 * Initialize event handlers of the main screen
@@ -196,14 +212,27 @@ public class Main extends Application {
 		});
 		showChartButton.setOnAction(e -> {
 			String name = chartList.getSelectionModel().getSelectedItem();
-			if (lineChart.getData().get(0) != charts.get(name).getSeries()) {
-				lineChart.getData().clear();
-				lineChart.getData().add(charts.get(name).getSeries());
+			String checking = null;
+			if(name != null) {
+				checking = name.substring(0, 9);
+				System.out.println(checking);
+				if(checking.equals(new String("LineChart"))){
+					if (lineChart.getData().get(0) != lineChartsMap.get(name).getSeries()) {
+						lineChart.getData().clear();
+						lineChart.getData().add(lineChartsMap.get(name).getSeries());
+					}
+					lineChart.setTitle(lineChartsMap.get(name).getTitle());
+					xAxis.setLabel(lineChartsMap.get(name).getXAxisName());
+					yAxis.setLabel(lineChartsMap.get(name).getYAxisName());
+					putSceneOnStage(SCENE_SHOW_LINECHART);
+				}else {
+					
+				}
+			}else {
+				noChartAlert.showAndWait();
 			}
-			lineChart.setTitle(charts.get(name).getTitle());
-			xAxis.setLabel(charts.get(name).getXAxisName());
-			yAxis.setLabel(charts.get(name).getYAxisName());
-			putSceneOnStage(SCENE_SHOW_CHART);
+			
+			
 		});
 	}
 
@@ -250,6 +279,7 @@ public class Main extends Application {
 						chartSelectXaxis.getItems().clear();
 						chartSelectYaxis.getItems().clear();
 						initLineChart();
+						putSceneOnStage(SCENE_SHOW_LINECHART);
 					} else {
 						noSelectedColAlert.showAndWait();
 						return;
@@ -262,7 +292,7 @@ public class Main extends Application {
 					chartSelectTextCol.getItems().clear();
 				}
 
-				putSceneOnStage(SCENE_SHOW_CHART);
+				
 			}
 		});
 
@@ -318,7 +348,7 @@ public class Main extends Application {
 	 */
 	private void initShowChartHandlers() {
 		// show chart screen
-		showChartBack.setOnAction(new EventHandler<ActionEvent>() {
+		showLineChartBack.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
@@ -421,7 +451,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Populate sample data table values to the chart view
+	 * Populate sample data table values to the line chart view
 	 */
 	private void initLineChart() {
 
@@ -437,7 +467,7 @@ public class Main extends Application {
 		if (xCol != null && yCol != null && xCol.getTypeName().equals(DataType.TYPE_NUMBER)
 				&& yCol.getTypeName().equals(DataType.TYPE_NUMBER)) {
 
-			lineChart.setTitle("Sample Line Chart");
+			lineChart.setTitle("Line Chart of " + currentDatasetName);
 			xAxis.setLabel(chartXaxisName);
 			yAxis.setLabel(chartYaxisName);
 
@@ -468,22 +498,77 @@ public class Main extends Application {
 			}
 
 			// put linechart data into map
-			lineChartClass t = new lineChartClass();
+			LineChartClass t = new LineChartClass();
 			t.setSeries(series);
 			t.setAxisName(chartXaxisName, chartYaxisName);
-			t.setTitle("Sample Line Chart");
+			t.setTitle("Line Chart of " + currentDatasetName);
 			String name = "LineChart" + lineChartCount++;
-			charts.put(name, t);
+			lineChartsMap.put(name, t);
 			chartList.getItems().add(name);
 		}
 	}
-
+	
 	/**
-	 * Create the show chart screen and layout its UI components
+	 * Populate sample data table values to the pie chart view
+	 */
+	private void initPieChart() {
+		if (currentDatasetName == null) {
+			return;
+		}
+		// Get 2 columns
+		DataColumn numCol = currentDataTable.getCol(chartNumColName);
+		DataColumn textCol = currentDataTable.getCol(chartTextColName);
+		// Ensure both columns exist and the type of numCol and textCol are Number and String respectively
+		if (numCol != null && textCol != null && numCol.getTypeName().equals(DataType.TYPE_NUMBER)
+				&& textCol.getTypeName().equals(DataType.TYPE_STRING)) {
+			
+			
+			ObservableList<PieChart.Data> pieChartDataList = FXCollections.observableArrayList();
+			
+			Number[] numColValues = (Number[]) numCol.getData();
+			String[] textColValues = (String[]) textCol.getData();
+			
+			int len = numColValues.length;
+			for(int i = 0; i < len; i++) {
+				pieChartDataList.add(new PieChart.Data(textColValues[i], (double) numColValues[i]));
+			}
+			
+			pieChart.setTitle("Pie Chart of " + currentDatasetName);
+			// Add all selected data into PieChart
+			if (pieChart.getData().size() == 0)
+				pieChart.getData().addAll(pieChartDataList);
+
+			else {
+				pieChart.getData().clear();
+				pieChart.getData().addAll(pieChartDataList);
+			}
+			
+			PieChartClass t = new PieChartClass();
+			t.setList(pieChartDataList);
+			t.setTitle("Line Chart of " + currentDatasetName);
+			String name = "PieChart" + lineChartCount++;
+			pieChartsMap.put(name, t);
+			chartList.getItems().add(name);
+		}
+	}
+	
+	/**
+	 * Create the show pie chart screen and layout its UI components
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
-	private Pane paneShowChartScreen() {
+	private Pane paneShowPieChartScreen() {
+		BorderPane pane = new BorderPane();
+		
+		return pane;
+	}
+	
+	/**
+	 * Create the show line chart screen and layout its UI components
+	 * 
+	 * @return a Pane component to be displayed on a scene
+	 */
+	private Pane paneShowLineChartScreen() {
 
 		xAxis = new NumberAxis();
 		yAxis = new NumberAxis();
@@ -491,9 +576,9 @@ public class Main extends Application {
 
 		// Layout the UI components
 
-		showChartHeader = new Label();
-		showChartHeader.getStyleClass().add("Header");
-		showChartBack = new Button("Back");
+		showLineChartHeader = new Label();
+		showLineChartHeader.getStyleClass().add("Header");
+		showLineChartBack = new Button("Back");
 
 		VBox chartContainer = new VBox(20);
 		chartContainer.getChildren().addAll(lineChart);
@@ -501,10 +586,10 @@ public class Main extends Application {
 
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
-		actionButtons.getChildren().add(showChartBack);
+		actionButtons.getChildren().add(showLineChartBack);
 
 		BorderPane pane = new BorderPane();
-		pane.setTop(showChartHeader);
+		pane.setTop(showLineChartHeader);
 		pane.setCenter(chartContainer);
 		pane.setBottom(actionButtons);
 
