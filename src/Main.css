@@ -19,3 +19,7 @@
 	-fx-font-size: 19;
 	-fx-font-weight: bold;
 }
+
+.combo-box-base:disabled {
+    -fx-opacity: 1;
+}

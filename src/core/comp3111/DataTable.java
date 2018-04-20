@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -92,7 +94,50 @@ public class DataTable {
 		}
 		return null;
 	}
-
+	/**
+	 * Get a String array of the names of all numerical columns
+	 * 
+	 * @return String[] or null
+	 */
+	public String[] getAllNumColName() {
+		
+		if(dc.size() == 0) {
+			return null;
+		}
+		
+		ArrayList<String> colsName = new ArrayList<String>(dc.size());
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			if(dc.get(col).getTypeName() == DataType.TYPE_NUMBER) {
+				colsName.add(col);
+			}
+		}
+		
+		return colsName.toArray(new String[0]);
+	}
+	
+	/**
+	 * Get a String array of the names of all text columns
+	 * 
+	 * @return String[] or null
+	 */
+	public String[] getAllTextColName() {
+		
+		if(dc.size() == 0) {
+			return null;
+		}
+		
+		ArrayList<String> colsName = new ArrayList<String>(dc.size());
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			if(dc.get(col).getTypeName() == DataType.TYPE_STRING) {
+				colsName.add(col);
+			}
+		}
+		
+		return colsName.toArray(new String[0]);
+	}
+	
 	/**
 	 * Check whether the column exists by the given column name
 	 * 
