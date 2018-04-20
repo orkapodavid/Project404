@@ -1,7 +1,10 @@
 package core.comp3111;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 2D array of data values with the following requirements: (1) There are 0 to
@@ -123,6 +126,29 @@ public class DataTable {
 		// assumption: For DataTable, all columns should have the same size
 		Map.Entry<String, DataColumn> entry = dc.entrySet().iterator().next();
 		return dc.get(entry.getKey()).getSize();
+	}
+	
+	public void print() {
+		int colcount = this.getNumCol();
+		int rowcount = this.getNumRow();
+		System.out.println("colcount: " + colcount + " rowcount: " + rowcount);
+		
+		List<DataColumn> Columns = new ArrayList<DataColumn>();
+		for (String key: dc.keySet()) {
+			System.out.print(key + " ");
+			Columns.add(dc.get(key));
+		}
+		System.out.println();
+		for (int i=0; i<rowcount; i++) {
+			for (int j=0; j<colcount; j++) {
+				System.out.print(Columns.get(j).getData()[i] + " ");
+			}
+			System.out.println();
+		}
+		for (int i=0; i<colcount; i++) {
+			System.out.print(Columns.get(i).getTypeName() + " ");
+		}
+		System.out.println();
 	}
 
 	// attribute: A java.util.Map interface
