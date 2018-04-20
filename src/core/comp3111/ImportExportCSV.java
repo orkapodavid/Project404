@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import core.comp3111.*;
@@ -46,6 +47,7 @@ public class ImportExportCSV {
 		emptyTable = new Alert(AlertType.ERROR);
 		tableAdded = new Alert(AlertType.INFORMATION);
 		wrongFileType = new Alert(AlertType.ERROR);
+		noFileSaved = new Alert(AlertType.ERROR);
 		
 		ImportChooser.setTitle("Import CSV");
 		ExtensionFilter CSVfilter = new ExtensionFilter("CSV Files", "*.csv");
@@ -90,15 +92,15 @@ public class ImportExportCSV {
 	 * 			-Throws IOException if FileReader or CSVParser cannot be closed properly
 	 *
 	 */
-	public void importCSV(ArrayList<DataTable> datasets) {
+	public boolean importCSV(Map<String, DataTable>  datasets, int DataSetCount) {
 		System.out.println("importCSV: method start");
 
 		File selectedFile = ImportChooser.showOpenDialog(null);
+		String name = "DataSet" + DataSetCount;
 		
 		if (selectedFile == null) {
 			System.out.println("importCSV: No file selected");
 			noFileChosen.showAndWait();
-			return;
 		} else {
 			String filePath = selectedFile.getAbsolutePath();
 			System.out.println("importCSV: Selecteded file from: " + filePath);
@@ -113,7 +115,9 @@ public class ImportExportCSV {
 				List<CSVRecord> csvContent = csvParser.getRecords();
 				
 				int rowCount = csvContent.size();
-				int colCount = csvContent.get(0).size(); // No. of Columns
+				int colCount = 0;
+				if(rowCount != 0)
+					 colCount = csvContent.get(0).size(); // No. of Columns
 				List<Object[]> newDataColumnElements = new ArrayList<Object[]>();
 				List<String> newDataColumnNames = new ArrayList<String>();
 				
@@ -151,9 +155,10 @@ public class ImportExportCSV {
 					System.out.println("importCSV: Empty table not added");
 					emptyTable.showAndWait();
 				} else {
-					datasets.add(importedTable);
+					datasets.put(name,importedTable);
 					System.out.println("importCSV: Imported table added");
 					tableAdded.showAndWait();
+					return true;
 				}
 				
 			} catch (Exception e) {
@@ -169,6 +174,7 @@ public class ImportExportCSV {
 			}
 			
 		}
+		return false;
 	}
 	
 	/**
@@ -177,10 +183,9 @@ public class ImportExportCSV {
 	 * @param datasets
 	 * 			-current collection of data tables
 	 */
-	public void exportCSV(ArrayList<DataTable> datasets) {
+	public void exportCSV(Map<String, DataTable>  datasets) {
 		System.out.println("exportCSV: method start");
 		//TODO: Let user choose with data table to export
-		
 		
 		File selectedFile = ExportChooser.showSaveDialog(null);
 		
@@ -195,7 +200,7 @@ public class ImportExportCSV {
 				fileWriter = new FileWriter(filePath);
 				csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
 				//TODO: Get specific table from data sets
-				datasets.get(0); //hardcode testing
+				datasets.get("DataSet0"); //hardcode testing
 				
 				
 				

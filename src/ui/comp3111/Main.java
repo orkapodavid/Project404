@@ -56,7 +56,7 @@ public class Main extends Application {
 	private int DataSetCount = 0;
 	private int lineChartCount = 0;
 
-	private ImportExportCSV importexporter;
+	private ImportExportCSV importexporter = null;
 	
 	// Attributes: Scene and Stage
 	private static final int SCENE_NUM = 6;
@@ -146,6 +146,7 @@ public class Main extends Application {
 	 * that requires interaction (e.g. button click, or others).
 	 */
 	private void initEventHandlers() {
+		importexporter = new ImportExportCSV();
 		initMainScreenHandlers();
 		initSubScreenHandlers();
 		initCreateChartHandlers();
@@ -170,18 +171,16 @@ public class Main extends Application {
 		noChartAlert.setContentText("No chart is available. Please create a chart.");
 	}
 	
-	private void initObjects() {
-		importexporter = new ImportExportCSV();
-	}
-	
 	/**
 	 * Initialize event handlers of the main screen
 	 */
 	private void initMainScreenHandlers() {
 		importButton.setOnAction(e -> {
-			importexporter.importCSV(DataSets);
-			String name = "DataSet" + DataSetCount++;
-			dataList.getItems().add(name);
+			if(importexporter.importCSV(DataSets,DataSetCount)) {
+				String name = "DataSet" + DataSetCount;
+				dataList.getItems().add(name);
+				DataSetCount++;
+			}
 		});
 		exportButton.setOnAction(e -> {
 			importexporter.exportCSV(DataSets);
@@ -740,7 +739,6 @@ public class Main extends Application {
 		try {
 
 			stage = primaryStage; // keep a stage reference as an attribute
-			initObjects(); // create objects
 			initScenes(); // initialize the scenes
 			initEventHandlers(); // link up the event handlers
 			putSceneOnStage(SCENE_MAIN_SCREEN); // show the main screen
@@ -758,13 +756,6 @@ public class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		launch(args);
-	}
-
-	public void testadd() {
-		DataTable t = SampleDataGenerator.generateSampleLineData();
-		String name = "DataSet" + DataSetCount++;
-		DataSets.put(name, t);
-		dataList.getItems().add(name);
 	}
 
 	private String checkSelectedDataSet() {
