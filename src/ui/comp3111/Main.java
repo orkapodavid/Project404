@@ -115,10 +115,12 @@ public class Main extends Application {
 	 */
 	private void initMainScreenHandlers() {
 		importButton.setOnAction(e -> {
-			importexporter.importCSV();
+			importexporter.importCSV(DataSets);
+			String name = "DataSet" + DataSetCount++;
+			dataList.getItems().add(name);
 		});
 		exportButton.setOnAction(e -> {
-			importexporter.exportCSV();
+			importexporter.exportCSV(DataSets);
 		});
 		chartButton.setOnAction(e -> {
 			chartHeader.setText(checkSelectedDataSet());
