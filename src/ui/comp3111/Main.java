@@ -484,12 +484,19 @@ public class Main extends Application {
 			XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
 
 			series.setName(currentDatasetName);
-
 			// populating the series with data
 			// As we have checked the type, it is safe to downcast to Number[]
-			Number[] xValues = (Number[]) xCol.getData();
-			Number[] yValues = (Number[]) yCol.getData();
-
+			Number[] xValues = new Number[xCol.getSize()];
+			Number[] yValues =  new Number[yCol.getSize()];
+			int index = 0;
+			for(Object data:xCol.getData()) {
+				xValues[index++] = (Number) data;
+			}
+			index = 0;
+			for(Object data:yCol.getData()) {
+				yValues[index++] = (Number) data;
+			}
+			
 			// In DataTable structure, both length must be the same
 			int len = xValues.length;
 
