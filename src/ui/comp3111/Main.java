@@ -4,13 +4,13 @@ import javafx.geometry.Insets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
 import core.comp3111.LineChartClass;
 import core.comp3111.PieChartClass;
 import core.comp3111.SampleDataGenerator;
+import core.comp3111.ImportExportCSV;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -56,6 +56,8 @@ public class Main extends Application {
 	private int DataSetCount = 0;
 	private int lineChartCount = 0;
 
+	private ImportExportCSV importexporter;
+	
 	// Attributes: Scene and Stage
 	private static final int SCENE_NUM = 6;
 	private static final int SCENE_MAIN_SCREEN = 0;
@@ -168,13 +170,21 @@ public class Main extends Application {
 		noChartAlert.setContentText("No chart is available. Please create a chart.");
 	}
 	
-
+	private void initObjects() {
+		importexporter = new ImportExportCSV();
+	}
+	
 	/**
 	 * Initialize event handlers of the main screen
 	 */
 	private void initMainScreenHandlers() {
 		importButton.setOnAction(e -> {
-			testadd();
+			importexporter.importCSV(DataSets);
+			String name = "DataSet" + DataSetCount++;
+			dataList.getItems().add(name);
+		});
+		exportButton.setOnAction(e -> {
+			importexporter.exportCSV(DataSets);
 		});
 
 		// Add ChangeListener to the ListView dataList
@@ -730,6 +740,7 @@ public class Main extends Application {
 		try {
 
 			stage = primaryStage; // keep a stage reference as an attribute
+			initObjects(); // create objects
 			initScenes(); // initialize the scenes
 			initEventHandlers(); // link up the event handlers
 			putSceneOnStage(SCENE_MAIN_SCREEN); // show the main screen
