@@ -1,9 +1,11 @@
 package core.comp3111;
 
+import java.io.Serializable;
+
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
 
-public class PieChartClass {
+public class PieChartClass implements Serializable{
 	
 	private ObservableList<PieChart.Data> pieChartDataList;
 	private String title;

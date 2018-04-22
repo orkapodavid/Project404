@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import core.comp3111.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -91,12 +89,12 @@ public class ImportExportCSV {
 	 * 
 	 * @param datasets
 	 * 			-current collection of data tables
-	 * @throws Exception
-	 *          -Throws exception if FileReader cannot read file or CSVParser cannot parse the selected CSV file
-	 *          
-	 * @throws IOException
-	 * 			-Throws IOException if FileReader or CSVParser cannot be closed properly
+	 * @param name
+	 * 			-name to be used by the imported table
 	 *
+	 * @return boolean
+	 * 			-true if CSV imported
+	 * 			-false otherwise
 	 */
 	public boolean importCSV(Map<String, DataTable>  datasets, String name) {
 		System.out.println("importCSV: method start");
