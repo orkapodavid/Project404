@@ -43,6 +43,9 @@ public class ImportExportCSV {
 	private static final String replaceWithMean = "Replace with column mean";
 	private static final String replaceWithMedian = "Replace with column median";
 	
+	/**
+	 * Default constructor of ImportExportCSV class.
+	 */
 	public ImportExportCSV() {
 		ImportChooser = new FileChooser();
 		ExportChooser = new FileChooser();
@@ -95,11 +98,10 @@ public class ImportExportCSV {
 	 * 			-Throws IOException if FileReader or CSVParser cannot be closed properly
 	 *
 	 */
-	public boolean importCSV(Map<String, DataTable>  datasets, int DataSetCount) {
+	public boolean importCSV(Map<String, DataTable>  datasets, String name) {
 		System.out.println("importCSV: method start");
 
 		File selectedFile = ImportChooser.showOpenDialog(null);
-		String name = "DataSet" + DataSetCount;
 		
 		if (selectedFile == null) {
 			System.out.println("importCSV: No file selected");
@@ -186,9 +188,6 @@ public class ImportExportCSV {
 	 * @param datasets
 	 * 			-current collection of data tables
 	 */
-	/**
-	 * @param datasets
-	 */
 	public void exportCSV(Map<String, DataTable>  datasets) {
 		System.out.println("exportCSV: method start");
 		
@@ -253,7 +252,7 @@ public class ImportExportCSV {
 						Files.deleteIfExists(currFilePath);
 					} catch (IOException e1) {
 						System.out.println("exportCSV: Error while deleting created file.");
-						e1.printStackTrace();
+						//e1.printStackTrace();
 					}
 				} finally {
 					try {
@@ -262,7 +261,7 @@ public class ImportExportCSV {
 						csvFilePrinter.close();
 					} catch (IOException e) {
 						System.out.println("exportCSV: Error while flushing/closing fileWriter/CSVFileWriter");
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				}
 			}
@@ -399,6 +398,14 @@ public class ImportExportCSV {
 		return currCol;
 	}
 	
+	/**
+	 * This function returns the mean of a number column.
+	 * 
+	 * @param currCol
+	 * 			-Column data
+	 * @return Number
+	 * 			-mean of current column
+	 */
 	private Number calculateMean(Object[] currCol) {
 		double sum = 0, mean = 0;
 		double objCount = 0;
@@ -413,6 +420,14 @@ public class ImportExportCSV {
 		return mean;
 	}
 	
+	/**
+	 * This function returns the median of a number column.
+	 * 
+	 * @param currCol
+	 * 			-Column data
+	 * @return Number
+	 * 			-median of current column
+	 */
 	private Number calculateMedian(Object[] currCol) {
 		double median = 0;
 		List<Object> nonMissing = new ArrayList<Object>();
