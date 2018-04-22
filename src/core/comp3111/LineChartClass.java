@@ -1,8 +1,10 @@
 package core.comp3111;
 
+import java.io.Serializable;
+
 import javafx.scene.chart.XYChart;
 
-public class LineChartClass implements Chart {
+public class LineChartClass implements Chart, Serializable {
 	
 	/**
 	 * Construct - Create an empty copy of all the essential data in a line chart.
