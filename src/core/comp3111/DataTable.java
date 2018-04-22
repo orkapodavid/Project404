@@ -139,6 +139,26 @@ public class DataTable {
 	}
 	
 	/**
+	 * Get a String array of the names of all columns
+	 * 
+	 * @return String[] or null
+	 */
+	public String[] getAllColName() {
+		
+		if(dc.size() == 0) {
+			return null;
+		}
+		
+		ArrayList<String> colsName = new ArrayList<String>(dc.size());
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			colsName.add(col);
+		}
+		
+		return colsName.toArray(new String[0]);
+	}
+	
+	/**
 	 * Check whether the column exists by the given column name
 	 * 
 	 * @param colName
