@@ -514,7 +514,7 @@ public class Main extends Application {
 			t.setSeries(series);
 			t.setAxisName(chartXaxisName, chartYaxisName);
 			t.setTitle("Line Chart of " + currentDatasetName);
-			String name = "LineChart" + environment.getEnviornmentLineCharts().size() + 1);
+			String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
 			environment.getEnviornmentLineCharts().put(name, t);
 			chartList.getItems().add(name);
 		}
