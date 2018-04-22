@@ -511,7 +511,7 @@ public class Main extends Application {
 		t.setTitle("Line Chart of " + currentDatasetName);
 		t.animate(false);
 		String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
-		lineChartsMap.put(name, t);
+		environment.getEnviornmentLineCharts().put(name, t);
 		chartList.getItems().add(name);
 	}
 
@@ -573,8 +573,8 @@ public class Main extends Application {
 		t.setAxisName(chartXaxisName, chartYaxisName);
 		t.setTitle("Line Chart of " + currentDatasetName);
 		t.animate(true);
-		String name = "LineChart" + lineChartCount++;
-		lineChartsMap.put(name, t);
+		String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
+		environment.getEnviornmentLineCharts().put(name, t);
 		chartList.getItems().add(name);
 	}
 
