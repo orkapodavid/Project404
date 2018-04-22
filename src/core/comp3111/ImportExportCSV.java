@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -163,7 +166,7 @@ public class ImportExportCSV {
 				
 			} catch (Exception e) {
 				System.out.println("importCSV: Error in CSVFileReader");
-				e.printStackTrace();
+				//e.printStackTrace();
 			} finally {
 				try {
 					fileReader.close();
@@ -183,36 +186,91 @@ public class ImportExportCSV {
 	 * @param datasets
 	 * 			-current collection of data tables
 	 */
+	/**
+	 * @param datasets
+	 */
 	public void exportCSV(Map<String, DataTable>  datasets) {
 		System.out.println("exportCSV: method start");
-		//TODO: Let user choose with data table to export
 		
-		File selectedFile = ExportChooser.showSaveDialog(null);
+		DataTable selectedDataTable = null;
+		List<String> exportOptions = new ArrayList<String>();
+		for (String key: datasets.keySet()) {
+			exportOptions.add(key);
+		}
+
+		ChoiceDialog<String> chooseExportDataSet = new ChoiceDialog<String>(exportOptions.get(0), exportOptions);
+		chooseExportDataSet.setTitle("Export");
+		chooseExportDataSet.setHeaderText("Please choose table to export");
+		chooseExportDataSet.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
+		Optional<String> returnedDataSetOption = chooseExportDataSet.showAndWait();
+		System.out.println("exportCSV: Selected tabled: " + returnedDataSetOption.get());
 		
-		if (selectedFile != null) {
-			String filePath = selectedFile.getAbsolutePath();
-			System.out.println("exportCSV: Save file to: " + filePath);
+		String selectedDataSetName;
+		
+		if (returnedDataSetOption.isPresent()) {
+			selectedDataSetName = returnedDataSetOption.get();
 			
-			FileWriter fileWriter = null;
-			CSVPrinter csvFilePrinter = null;
+			ExportChooser.setInitialFileName(selectedDataSetName + ".csv");
+			System.out.println("exportCSV: Initial file name: " + ExportChooser.getInitialFileName());
 			
-			try {
-				fileWriter = new FileWriter(filePath);
-				csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
-				//TODO: Get specific table from data sets
-				datasets.get("DataSet0"); //hardcode testing
+			File selectedFile = ExportChooser.showSaveDialog(null);
+			
+			if (selectedFile != null) {
+				String filePath = selectedFile.getAbsolutePath();
+				System.out.println("exportCSV: Save file to: " + filePath);
 				
+				FileWriter fileWriter = null;
+				CSVPrinter csvFilePrinter = null;
 				
-				
-			} catch (Exception e) {
-				
+				try {
+					fileWriter = new FileWriter(filePath);
+					csvFilePrinter = new CSVPrinter(fileWriter, CSVFormat.EXCEL);
+					selectedDataTable = datasets.get(selectedDataSetName);
+					String[] allColNames = selectedDataTable.getAllColName();
+					Map<String, DataColumn> allCols = new HashMap<String, DataColumn>();
+					
+					for (int i=0; i<selectedDataTable.getNumCol(); i++) {
+						allCols.put(allColNames[i], selectedDataTable.getCol(allColNames[i]));
+					}
+					
+					csvFilePrinter.printRecord(allColNames); //Create Header
+					
+					for (int i=0; i<selectedDataTable.getNumRow(); i++) {
+						List<Object> currRecord = new ArrayList<Object>();
+						for (int j=0; j<selectedDataTable.getNumCol(); j++) {
+							DataColumn currCol = allCols.get(allColNames[j]);
+							Object currObj = currCol.getData()[i];
+							currRecord.add(currObj);
+						}
+						csvFilePrinter.printRecord(currRecord);
+					}
+					
+				} catch (Exception e) {
+					System.out.println("exportCSV: Error in CSVFileWriter");
+					e.printStackTrace();
+					Path currFilePath = selectedFile.toPath();
+					try {
+						Files.deleteIfExists(currFilePath);
+					} catch (IOException e1) {
+						System.out.println("exportCSV: Error while deleting created file.");
+						e1.printStackTrace();
+					}
+				} finally {
+					try {
+						fileWriter.flush();
+						fileWriter.close();
+						csvFilePrinter.close();
+					} catch (IOException e) {
+						System.out.println("exportCSV: Error while flushing/closing fileWriter/CSVFileWriter");
+						e.printStackTrace();
+					}
+				}
 			}
-			
-		}
-		else {
-			System.out.println("exportCSV: No file saved");
-			noFileSaved.showAndWait();
-		}
+			else {
+				System.out.println("exportCSV: No file saved");
+				noFileSaved.showAndWait();
+			}
+		}	
 	}
 	
 	/**
@@ -357,11 +415,19 @@ public class ImportExportCSV {
 	
 	private Number calculateMedian(Object[] currCol) {
 		double median = 0;
-	    int middle = currCol.length/2;
-	    if (currCol.length%2 == 1) {
-	    	median = (double)(((Long)currCol[middle]).doubleValue());
+		List<Object> nonMissing = new ArrayList<Object>();
+		
+		for (int i=0; i<currCol.length; i++) {
+			if (!currCol[i].equals("")) {
+				nonMissing.add(currCol[i]);
+			}
+		}
+		
+	    int middle = nonMissing.size()/2;
+	    if (nonMissing.size()%2 == 1) {
+	    	median = (double)(((Long)nonMissing.get(middle)).doubleValue());
 	    } else {
-	        median = ((double)(((Long)currCol[middle-1]).doubleValue()) + (double)(((Long)currCol[middle]).doubleValue()) / 2.0);
+	        median = ((double)(((Long)nonMissing.get(middle-1)).doubleValue()) + (double)(((Long)nonMissing.get(middle)).doubleValue()) / 2.0);
 	    }
 		
 		System.out.println("Median: " + median);
