@@ -12,6 +12,9 @@ import core.comp3111.LineChartClass;
 import core.comp3111.PieChartClass;
 import core.comp3111.SampleDataGenerator;
 import core.comp3111.ImportExportCSV;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,6 +31,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -42,6 +46,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * The Main class of this GUI application
@@ -53,7 +58,7 @@ public class Main extends Application {
 
 	private ImportExportCSV importexporter = null;
 	private Environment environment = null;
-	
+
 	// Attributes: Scene and Stage
 	private static final int SCENE_NUM = 6;
 	private static final int SCENE_MAIN_SCREEN = 0;
@@ -63,7 +68,7 @@ public class Main extends Application {
 	private static final int SCENE_SHOW_LINECHART = 4;
 	private static final int SCENE_SHOW_PIECHART = 5;
 	private static final String[] SCENE_TITLES = { "COMP3111 Chart - [Project404]", "Create Chart", "Split Data",
-			"Filter Data", "Line Chart", "Pie Chart"};
+			"Filter Data", "Line Chart", "Pie Chart" };
 	private Stage stage = null;
 	private Scene[] scenes = null;
 
@@ -79,6 +84,7 @@ public class Main extends Application {
 	private Alert noChartAlert = null;
 	// Screen 2: paneCreateChartScreen
 	private Boolean isLineChart = null;
+	private CheckBox setAnimation = null;
 	private String chartXaxisName = null;
 	private String chartYaxisName = null;
 	private String chartNumColName = null;
@@ -117,7 +123,9 @@ public class Main extends Application {
 	private PieChart pieChart = null;
 	private Button showPieChartBack = null;
 	private Label showPieChartHeader = null;
-	
+
+	private int index = 0;
+
 	/**
 	 * create all scenes in this application
 	 */
@@ -147,7 +155,6 @@ public class Main extends Application {
 		initMainScreenHandlers();
 		initSubScreenHandlers();
 		initCreateChartHandlers();
-		initShowChartHandlers();
 		initAlertMsg();
 	}
 
@@ -161,13 +168,12 @@ public class Main extends Application {
 		noSelectedColAlert.setTitle("Warning Dialog");
 		noSelectedColAlert.setHeaderText(null);
 		noSelectedColAlert.setContentText("Incomplete selection of data columns. Please complete your selection");
-		
 		noChartAlert = new Alert(AlertType.INFORMATION);
 		noChartAlert.setTitle("Reminder Dialog");
 		noChartAlert.setHeaderText(null);
 		noChartAlert.setContentText("No chart is available. Please create a chart.");
 	}
-	
+
 	/**
 	 * Initialize event handlers of the main screen
 	 */
@@ -218,7 +224,7 @@ public class Main extends Application {
 		showChartButton.setOnAction(e -> {
 			String name = chartList.getSelectionModel().getSelectedItem();
 			String checking = null;
-			if(name != null) {
+			if (name != null) {
 				checking = name.substring(0, 9);
 				System.out.println(checking);
 				if(checking.equals(new String("LineChart"))){
@@ -230,19 +236,18 @@ public class Main extends Application {
 					xAxis.setLabel(environment.getEnviornmentLineCharts().get(name).getXAxisName());
 					yAxis.setLabel(environment.getEnviornmentLineCharts().get(name).getYAxisName());
 					putSceneOnStage(SCENE_SHOW_LINECHART);
-				}else {
-					
+				} else {
+
 				}
-			}else {
+			} else {
 				noChartAlert.showAndWait();
 			}
-			
-			
+
 		});
 	}
 
 	/**
-	 * Initialize event handlers of the sub screen
+	 * Initialize event handlers of all the return button
 	 */
 	private void initSubScreenHandlers() {
 		// create chart screen
@@ -255,6 +260,9 @@ public class Main extends Application {
 		});
 		// filter data screen
 		filterCancel.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		showLineChartBack.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
 	}
@@ -283,7 +291,10 @@ public class Main extends Application {
 					if (chartXaxisName != null && chartYaxisName != null) {
 						chartSelectXaxis.getItems().clear();
 						chartSelectYaxis.getItems().clear();
-						initLineChart();
+						if (setAnimation.isSelected())
+							initAnimatedLineChart();
+						else
+							initLineChart();
 						putSceneOnStage(SCENE_SHOW_LINECHART);
 					} else {
 						noSelectedColAlert.showAndWait();
@@ -297,7 +308,6 @@ public class Main extends Application {
 					chartSelectTextCol.getItems().clear();
 				}
 
-				
 			}
 		});
 
@@ -323,6 +333,8 @@ public class Main extends Application {
 					chartSelectXaxisLabel.setDisable(false);
 					chartSelectYaxisLabel.getStyleClass().removeAll("combo-box-base:disabled");
 					chartSelectYaxisLabel.setDisable(false);
+					setAnimation.getStyleClass().removeAll("combo-box-base:disabled");
+					setAnimation.setDisable(false);
 				} else {
 					isLineChart = false;
 					chartSelectXaxis.getStyleClass().add("combo-box-base:disabled");
@@ -333,6 +345,8 @@ public class Main extends Application {
 					chartSelectXaxisLabel.setDisable(true);
 					chartSelectYaxisLabel.getStyleClass().add("combo-box-base:disabled");
 					chartSelectYaxisLabel.setDisable(true);
+					setAnimation.getStyleClass().add("combo-box-base:disabled");
+					setAnimation.setDisable(true);
 
 					chartSelectTextLabel.getStyleClass().removeAll("combo-box-base:disabled");
 					chartSelectTextLabel.setDisable(false);
@@ -346,22 +360,6 @@ public class Main extends Application {
 			}
 		});
 
-	}
-
-	/**
-	 * Initialize event handlers of the sub screen - SCENE_SHOW_CHART
-	 */
-	private void initShowChartHandlers() {
-		// show chart screen
-		showLineChartBack.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				// clear all previous series
-				// lineChart.getData().clear();
-				putSceneOnStage(SCENE_MAIN_SCREEN);
-			}
-		});
 	}
 
 	/**
@@ -386,6 +384,7 @@ public class Main extends Application {
 		chartSelectYaxis = new ComboBox<>();
 		chartSelectTextCol = new ComboBox<>();
 		chartSelectNumCol = new ComboBox<>();
+		setAnimation = new CheckBox("Animated LineChart");
 
 		chartSelectXaxisLabel = new Label("X-axis: ");
 		chartSelectXaxisLabel.setFont(labelFont);
@@ -430,7 +429,7 @@ public class Main extends Application {
 		container.setSpacing(10);
 		container.setAlignment(Pos.TOP_LEFT);
 		container.getChildren().addAll(chartSelectDataset, selectionBoxes, lineChartXSelectionBoxes,
-				lineChartYSelectionBoxes, pieChartTSelectionBoxes, pieChartNSelectionBoxes);
+				lineChartYSelectionBoxes, setAnimation, pieChartTSelectionBoxes, pieChartNSelectionBoxes);
 
 		// Default choice is "Line Chart"
 		chartTypes.getSelectionModel().selectFirst();
@@ -468,58 +467,117 @@ public class Main extends Application {
 		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
 		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
 
-		// Ensure both columns exist and the type is number
-		if (xCol != null && yCol != null && xCol.getTypeName().equals(DataType.TYPE_NUMBER)
-				&& yCol.getTypeName().equals(DataType.TYPE_NUMBER)) {
+		lineChart.setTitle("Line Chart of " + currentDatasetName);
+		xAxis.setLabel(chartXaxisName);
+		yAxis.setLabel(chartYaxisName);
 
-			lineChart.setTitle("Line Chart of " + currentDatasetName);
-			xAxis.setLabel(chartXaxisName);
-			yAxis.setLabel(chartYaxisName);
+		// defining a series
+		XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
 
-			// defining a series
-			XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
-
-			series.setName(currentDatasetName);
-			// populating the series with data
-			// As we have checked the type, it is safe to downcast to Number[]
-			Number[] xValues = new Number[xCol.getSize()];
-			Number[] yValues =  new Number[yCol.getSize()];
-			int index = 0;
-			for(Object data:xCol.getData()) {
-				xValues[index++] = (Number) data;
-			}
-			index = 0;
-			for(Object data:yCol.getData()) {
-				yValues[index++] = (Number) data;
-			}
-			
-			// In DataTable structure, both length must be the same
-			int len = xValues.length;
-
-			for (int i = 0; i < len; i++) {
-				series.getData().add(new XYChart.Data<Number, Number>(xValues[i], yValues[i]));
-			}
-
-			// add the new series as the only one series for this line chart
-			if (lineChart.getData().size() == 0)
-				lineChart.getData().add(series);
-
-			else if (lineChart.getData().get(0) != series) {
-				lineChart.getData().clear();
-				lineChart.getData().add(series);
-			}
-
-			// put linechart data into map
-			LineChartClass t = new LineChartClass();
-			t.setSeries(series);
-			t.setAxisName(chartXaxisName, chartYaxisName);
-			t.setTitle("Line Chart of " + currentDatasetName);
-			String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
-			environment.getEnviornmentLineCharts().put(name, t);
-			chartList.getItems().add(name);
+		series.setName(currentDatasetName);
+		// populating the series with data
+		// As we have checked the type, it is safe to downcast to Number[]
+		Number[] xValues = new Number[xCol.getSize()];
+		Number[] yValues = new Number[yCol.getSize()];
+		int index = 0;
+		for (Object data : xCol.getData()) {
+			xValues[index++] = (Number) data;
 		}
+		index = 0;
+		for (Object data : yCol.getData()) {
+			yValues[index++] = (Number) data;
+		}
+
+		// In DataTable structure, both length must be the same
+		int len = xValues.length;
+
+		for (int i = 0; i < len; i++) {
+			series.getData().add(new XYChart.Data<Number, Number>(xValues[i], yValues[i]));
+		}
+
+		// add the new series as the only one series for this line chart
+		if (lineChart.getData().size() == 0)
+			lineChart.getData().add(series);
+
+		else if (lineChart.getData().get(0) != series) {
+			lineChart.getData().clear();
+			lineChart.getData().add(series);
+		}
+
+		// put linechart data into map
+		LineChartClass t = new LineChartClass();
+		t.setSeries(series);
+		t.setAxisName(chartXaxisName, chartYaxisName);
+		t.setTitle("Line Chart of " + currentDatasetName);
+		t.animate(false);
+		String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
+		lineChartsMap.put(name, t);
+		chartList.getItems().add(name);
 	}
-	
+
+	/**
+	 * Populate sample data table values to the animated line chart view
+	 */
+	private void initAnimatedLineChart() {
+
+		if (currentDatasetName == null) {
+			return;
+		}
+
+		// Get 2 columns
+		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
+		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
+
+		lineChart.setTitle("Line Chart of " + currentDatasetName);
+		xAxis.setLabel(chartXaxisName);
+		yAxis.setLabel(chartYaxisName);
+
+		// defining a series
+		XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
+		series.setName(currentDatasetName);
+
+		// populating the series with data
+		// As we have checked the type, it is safe to downcast to Number
+		index = 0;
+		series.getData()
+				.add(new XYChart.Data<Number, Number>((Number) xCol.getData()[index], (Number) yCol.getData()[index]));
+		index++;
+
+		Timeline tl = new Timeline();
+		tl.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent actionEvent) {
+				if (index >= xCol.getSize()) {
+					index = 0;
+					series.getData().clear();
+				}
+				series.getData().add(new XYChart.Data<Number, Number>((Number) xCol.getData()[index],
+						(Number) yCol.getData()[index]));
+				index++;
+			}
+		}));
+		tl.setCycleCount(Animation.INDEFINITE);
+		tl.play();
+		// add the new series as the only one series for this line chart
+		if (lineChart.getData().size() == 0)
+			lineChart.getData().add(series);
+
+		else if (lineChart.getData().get(0) != series) {
+			lineChart.getData().clear();
+			lineChart.getData().add(series);
+		}
+
+		// put linechart data into map
+		LineChartClass t = new LineChartClass();
+		t.setSeries(series);
+		t.setAxisName(chartXaxisName, chartYaxisName);
+		t.setTitle("Line Chart of " + currentDatasetName);
+		t.animate(true);
+		String name = "LineChart" + lineChartCount++;
+		lineChartsMap.put(name, t);
+		chartList.getItems().add(name);
+	}
+
 	/**
 	 * Populate sample data table values to the pie chart view
 	 */
@@ -530,21 +588,21 @@ public class Main extends Application {
 		// Get 2 columns
 		DataColumn numCol = currentDataTable.getCol(chartNumColName);
 		DataColumn textCol = currentDataTable.getCol(chartTextColName);
-		// Ensure both columns exist and the type of numCol and textCol are Number and String respectively
+		// Ensure both columns exist and the type of numCol and textCol are Number and
+		// String respectively
 		if (numCol != null && textCol != null && numCol.getTypeName().equals(DataType.TYPE_NUMBER)
 				&& textCol.getTypeName().equals(DataType.TYPE_STRING)) {
-			
-			
+
 			ObservableList<PieChart.Data> pieChartDataList = FXCollections.observableArrayList();
-			
+
 			Number[] numColValues = (Number[]) numCol.getData();
 			String[] textColValues = (String[]) textCol.getData();
-			
+
 			int len = numColValues.length;
-			for(int i = 0; i < len; i++) {
+			for (int i = 0; i < len; i++) {
 				pieChartDataList.add(new PieChart.Data(textColValues[i], (double) numColValues[i]));
 			}
-			
+
 			pieChart.setTitle("Pie Chart of " + currentDatasetName);
 			// Add all selected data into PieChart
 			if (pieChart.getData().size() == 0)
@@ -554,7 +612,7 @@ public class Main extends Application {
 				pieChart.getData().clear();
 				pieChart.getData().addAll(pieChartDataList);
 			}
-			
+
 			PieChartClass t = new PieChartClass();
 			t.setList(pieChartDataList);
 			t.setTitle("Line Chart of " + currentDatasetName);
@@ -563,7 +621,7 @@ public class Main extends Application {
 			chartList.getItems().add(name);
 		}
 	}
-	
+
 	/**
 	 * Create the show pie chart screen and layout its UI components
 	 * 
@@ -571,10 +629,10 @@ public class Main extends Application {
 	 */
 	private Pane paneShowPieChartScreen() {
 		BorderPane pane = new BorderPane();
-		
+
 		return pane;
 	}
-	
+
 	/**
 	 * Create the show line chart screen and layout its UI components
 	 * 
