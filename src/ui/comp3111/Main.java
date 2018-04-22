@@ -229,10 +229,10 @@ public class Main extends Application {
 				checking = name.substring(0, 9);
 				System.out.println(checking);
 				if (checking.equals(new String("LineChart"))) {
-					if (lineChartsMap.get(name).get_animate()) {
+					if (environment.getEnviornmentLineCharts().get(name).get_animate()) {
 						index = 0;
 						XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
-						temp.setName(lineChartsMap.get(name).getSeries().getName());
+						temp.setName(environment.getEnviornmentLineCharts().get(name).getSeries().getName());
 						lineChart.getData().set(0, temp);
 						initTimer(environment.getEnviornmentLineCharts().get(name));
 					} else if (lineChart.getData().get(0) != environment.getEnviornmentLineCharts().get(name).getSeries()) {
@@ -320,9 +320,9 @@ public class Main extends Application {
 						if (setAnimation.isSelected()) {
 							index = 0;
 							XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
-							temp.setName(lineChartsMap.get(name).getSeries().getName());
+							temp.setName(environment.getEnviornmentLineCharts().get(name).getSeries().getName());
 							lineChart.getData().set(0, temp);
-							initTimer(lineChartsMap.get(name));
+							initTimer(environment.getEnviornmentLineCharts().get(name));
 						}
 						putSceneOnStage(SCENE_SHOW_LINECHART);
 					} else {
