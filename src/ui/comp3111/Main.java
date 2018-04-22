@@ -78,6 +78,7 @@ public class Main extends Application {
 
 	// Screen 1: paneMainScreen
 	private Button importButton, exportButton, filterButton, chartButton, showChartButton, splitButton;
+	private MenuItem Save, Load;
 	private ListView<String> dataList;
 	private ListView<String> chartList;
 	private Alert noDatasetAlert = null;
@@ -178,9 +179,17 @@ public class Main extends Application {
 	 * Initialize event handlers of the main screen
 	 */
 	private void initMainScreenHandlers() {
+		Save.setOnAction(e -> {
+			environment.saveEnvironment();
+		});
+		
+		Load.setOnAction(e -> {
+			environment.loadEnvironment(dataList, chartList);
+		});
+		
 		importButton.setOnAction(e -> {
 			String name = "DataSet" + (environment.getEnvironmentDataTables().size() + 1);
-			if(importexporter.importCSV(environment.getEnvironmentDataTables(),name)) {
+			if(importexporter.importCSV(environment.getEnvironmentDataTables(), name)) {
 				dataList.getItems().add(name);
 			}
 		});
@@ -730,8 +739,8 @@ public class Main extends Application {
 
 		MenuBar menuBar = new MenuBar();
 		Menu FileIO = new Menu("File");
-		MenuItem Save = new MenuItem("Save");
-		MenuItem Load = new MenuItem("Load");
+		Save = new MenuItem("Save");
+		Load = new MenuItem("Load");
 		FileIO.getItems().addAll(Save, Load);
 		menuBar.getMenus().add(FileIO);
 
