@@ -4,6 +4,7 @@ import ui.comp3111.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -110,7 +111,6 @@ public class Environment{
 			try {
 				oStream = new FileOutputStream(filePath);
 				objOStream = new ObjectOutputStream(oStream);
-				
 				objOStream.writeObject(envParams);
 				
 			} catch (FileNotFoundException e) {
@@ -151,7 +151,6 @@ public class Environment{
 			try {
 				iStream = new FileInputStream(filePath);
 				objIStream = new ObjectInputStream(iStream);
-				
 				envParams = (EnvironmentParams)objIStream.readObject();
 				
 			} catch (FileNotFoundException e) {
