@@ -7,6 +7,7 @@ import java.util.Map;
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
+import core.comp3111.Environment;
 import core.comp3111.LineChartClass;
 import core.comp3111.PieChartClass;
 import core.comp3111.SampleDataGenerator;
@@ -55,13 +56,8 @@ import javafx.util.Duration;
  */
 public class Main extends Application {
 
-	private Map<String, DataTable> DataSets = new HashMap<String, DataTable>();
-	private Map<String, LineChartClass> lineChartsMap = new HashMap<String, LineChartClass>();
-	private Map<String, PieChartClass> pieChartsMap = new HashMap<String, PieChartClass>();
-	private int DataSetCount = 0;
-	private int lineChartCount = 0;
-
 	private ImportExportCSV importexporter = null;
+	private Environment environment = null;
 
 	// Attributes: Scene and Stage
 	private static final int SCENE_NUM = 6;
@@ -155,6 +151,7 @@ public class Main extends Application {
 	 */
 	private void initEventHandlers() {
 		importexporter = new ImportExportCSV();
+		environment = new Environment();
 		initMainScreenHandlers();
 		initSubScreenHandlers();
 		initCreateChartHandlers();
@@ -170,8 +167,7 @@ public class Main extends Application {
 		noSelectedColAlert = new Alert(AlertType.WARNING);
 		noSelectedColAlert.setTitle("Warning Dialog");
 		noSelectedColAlert.setHeaderText(null);
-		noSelectedColAlert.setContentText("Incomplete selection of data columns. Please complete your slection");
-
+		noSelectedColAlert.setContentText("Incomplete selection of data columns. Please complete your selection");
 		noChartAlert = new Alert(AlertType.INFORMATION);
 		noChartAlert.setTitle("Reminder Dialog");
 		noChartAlert.setHeaderText(null);
@@ -183,14 +179,13 @@ public class Main extends Application {
 	 */
 	private void initMainScreenHandlers() {
 		importButton.setOnAction(e -> {
-			if (importexporter.importCSV(DataSets, DataSetCount)) {
-				String name = "DataSet" + DataSetCount;
+			String name = "DataSet" + (environment.getEnvironmentDataTables().size() + 1);
+			if(importexporter.importCSV(environment.getEnvironmentDataTables(),name)) {
 				dataList.getItems().add(name);
-				DataSetCount++;
 			}
 		});
 		exportButton.setOnAction(e -> {
-			importexporter.exportCSV(DataSets);
+			importexporter.exportCSV(environment.getEnvironmentDataTables());
 		});
 
 		// Add ChangeListener to the ListView dataList
@@ -206,7 +201,7 @@ public class Main extends Application {
 			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
 			if (currentDatasetName != null) {
 				chartSelectDataset.setText("Selected Dataset: " + currentDatasetName);
-				currentDataTable = DataSets.get(currentDatasetName);
+				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
 				chartSelectXaxis.getItems().addAll(currentDataTable.getAllNumColName());
 				chartSelectYaxis.getItems().addAll(currentDataTable.getAllNumColName());
 				chartSelectTextCol.getItems().addAll(currentDataTable.getAllTextColName());
@@ -232,14 +227,14 @@ public class Main extends Application {
 			if (name != null) {
 				checking = name.substring(0, 9);
 				System.out.println(checking);
-				if (checking.equals(new String("LineChart"))) {
-					if (lineChart.getData().get(0) != lineChartsMap.get(name).getSeries()) {
+				if(checking.equals(new String("LineChart"))){
+					if (lineChart.getData().get(0) != environment.getEnviornmentLineCharts().get(name).getSeries()) {
 						lineChart.getData().clear();
-						lineChart.getData().add(lineChartsMap.get(name).getSeries());
+						lineChart.getData().add(environment.getEnviornmentLineCharts().get(name).getSeries());
 					}
-					lineChart.setTitle(lineChartsMap.get(name).getTitle());
-					xAxis.setLabel(lineChartsMap.get(name).getXAxisName());
-					yAxis.setLabel(lineChartsMap.get(name).getYAxisName());
+					lineChart.setTitle(environment.getEnviornmentLineCharts().get(name).getTitle());
+					xAxis.setLabel(environment.getEnviornmentLineCharts().get(name).getXAxisName());
+					yAxis.setLabel(environment.getEnviornmentLineCharts().get(name).getYAxisName());
 					putSceneOnStage(SCENE_SHOW_LINECHART);
 				} else {
 
@@ -515,7 +510,7 @@ public class Main extends Application {
 		t.setAxisName(chartXaxisName, chartYaxisName);
 		t.setTitle("Line Chart of " + currentDatasetName);
 		t.animate(false);
-		String name = "LineChart" + lineChartCount++;
+		String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
 		lineChartsMap.put(name, t);
 		chartList.getItems().add(name);
 	}
@@ -563,7 +558,6 @@ public class Main extends Application {
 		}));
 		tl.setCycleCount(Animation.INDEFINITE);
 		tl.play();
-
 		// add the new series as the only one series for this line chart
 		if (lineChart.getData().size() == 0)
 			lineChart.getData().add(series);
@@ -622,8 +616,8 @@ public class Main extends Application {
 			PieChartClass t = new PieChartClass();
 			t.setList(pieChartDataList);
 			t.setTitle("Line Chart of " + currentDatasetName);
-			String name = "PieChart" + lineChartCount++;
-			pieChartsMap.put(name, t);
+			String name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
+			environment.getEnviornmentPieCharts().put(name, t);
 			chartList.getItems().add(name);
 		}
 	}
