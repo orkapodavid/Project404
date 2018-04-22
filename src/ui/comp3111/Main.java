@@ -173,7 +173,7 @@ public class Main extends Application {
 	 */
 	private void initMainScreenHandlers() {
 		importButton.setOnAction(e -> {
-			String name = "DataSet" + environment.getEnvironmentDataTables().size();
+			String name = "DataSet" + (environment.getEnvironmentDataTables().size() + 1);
 			if(importexporter.importCSV(environment.getEnvironmentDataTables(),name)) {
 				dataList.getItems().add(name);
 			}
@@ -514,7 +514,7 @@ public class Main extends Application {
 			t.setSeries(series);
 			t.setAxisName(chartXaxisName, chartYaxisName);
 			t.setTitle("Line Chart of " + currentDatasetName);
-			String name = "LineChart" + environment.getEnviornmentLineCharts().size();
+			String name = "LineChart" + environment.getEnviornmentLineCharts().size() + 1);
 			environment.getEnviornmentLineCharts().put(name, t);
 			chartList.getItems().add(name);
 		}
@@ -558,7 +558,7 @@ public class Main extends Application {
 			PieChartClass t = new PieChartClass();
 			t.setList(pieChartDataList);
 			t.setTitle("Line Chart of " + currentDatasetName);
-			String name = "PieChart" + environment.getEnviornmentPieCharts().size();
+			String name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
 			environment.getEnviornmentPieCharts().put(name, t);
 			chartList.getItems().add(name);
 		}
