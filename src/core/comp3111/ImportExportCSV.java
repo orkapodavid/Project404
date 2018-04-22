@@ -426,8 +426,9 @@ public class ImportExportCSV {
 	    int middle = nonMissing.size()/2;
 	    if (nonMissing.size()%2 == 1) {
 	    	median = (double)(((Long)nonMissing.get(middle)).doubleValue());
+	    	System.out.println("Size of records: " + nonMissing.size());
 	    } else {
-	        median = ((double)(((Long)nonMissing.get(middle-1)).doubleValue()) + (double)(((Long)nonMissing.get(middle)).doubleValue()) / 2.0);
+	        median = ((double)(((((Long)nonMissing.get(middle-1)).doubleValue()) + (((Long)nonMissing.get(middle)).doubleValue())) / 2.0));
 	    }
 		
 		System.out.println("Median: " + median);
