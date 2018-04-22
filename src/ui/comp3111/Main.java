@@ -124,6 +124,7 @@ public class Main extends Application {
 	private Button showPieChartBack = null;
 	private Label showPieChartHeader = null;
 
+	private Timeline tl = null;
 	private int index = 0;
 
 	/**
@@ -227,8 +228,14 @@ public class Main extends Application {
 			if (name != null) {
 				checking = name.substring(0, 9);
 				System.out.println(checking);
-				if(checking.equals(new String("LineChart"))){
-					if (lineChart.getData().get(0) != environment.getEnviornmentLineCharts().get(name).getSeries()) {
+				if (checking.equals(new String("LineChart"))) {
+					if (lineChartsMap.get(name).get_animate()) {
+						index = 0;
+						XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
+						temp.setName(lineChartsMap.get(name).getSeries().getName());
+						lineChart.getData().set(0, temp);
+						initTimer(environment.getEnviornmentLineCharts().get(name));
+					} else if (lineChart.getData().get(0) != environment.getEnviornmentLineCharts().get(name).getSeries()) {
 						lineChart.getData().clear();
 						lineChart.getData().add(environment.getEnviornmentLineCharts().get(name).getSeries());
 					}
@@ -264,7 +271,25 @@ public class Main extends Application {
 		});
 		showLineChartBack.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
+			tl.stop();
 		});
+	}
+
+	private void initTimer(LineChartClass current) {
+		tl = new Timeline();
+		tl.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent actionEvent) {
+				if (index == current.getSeries().getData().size()) {
+					lineChart.getData().get(0).getData().remove(1, index);
+					index = 0;
+				} else
+					lineChart.getData().get(0).getData().add(current.getSeries().getData().get(index));
+				index++;
+			}
+		}));
+		tl.setCycleCount(Animation.INDEFINITE);
+		tl.play();
 	}
 
 	/**
@@ -291,10 +316,14 @@ public class Main extends Application {
 					if (chartXaxisName != null && chartYaxisName != null) {
 						chartSelectXaxis.getItems().clear();
 						chartSelectYaxis.getItems().clear();
-						if (setAnimation.isSelected())
-							initAnimatedLineChart();
-						else
-							initLineChart();
+						String name = initLineChart();
+						if (setAnimation.isSelected()) {
+							index = 0;
+							XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
+							temp.setName(lineChartsMap.get(name).getSeries().getName());
+							lineChart.getData().set(0, temp);
+							initTimer(lineChartsMap.get(name));
+						}
 						putSceneOnStage(SCENE_SHOW_LINECHART);
 					} else {
 						noSelectedColAlert.showAndWait();
@@ -457,10 +486,10 @@ public class Main extends Application {
 	/**
 	 * Populate sample data table values to the line chart view
 	 */
-	private void initLineChart() {
+	private String initLineChart() {
 
 		if (currentDatasetName == null) {
-			return;
+			return "";
 		}
 
 		// Get 2 columns
@@ -476,23 +505,10 @@ public class Main extends Application {
 
 		series.setName(currentDatasetName);
 		// populating the series with data
-		// As we have checked the type, it is safe to downcast to Number[]
-		Number[] xValues = new Number[xCol.getSize()];
-		Number[] yValues = new Number[yCol.getSize()];
-		int index = 0;
-		for (Object data : xCol.getData()) {
-			xValues[index++] = (Number) data;
-		}
-		index = 0;
-		for (Object data : yCol.getData()) {
-			yValues[index++] = (Number) data;
-		}
-
 		// In DataTable structure, both length must be the same
-		int len = xValues.length;
-
-		for (int i = 0; i < len; i++) {
-			series.getData().add(new XYChart.Data<Number, Number>(xValues[i], yValues[i]));
+		for (int i = 0; i < xCol.getSize(); i++) {
+			series.getData()
+					.add(new XYChart.Data<Number, Number>((Number) xCol.getData()[i], (Number) yCol.getData()[i]));
 		}
 
 		// add the new series as the only one series for this line chart
@@ -509,73 +525,14 @@ public class Main extends Application {
 		t.setSeries(series);
 		t.setAxisName(chartXaxisName, chartYaxisName);
 		t.setTitle("Line Chart of " + currentDatasetName);
-		t.animate(false);
+		if (setAnimation.isSelected())
+			t.animate(true);
+		else
+			t.animate(false);
 		String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
 		environment.getEnviornmentLineCharts().put(name, t);
 		chartList.getItems().add(name);
-	}
-
-	/**
-	 * Populate sample data table values to the animated line chart view
-	 */
-	private void initAnimatedLineChart() {
-
-		if (currentDatasetName == null) {
-			return;
-		}
-
-		// Get 2 columns
-		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
-		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
-
-		lineChart.setTitle("Line Chart of " + currentDatasetName);
-		xAxis.setLabel(chartXaxisName);
-		yAxis.setLabel(chartYaxisName);
-
-		// defining a series
-		XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
-		series.setName(currentDatasetName);
-
-		// populating the series with data
-		// As we have checked the type, it is safe to downcast to Number
-		index = 0;
-		series.getData()
-				.add(new XYChart.Data<Number, Number>((Number) xCol.getData()[index], (Number) yCol.getData()[index]));
-		index++;
-
-		Timeline tl = new Timeline();
-		tl.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent actionEvent) {
-				if (index >= xCol.getSize()) {
-					index = 0;
-					series.getData().clear();
-				}
-				series.getData().add(new XYChart.Data<Number, Number>((Number) xCol.getData()[index],
-						(Number) yCol.getData()[index]));
-				index++;
-			}
-		}));
-		tl.setCycleCount(Animation.INDEFINITE);
-		tl.play();
-		// add the new series as the only one series for this line chart
-		if (lineChart.getData().size() == 0)
-			lineChart.getData().add(series);
-
-		else if (lineChart.getData().get(0) != series) {
-			lineChart.getData().clear();
-			lineChart.getData().add(series);
-		}
-
-		// put linechart data into map
-		LineChartClass t = new LineChartClass();
-		t.setSeries(series);
-		t.setAxisName(chartXaxisName, chartYaxisName);
-		t.setTitle("Line Chart of " + currentDatasetName);
-		t.animate(true);
-		String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
-		environment.getEnviornmentLineCharts().put(name, t);
-		chartList.getItems().add(name);
+		return name;
 	}
 
 	/**
