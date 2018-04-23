@@ -85,6 +85,15 @@ public class LineChartClass implements Chart, Externalizable {
 	public void animate(boolean state) {
 		animation = state;
 	}
+	
+	/**
+	 * Get the line chart's state.
+	 * 
+	 * @return boolean
+	 */
+	public boolean get_animate() {
+		return animation;
+	}
 
 	/**
 	 * Get the line chart's state.

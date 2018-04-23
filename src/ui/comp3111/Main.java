@@ -494,7 +494,6 @@ public class Main extends Application {
 	 * Populate sample data table values to the line chart view
 	 */
 	private String initLineChart() {
-
 		// Get 2 columns
 		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
 		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
