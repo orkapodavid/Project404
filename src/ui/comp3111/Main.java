@@ -1,6 +1,14 @@
 package ui.comp3111;
 
 import javafx.geometry.Insets;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +16,7 @@ import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
 import core.comp3111.Environment;
+import core.comp3111.EnvironmentParams;
 import core.comp3111.LineChartClass;
 import core.comp3111.PieChartClass;
 import core.comp3111.SampleDataGenerator;
@@ -45,7 +54,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Duration;
 
 /**
@@ -57,7 +68,10 @@ import javafx.util.Duration;
 public class Main extends Application {
 
 	private ImportExportCSV importexporter = null;
+
 	private Environment environment = null;
+	private Alert saved, loaded, noFileSaved, noFileLoaded;
+	private FileChooser SaveChooser, LoadChooser; 
 
 	// Attributes: Scene and Stage
 	private static final int SCENE_NUM = 6;
@@ -175,6 +189,31 @@ public class Main extends Application {
 		noChartAlert.setTitle("Reminder Dialog");
 		noChartAlert.setHeaderText(null);
 		noChartAlert.setContentText("No chart is available. Please create a chart.");
+		
+		SaveChooser = new FileChooser();
+		LoadChooser = new FileChooser();
+		LoadChooser.setTitle("Load Environment");
+		ExtensionFilter SaveLoadFilter = new ExtensionFilter("comp3111 files", "*.comp3111");
+		LoadChooser.getExtensionFilters().add(SaveLoadFilter);
+		LoadChooser.setSelectedExtensionFilter(SaveLoadFilter);
+		SaveChooser.setTitle("Save Environment");
+		SaveChooser.getExtensionFilters().add(SaveLoadFilter);
+		SaveChooser.setSelectedExtensionFilter(SaveLoadFilter);
+		
+		saved = new Alert(AlertType.INFORMATION);
+		loaded = new Alert(AlertType.INFORMATION);
+		noFileSaved = new Alert(AlertType.ERROR);
+		noFileLoaded = new Alert(AlertType.ERROR);
+		saved.setTitle("Saved");
+		saved.setHeaderText("Success");
+		loaded.setTitle("Loaded");
+		loaded.setHeaderText("Success");
+		noFileSaved.setTitle("ERROR");
+		noFileSaved.setHeaderText("File not saved");
+		noFileSaved.setContentText("Operation cancelled as no directory has been specified.");
+		noFileLoaded.setTitle("ERROR");
+		noFileLoaded.setHeaderText("File not selected");
+		noFileLoaded.setContentText("Operation cancelled as no file selected.");
 	}
 
 	/**
@@ -182,11 +221,57 @@ public class Main extends Application {
 	 */
 	private void initMainScreenHandlers() {
 		Save.setOnAction(e -> {
-			environment.saveEnvironment();
+			SaveChooser.setInitialFileName("envparams.comp3111");
+			File selectedFile = SaveChooser.showSaveDialog(null);
+			if (selectedFile != null) {
+				String filePath = null;
+				try {
+					filePath = environment.saveEnvironment(selectedFile);
+				} catch (Exception e1) {
+					System.out.println("saveEnv: Exception");
+					//e1.printStackTrace();
+				}
+				if (!filePath.equals(null)) {
+					saved.setContentText("Environment has been saved to: " + filePath);
+					saved.showAndWait();
+				}
+			} else {
+				System.out.println("saveEnv: No file saved.");
+				noFileSaved.showAndWait();
+			}
 		});
 		
 		Load.setOnAction(e -> {
-			environment.loadEnvironment(dataList, chartList);
+			File selectedFile = LoadChooser.showOpenDialog(null);
+			if (selectedFile != null) {
+				String filePath = null;
+				try {
+					filePath = environment.loadEnvironment(selectedFile);
+				} catch (Exception e1) {
+					System.out.println("loadEnv: Exception");
+					//e1.printStackTrace();
+				}
+				dataList.getItems().removeAll();
+				chartList.getItems().removeAll();
+				for (String datakey:environment.getEnvironmentDataTables().keySet()) {
+					dataList.getItems().add(datakey);
+				}
+				for (String chartkey:environment.getEnviornmentLineCharts().keySet()) {
+					chartList.getItems().add(chartkey);
+				}
+				for (String chartkey:environment.getEnviornmentPieCharts().keySet()) {
+					chartList.getItems().add(chartkey);
+				}
+				if (!loaded.equals(null)) {
+					loaded.setContentText("Environment has been loaded from: " + filePath);
+					loaded.showAndWait();
+				}
+			} else {
+				System.out.println("loadEnv: No file loaded.");
+				if (!noFileLoaded.equals(null))	{
+					noFileLoaded.showAndWait();
+				}
+			}			
 		});
 		
 		importButton.setOnAction(e -> {
