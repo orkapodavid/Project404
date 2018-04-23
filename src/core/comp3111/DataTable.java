@@ -109,7 +109,7 @@ public class DataTable implements Serializable {
 		ArrayList<String> colsName = new ArrayList<String>(dc.size());
 		Set<String> colsSet =  dc.keySet();
 		for(String col:colsSet) {
-			if(dc.get(col).getTypeName() == DataType.TYPE_NUMBER) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_NUMBER)) {
 				colsName.add(col);
 			}
 		}
@@ -131,7 +131,7 @@ public class DataTable implements Serializable {
 		ArrayList<String> colsName = new ArrayList<String>(dc.size());
 		Set<String> colsSet =  dc.keySet();
 		for(String col:colsSet) {
-			if(dc.get(col).getTypeName() == DataType.TYPE_STRING) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_STRING)) {
 				colsName.add(col);
 			}
 		}

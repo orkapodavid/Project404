@@ -126,7 +126,7 @@ public class Main extends Application {
 	private Label showPieChartHeader = null;
 
 	private Timeline tl = null;
-	private int index = 0;
+	private LineChartClass current = null;
 
 	/**
 	 * create all scenes in this application
@@ -157,6 +157,7 @@ public class Main extends Application {
 		initMainScreenHandlers();
 		initSubScreenHandlers();
 		initCreateChartHandlers();
+		initTimer();
 		initAlertMsg();
 	}
 
@@ -190,7 +191,7 @@ public class Main extends Application {
 		
 		importButton.setOnAction(e -> {
 			String name = "DataSet" + (environment.getEnvironmentDataTables().size() + 1);
-			if(importexporter.importCSV(environment.getEnvironmentDataTables(), name)) {
+			if(importexporter.importCSV(environment.getEnvironmentDataTables(),name)) {
 				dataList.getItems().add(name);
 			}
 		});
@@ -198,16 +199,15 @@ public class Main extends Application {
 			importexporter.exportCSV(environment.getEnvironmentDataTables());
 		});
 
-		// Add ChangeListener to the ListView dataList
-		dataList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
-				currentDatasetName = newValue;
-
-			}
-		});
+//		// Add ChangeListener to the ListView dataList
+//		dataList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+//			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+//				currentDatasetName = newValue;
+//
+//			}
+//		});
 
 		chartButton.setOnAction(e -> {
-			currentDatasetName = null;
 			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
 			if (currentDatasetName != null) {
 				chartSelectDataset.setText("Selected Dataset: " + currentDatasetName);
@@ -233,17 +233,16 @@ public class Main extends Application {
 		});
 		showChartButton.setOnAction(e -> {
 			String name = chartList.getSelectionModel().getSelectedItem();
-			String checking = null;
 			if (name != null) {
-				checking = name.substring(0, 9);
+				String checking = name.substring(0, 9);
 				System.out.println(checking);
 				if (checking.equals(new String("LineChart"))) {
 					if (environment.getEnviornmentLineCharts().get(name).get_animate()) {
-						index = 0;
 						XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
 						temp.setName(environment.getEnviornmentLineCharts().get(name).getSeries().getName());
+						current = environment.getEnviornmentLineCharts().get(name);
 						lineChart.getData().set(0, temp);
-						initTimer(environment.getEnviornmentLineCharts().get(name));
+						tl.play();
 					} else if (lineChart.getData().get(0) != environment.getEnviornmentLineCharts().get(name).getSeries()) {
 						lineChart.getData().clear();
 						lineChart.getData().add(environment.getEnviornmentLineCharts().get(name).getSeries());
@@ -284,21 +283,20 @@ public class Main extends Application {
 		});
 	}
 
-	private void initTimer(LineChartClass current) {
+	private void initTimer() {
 		tl = new Timeline();
 		tl.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent actionEvent) {
-				if (index == current.getSeries().getData().size()) {
-					lineChart.getData().get(0).getData().remove(1, index);
-					index = 0;
-				} else
-					lineChart.getData().get(0).getData().add(current.getSeries().getData().get(index));
-				index++;
+				int size = lineChart.getData().get(0).getData().size();
+				if (size == current.getSeries().getData().size()) 
+					lineChart.getData().get(0).getData().remove(1, size);
+				else
+					lineChart.getData().get(0).getData().add(current.getSeries().getData().get(size));
 			}
 		}));
 		tl.setCycleCount(Animation.INDEFINITE);
-		tl.play();
+//		tl.play();
 	}
 
 	/**
@@ -327,11 +325,11 @@ public class Main extends Application {
 						chartSelectYaxis.getItems().clear();
 						String name = initLineChart();
 						if (setAnimation.isSelected()) {
-							index = 0;
 							XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
 							temp.setName(environment.getEnviornmentLineCharts().get(name).getSeries().getName());
 							lineChart.getData().set(0, temp);
-							initTimer(environment.getEnviornmentLineCharts().get(name));
+							current = environment.getEnviornmentLineCharts().get(name);
+							tl.play();
 						}
 						putSceneOnStage(SCENE_SHOW_LINECHART);
 					} else {
@@ -496,11 +494,6 @@ public class Main extends Application {
 	 * Populate sample data table values to the line chart view
 	 */
 	private String initLineChart() {
-
-		if (currentDatasetName == null) {
-			return "";
-		}
-
 		// Get 2 columns
 		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
 		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
