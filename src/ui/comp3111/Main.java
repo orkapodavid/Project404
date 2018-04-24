@@ -21,6 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -128,6 +129,7 @@ public class Main extends Application {
 	private PieChart pieChart = null;
 	private Button showPieChartBack = null;
 	private Label showPieChartHeader = null;
+	/* private PieChartClass currentPieChartClass = null; */
 
 	/**
 	 * create all scenes in this application
@@ -295,6 +297,7 @@ public class Main extends Application {
 			splitHeader.setText(checkSelectedDataSet());
 			putSceneOnStage(SCENE_SPLIT_DATA);
 		});
+		
 		showChartButton.setOnAction(e -> {
 			String name = chartList.getSelectionModel().getSelectedItem();
 			if (name != null) {
@@ -319,7 +322,14 @@ public class Main extends Application {
 					yAxis.setLabel(environment.getEnviornmentLineCharts().get(name).getYAxisName());
 					putSceneOnStage(SCENE_SHOW_LINECHART);
 				} else {
-
+					PieChartClass newPieChartClass = environment.getEnviornmentPieCharts().get(name);
+					ObservableList<PieChart.Data> newOList = newPieChartClass.getObserList();
+					
+					if(pieChart.getData() != newOList) {
+						pieChart.setData(newOList);
+					}
+					pieChart.setTitle(newPieChartClass.getTitle());
+					putSceneOnStage(SCENE_SHOW_PIECHART);
 				}
 			} else {
 				noChartAlert.showAndWait();
@@ -347,6 +357,9 @@ public class Main extends Application {
 		showLineChartBack.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 			tl.stop();
+		});
+		showPieChartBack.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
 	}
 
@@ -389,6 +402,8 @@ public class Main extends Application {
 					if (chartXaxisName != null && chartYaxisName != null) {
 						chartSelectXaxis.getItems().clear();
 						chartSelectYaxis.getItems().clear();
+						chartSelectNumCol.getItems().clear();
+						chartSelectTextCol.getItems().clear();
 						String name = initLineChart();
 						if (setAnimation.isSelected()) {
 							XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
@@ -404,10 +419,22 @@ public class Main extends Application {
 					}
 
 				} else {
+					// Initialize PieChart Screen
 					chartNumColName = chartSelectNumCol.getValue();
 					chartTextColName = chartSelectTextCol.getValue();
-					chartSelectNumCol.getItems().clear();
-					chartSelectTextCol.getItems().clear();
+					if(chartNumColName != null && chartTextColName != null) {
+						chartSelectXaxis.getItems().clear();
+						chartSelectYaxis.getItems().clear();
+						chartSelectNumCol.getItems().clear();
+						chartSelectTextCol.getItems().clear();
+						initPieChart();
+						// String name = initPieChart();
+						// currentPieChartClass = environment.getEnviornmentPieCharts().get(name);
+						putSceneOnStage(SCENE_SHOW_PIECHART);
+					}else {
+						noSelectedColAlert.showAndWait();
+						return;
+					}	
 				}
 
 			}
@@ -606,9 +633,10 @@ public class Main extends Application {
 	/**
 	 * Populate sample data table values to the pie chart view
 	 */
-	private void initPieChart() {
+	private String initPieChart() {
+		String name = null;
 		if (currentDatasetName == null) {
-			return;
+			return null;
 		}
 		// Get 2 columns
 		DataColumn numCol = currentDataTable.getCol(chartNumColName);
@@ -620,31 +648,37 @@ public class Main extends Application {
 
 			ObservableList<PieChart.Data> pieChartDataList = FXCollections.observableArrayList();
 
-			Number[] numColValues = (Number[]) numCol.getData();
-			String[] textColValues = (String[]) textCol.getData();
+			Object[] numColValues = numCol.getData();
+			Object[] textColValues =  textCol.getData();
 
 			int len = numColValues.length;
 			for (int i = 0; i < len; i++) {
-				pieChartDataList.add(new PieChart.Data(textColValues[i], (double) numColValues[i]));
+				pieChartDataList.add(new PieChart.Data((String)textColValues[i], ((Number)numColValues[i]).doubleValue()));
 			}
 
 			pieChart.setTitle("Pie Chart of " + currentDatasetName);
+			pieChart.setLegendSide(Side.LEFT);
+			
+			
 			// Add all selected data into PieChart
-			if (pieChart.getData().size() == 0)
-				pieChart.getData().addAll(pieChartDataList);
-
-			else {
+			if (pieChart.getData().size() == 0) {
+				System.out.println("pieChart.getData().size() == 0");
+				pieChart.setData(pieChartDataList);	
+			}else {
+				System.out.println("pieChart.getData().size() != 0");
 				pieChart.getData().clear();
-				pieChart.getData().addAll(pieChartDataList);
+				pieChart.setData(pieChartDataList);
 			}
 
 			PieChartClass t = new PieChartClass();
 			t.setList(pieChartDataList);
-			t.setTitle("Line Chart of " + currentDatasetName);
-			String name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
+			t.setTitle("Pie Chart of " + currentDatasetName);
+			t.setAxisName(chartNumColName, chartTextColName);
+			name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
 			environment.getEnviornmentPieCharts().put(name, t);
 			chartList.getItems().add(name);
 		}
+		return name;
 	}
 
 	/**
@@ -653,8 +687,29 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneShowPieChartScreen() {
+		pieChart = new PieChart();
+		
+		// Layout the UI components
+		showPieChartBack = new Button("Back");
+		showPieChartHeader = new Label();
+		showPieChartHeader.getStyleClass().add("Header");
+		
+		VBox chartContainer = new VBox(20);
+		chartContainer.getChildren().addAll(pieChart);
+		chartContainer.setAlignment(Pos.CENTER);
+		
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().add(showPieChartBack);
+		
 		BorderPane pane = new BorderPane();
-
+		pane.setTop(showPieChartHeader);
+		pane.setCenter(chartContainer);
+		pane.setBottom(actionButtons);
+		
+		// Apply CSS to style the GUI components
+		pane.getStyleClass().add("screen-background");
+				
 		return pane;
 	}
 
