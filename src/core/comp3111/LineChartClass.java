@@ -96,15 +96,6 @@ public class LineChartClass implements Chart, Externalizable {
 	}
 
 	/**
-	 * Get the line chart's state.
-	 * 
-	 * @return boolean
-	 */
-	public boolean get_animate() {
-		return animation;
-	}
-
-	/**
 	 * Get the line chart's XAxis name.
 	 * 
 	 * @return String

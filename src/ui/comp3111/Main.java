@@ -3,23 +3,12 @@ package ui.comp3111;
 import javafx.geometry.Insets;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
 import core.comp3111.Environment;
-import core.comp3111.EnvironmentParams;
 import core.comp3111.LineChartClass;
 import core.comp3111.PieChartClass;
-import core.comp3111.SampleDataGenerator;
 import core.comp3111.ImportExportCSV;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -41,7 +30,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -134,13 +122,12 @@ public class Main extends Application {
 	private NumberAxis yAxis = null;
 	private Label showLineChartHeader = null;
 	private Button showLineChartBack = null;
+	private Timeline tl = null;
+	private LineChartClass current = null;
 	// Screen 6: paneShowPieChartScreen
 	private PieChart pieChart = null;
 	private Button showPieChartBack = null;
 	private Label showPieChartHeader = null;
-
-	private Timeline tl = null;
-	private LineChartClass current = null;
 
 	/**
 	 * create all scenes in this application
@@ -251,8 +238,8 @@ public class Main extends Application {
 					System.out.println("loadEnv: Exception");
 					//e1.printStackTrace();
 				}
-				dataList.getItems().removeAll();
-				chartList.getItems().removeAll();
+				dataList.getItems().remove(0, dataList.getItems().size());
+				chartList.getItems().remove(0, chartList.getItems().size());
 				for (String datakey:environment.getEnvironmentDataTables().keySet()) {
 					dataList.getItems().add(datakey);
 				}
@@ -283,14 +270,6 @@ public class Main extends Application {
 		exportButton.setOnAction(e -> {
 			importexporter.exportCSV(environment.getEnvironmentDataTables());
 		});
-
-//		// Add ChangeListener to the ListView dataList
-//		dataList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-//			public void changed(ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
-//				currentDatasetName = newValue;
-//
-//			}
-//		});
 
 		chartButton.setOnAction(e -> {
 			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
@@ -326,7 +305,10 @@ public class Main extends Application {
 						XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
 						temp.setName(environment.getEnviornmentLineCharts().get(name).getSeries().getName());
 						current = environment.getEnviornmentLineCharts().get(name);
-						lineChart.getData().set(0, temp);
+						if(lineChart.getData().size() != 0)
+							lineChart.getData().set(0, temp);
+						else 
+							lineChart.getData().add(temp);
 						tl.play();
 					} else if (lineChart.getData().get(0) != environment.getEnviornmentLineCharts().get(name).getSeries()) {
 						lineChart.getData().clear();
@@ -370,7 +352,7 @@ public class Main extends Application {
 
 	private void initTimer() {
 		tl = new Timeline();
-		tl.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new EventHandler<ActionEvent>() {
+		tl.getKeyFrames().add(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent actionEvent) {
 				int size = lineChart.getData().get(0).getData().size();
@@ -381,7 +363,6 @@ public class Main extends Application {
 			}
 		}));
 		tl.setCycleCount(Animation.INDEFINITE);
-//		tl.play();
 	}
 
 	/**
