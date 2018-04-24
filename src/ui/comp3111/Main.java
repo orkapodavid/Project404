@@ -869,6 +869,7 @@ public class Main extends Application {
 		xAxis = new NumberAxis();
 		yAxis = new NumberAxis();
 		lineChart = new LineChart<Number, Number>(xAxis, yAxis);
+		lineChart.setAnimated(false);
 
 		// Layout the UI components
 
