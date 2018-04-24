@@ -38,6 +38,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -115,8 +116,16 @@ public class Main extends Application {
 	private Button splitComfirm = null;
 	// Screen 4: paneFilterDataScreen
 	private Label filterHeader = null;
+	private Label filterSelectNumLabel = null;
+	private Label filterSelectOperatorLabel = null;
 	private Button filterCancel = null;
 	private Button filterComfirm = null;
+	private TextField filterTextField = null;
+	private ComboBox<String> filterAction = null;
+	private ComboBox<String> filterSelectNumCol = null;
+	private ComboBox<String> filterSelectOperator = null;
+	private Alert notNum = null;
+	private Alert notEnoughInput = null;
 	// Screen 5: paneShowLineChartScreen
 	private LineChart<Number, Number> lineChart = null;
 	private NumberAxis xAxis = null;
@@ -160,6 +169,7 @@ public class Main extends Application {
 		initMainScreenHandlers();
 		initSubScreenHandlers();
 		initCreateChartHandlers();
+		initFliterDataHandlers();
 		initTimer();
 		initAlertMsg();
 	}
@@ -168,7 +178,7 @@ public class Main extends Application {
 		noDatasetAlert = new Alert(AlertType.INFORMATION);
 		noDatasetAlert.setTitle("Reminder Dialog");
 		noDatasetAlert.setHeaderText(null);
-		noDatasetAlert.setContentText("No dataset is available. Please import a dataset.");
+		noDatasetAlert.setContentText("No dataset is selected. Please select a dataset.");
 
 		noSelectedColAlert = new Alert(AlertType.WARNING);
 		noSelectedColAlert.setTitle("Warning Dialog");
@@ -177,7 +187,18 @@ public class Main extends Application {
 		noChartAlert = new Alert(AlertType.INFORMATION);
 		noChartAlert.setTitle("Reminder Dialog");
 		noChartAlert.setHeaderText(null);
-		noChartAlert.setContentText("No chart is available. Please create a chart.");
+		noChartAlert.setContentText("No chart is selected. Please select a chart.");
+		
+		// for SCENE_SPLIT_DATA
+		notEnoughInput = new Alert(AlertType.INFORMATION);
+		noChartAlert.setTitle("Reminder Dialog");
+		noChartAlert.setHeaderText(null);
+		noChartAlert.setContentText("Incomplete information. Please fill out this form.");
+		notNum = new Alert(AlertType.WARNING);
+		noChartAlert.setTitle("Warning Dialog");
+		noChartAlert.setHeaderText(null);
+		noChartAlert.setContentText("Please input a number for filtering");
+		
 		
 		SaveChooser = new FileChooser();
 		LoadChooser = new FileChooser();
@@ -238,7 +259,7 @@ public class Main extends Application {
 					filePath = environment.loadEnvironment(selectedFile);
 				} catch (Exception e1) {
 					System.out.println("loadEnv: Exception");
-					//e1.printStackTrace();
+					e1.printStackTrace();
 				}
 				dataList.getItems().remove(0, dataList.getItems().size());
 				chartList.getItems().remove(0, chartList.getItems().size());
@@ -290,8 +311,16 @@ public class Main extends Application {
 		});
 
 		filterButton.setOnAction(e -> {
-			filterHeader.setText(checkSelectedDataSet());
-			putSceneOnStage(SCENE_FILTER_DATA);
+			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
+			if(currentDatasetName != null) {
+				filterHeader.setText("Selected Dataset: " + currentDatasetName);
+				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
+				filterSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
+				putSceneOnStage(SCENE_FILTER_DATA);
+			}else {
+				noDatasetAlert.showAndWait();
+			}
+			
 		});
 		splitButton.setOnAction(e -> {
 			splitHeader.setText(checkSelectedDataSet());
@@ -490,7 +519,37 @@ public class Main extends Application {
 		});
 
 	}
-
+	
+	/**
+	 * Initialize event handlers of the sub screen - SCENE_FILTER_DATA
+	 */
+	private void initFliterDataHandlers() {
+		filterComfirm.setOnAction(e -> {
+			String filterOption = filterAction.getValue();
+			String filterNumColName = filterSelectNumCol.getValue();
+			String filterOperator = filterSelectOperator.getValue();
+			Object filterThreshold = filterTextField.getText();
+			double threshold;
+			// Ensure all inputs are well-received
+			if(filterNumColName == null || filterOperator == null || filterThreshold == null || filterOption == null) {
+				notEnoughInput.showAndWait();
+				return;
+			}
+			
+			// Ensure the input threshold is a number
+			if (filterThreshold instanceof Number) {
+				threshold = ((Number)filterThreshold).doubleValue();
+			}else {
+				notNum.showAndWait();
+				return;
+			}
+			
+			// do the data filter
+			
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+	}
+	
 	/**
 	 * Create the create chart screen and layout its UI components
 	 * 
@@ -748,18 +807,45 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneFilterDataScreen() {
-
+		Font labelFont = new Font(20);
 		filterHeader = new Label();
 		filterHeader.getStyleClass().add("Header");
 		filterComfirm = new Button("Comfirm");
 		filterCancel = new Button("Cancel");
-
+		
+		filterSelectNumLabel = new Label("Numerical Column:");
+		filterSelectNumLabel.setFont(labelFont);
+		filterTextField = new TextField();
+		filterSelectOperatorLabel = new Label("Filter Data");
+		filterSelectOperatorLabel.setFont(labelFont);
+		
+		filterAction = new ComboBox<String>();
+		filterAction.getItems().addAll("Replacing the current dataset", "Creating a new dataset");
+		filterSelectNumCol = new ComboBox<String>();
+		filterSelectOperator = new ComboBox<String>();
+		filterSelectOperator.getItems().addAll(">", ">=", "==", "<=", "<", "!=");
+		
+		HBox selectionBoxes = new HBox();
+		selectionBoxes.setSpacing(10);
+		selectionBoxes.setAlignment(Pos.TOP_LEFT);
+		selectionBoxes.getChildren().addAll(filterSelectNumLabel, filterSelectNumCol);
+		
+		HBox selectionBoxes2 = new HBox();
+		selectionBoxes.setSpacing(10);
+		selectionBoxes.setAlignment(Pos.TOP_LEFT);
+		selectionBoxes.getChildren().addAll(filterSelectOperatorLabel, filterSelectOperator, filterTextField);
+		
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
 		actionButtons.getChildren().addAll(filterCancel, filterComfirm);
 
+		VBox container = new VBox();
+		container.setSpacing(10);
+		container.setAlignment(Pos.TOP_LEFT);
+		container.getChildren().addAll(filterHeader, selectionBoxes, selectionBoxes2);
+				
 		BorderPane pane = new BorderPane();
-		pane.setTop(filterHeader);
+		pane.setTop(container);
 		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
@@ -800,7 +886,7 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneMainScreen() {
-
+		
 		MenuBar menuBar = new MenuBar();
 		Menu FileIO = new Menu("File");
 		Save = new MenuItem("Save");
