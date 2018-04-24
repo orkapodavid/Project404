@@ -248,7 +248,7 @@ public class Main extends Application {
 		
 		emptyCSV.setTitle("ERROR");
 		emptyCSV.setHeaderText("Empty CSV");
-		emptyCSV.setContentText("Selected CSv file is empty");
+		emptyCSV.setContentText("Selected CSV file is empty");
 		
 		replacedAlert.setTitle("Information");
 		replacedAlert.setHeaderText("Replaced missing data");
@@ -261,7 +261,10 @@ public class Main extends Application {
 		chooseReplaceOption = new ChoiceDialog<String>(replaceWithZeros, replaceOptions);
 		chooseReplaceOption.setTitle("Replace Option");
 		chooseReplaceOption.setHeaderText("Please choose");
-		chooseReplaceOption.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
+		//chooseReplaceOption.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
+//		chooseReplaceOption.setOnCloseRequest(e -> {
+//			
+//		});
 		
 		SaveChooser = new FileChooser();
 		LoadChooser = new FileChooser();

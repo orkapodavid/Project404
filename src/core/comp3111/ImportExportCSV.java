@@ -71,8 +71,8 @@ public class ImportExportCSV {
 		List<CSVRecord> csvContent = csvParser.getRecords();
 		
 		int rowCount = csvContent.size();
-		int colCount = csvContent.get(0).size();
 		if(rowCount != 0) {
+			int colCount = csvContent.get(0).size();
 			List<Object[]> newDataColumnElements = new ArrayList<Object[]>();
 			List<String> newDataColumnNames = new ArrayList<String>();
 			
