@@ -38,6 +38,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -114,10 +115,15 @@ public class Main extends Application {
 	private Label splitHeader = null;
 	private Button splitCancel = null;
 	private Button splitComfirm = null;
+	private Label splitActionLabel = null;
+	private ComboBox<String> splitAction = null;
+	private Label splitSliderLabel = null;
+	private Slider splitSlider = null;
 	// Screen 4: paneFilterDataScreen
 	private Label filterHeader = null;
 	private Label filterSelectNumLabel = null;
 	private Label filterSelectOperatorLabel = null;
+	private Label fliterActionLabel = null;
 	private Button filterCancel = null;
 	private Button filterComfirm = null;
 	private TextField filterTextField = null;
@@ -191,13 +197,13 @@ public class Main extends Application {
 		
 		// for SCENE_SPLIT_DATA
 		notEnoughInput = new Alert(AlertType.INFORMATION);
-		noChartAlert.setTitle("Reminder Dialog");
-		noChartAlert.setHeaderText(null);
-		noChartAlert.setContentText("Incomplete information. Please fill out this form.");
+		notEnoughInput.setTitle("Reminder Dialog");
+		notEnoughInput.setHeaderText(null);
+		notEnoughInput.setContentText("Incomplete information. Please fill out this form.");
 		notNum = new Alert(AlertType.WARNING);
-		noChartAlert.setTitle("Warning Dialog");
-		noChartAlert.setHeaderText(null);
-		noChartAlert.setContentText("Please input a number for filtering");
+		notNum.setTitle("Warning Dialog");
+		notNum.setHeaderText(null);
+		notNum.setContentText("Please input a number for filtering");
 		
 		
 		SaveChooser = new FileChooser();
@@ -818,12 +824,15 @@ public class Main extends Application {
 		filterTextField = new TextField();
 		filterSelectOperatorLabel = new Label("Filter Data");
 		filterSelectOperatorLabel.setFont(labelFont);
+		fliterActionLabel = new Label("Select an effect after sfiltering");
+		fliterActionLabel.setFont(labelFont);
 		
 		filterAction = new ComboBox<String>();
 		filterAction.getItems().addAll("Replacing the current dataset", "Creating a new dataset");
 		filterSelectNumCol = new ComboBox<String>();
 		filterSelectOperator = new ComboBox<String>();
-		filterSelectOperator.getItems().addAll(">", ">=", "==", "<=", "<", "!=");
+		filterSelectOperator.getItems().addAll(">","<", ">=","<=", "==", "!=");
+		
 		
 		HBox selectionBoxes = new HBox();
 		selectionBoxes.setSpacing(10);
@@ -831,9 +840,9 @@ public class Main extends Application {
 		selectionBoxes.getChildren().addAll(filterSelectNumLabel, filterSelectNumCol);
 		
 		HBox selectionBoxes2 = new HBox();
-		selectionBoxes.setSpacing(10);
-		selectionBoxes.setAlignment(Pos.TOP_LEFT);
-		selectionBoxes.getChildren().addAll(filterSelectOperatorLabel, filterSelectOperator, filterTextField);
+		selectionBoxes2.setSpacing(10);
+		selectionBoxes2.setAlignment(Pos.TOP_LEFT);
+		selectionBoxes2.getChildren().addAll(filterSelectOperatorLabel, filterSelectOperator, filterTextField);
 		
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
@@ -842,9 +851,10 @@ public class Main extends Application {
 		VBox container = new VBox();
 		container.setSpacing(10);
 		container.setAlignment(Pos.TOP_LEFT);
-		container.getChildren().addAll(filterHeader, selectionBoxes, selectionBoxes2);
+		container.getChildren().addAll(filterHeader, fliterActionLabel, filterAction, selectionBoxes, selectionBoxes2);
 				
 		BorderPane pane = new BorderPane();
+		pane.setPadding(new Insets(30, 30, 10, 20));
 		pane.setTop(container);
 		pane.setBottom(actionButtons);
 
@@ -860,12 +870,30 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneSplitDataScreen() {
-
+		Font labelFont = new Font(20);
 		splitHeader = new Label();
 		splitHeader.getStyleClass().add("Header");
 		splitComfirm = new Button("Comfirm");
 		splitCancel = new Button("Cancel");
-
+		
+		splitActionLabel = new Label("Select an effect after spliting");
+		splitActionLabel.setFont(labelFont);
+		splitSliderLabel = new Label("Slide the slider to control the percentage of split ");
+		splitSliderLabel.setFont(labelFont);
+		
+		splitAction  = new ComboBox<String>();
+		splitAction.getItems().addAll("Replacing the current dataset", "Creating a new dataset");
+		splitSlider = new Slider();
+		splitSlider.setMin(0);
+		splitSlider.setMax(100);
+		splitSlider.setValue(40);
+		splitSlider.setShowTickLabels(true);
+		splitSlider.setShowTickMarks(true);
+		splitSlider.setMajorTickUnit(50);
+		splitSlider.setMinorTickCount(5);
+		splitSlider.setBlockIncrement(10);
+	
+		
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
 		actionButtons.getChildren().addAll(splitCancel, splitComfirm);
