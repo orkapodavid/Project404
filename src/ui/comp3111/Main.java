@@ -3,6 +3,23 @@ package ui.comp3111;
 import javafx.geometry.Insets;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
@@ -29,7 +46,9 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -56,7 +75,13 @@ import javafx.util.Duration;
 public class Main extends Application {
 
 	private ImportExportCSV importexporter = null;
-
+	private FileChooser ImportChooser, ExportChooser;
+	private Alert noFileChosen, emptyTable, tableAdded, wrongFileType, noFileExported, replacedAlert, noDataSets, emptyCSV;
+	private ChoiceDialog<String> chooseReplaceOption;
+	private static final String replaceWithZeros = "Replace with zeros";
+	private static final String replaceWithMean = "Replace with column mean";
+	private static final String replaceWithMedian = "Replace with column median";
+	
 	private Environment environment = null;
 	private Alert saved, loaded, noFileSaved, noFileLoaded;
 	private FileChooser SaveChooser, LoadChooser; 
@@ -177,6 +202,67 @@ public class Main extends Application {
 		noChartAlert.setHeaderText(null);
 		noChartAlert.setContentText("No chart is available. Please create a chart.");
 		
+		ImportChooser = new FileChooser();
+		ExportChooser = new FileChooser();
+		noFileChosen = new Alert(AlertType.ERROR);
+		emptyTable = new Alert(AlertType.ERROR);
+		tableAdded = new Alert(AlertType.INFORMATION);
+		wrongFileType = new Alert(AlertType.ERROR);
+		noFileExported = new Alert(AlertType.ERROR);
+		replacedAlert = new Alert(AlertType.INFORMATION);
+		emptyCSV = new Alert(AlertType.ERROR);
+		noDataSets = new Alert(AlertType.ERROR);
+		
+		ImportChooser.setTitle("Import CSV");
+		ExtensionFilter CSVfilter = new ExtensionFilter("CSV Files", "*.csv");
+		ImportChooser.getExtensionFilters().add(CSVfilter);
+		ImportChooser.setSelectedExtensionFilter(CSVfilter);
+		
+		ExportChooser.setTitle("Export CSV");
+		ExportChooser.getExtensionFilters().add(CSVfilter);
+		ExportChooser.setSelectedExtensionFilter(CSVfilter);
+		
+		noFileChosen.setTitle("Error");
+		noFileChosen.setHeaderText("No file selected");
+		noFileChosen.setContentText("Operation cancelled");
+		
+		emptyTable.setTitle("Error");
+		emptyTable.setHeaderText("Selected CSV File is empty");
+		emptyTable.setContentText("Operation cancelled");
+		
+		tableAdded.setTitle("Success");
+		tableAdded.setHeaderText("File Imported");
+		tableAdded.setContentText("CSV file successfully imported into data sets");
+		
+		wrongFileType.setTitle("ERROR");
+		wrongFileType.setHeaderText("Invalid file type");
+		wrongFileType.setContentText("Operation cancelled");
+		
+		noFileExported.setTitle("ERROR");
+		noFileExported.setHeaderText("File not saved");
+		noFileExported.setContentText("Operation cancelled");
+		
+		noDataSets.setTitle("ERROR");
+		noDataSets.setHeaderText("No data set");
+		noDataSets.setContentText("No data set available for export");
+		
+		emptyCSV.setTitle("ERROR");
+		emptyCSV.setHeaderText("Empty CSV");
+		emptyCSV.setContentText("Selected CSv file is empty");
+		
+		replacedAlert.setTitle("Information");
+		replacedAlert.setHeaderText("Replaced missing data");
+		
+		Collection<String> replaceOptions = new ArrayList<String>();
+		replaceOptions.add(replaceWithZeros);
+		replaceOptions.add(replaceWithMean);
+		replaceOptions.add(replaceWithMedian);
+		
+		chooseReplaceOption = new ChoiceDialog<String>(replaceWithZeros, replaceOptions);
+		chooseReplaceOption.setTitle("Replace Option");
+		chooseReplaceOption.setHeaderText("Please choose");
+		chooseReplaceOption.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
+		
 		SaveChooser = new FileChooser();
 		LoadChooser = new FileChooser();
 		LoadChooser.setTitle("Load Environment");
@@ -263,12 +349,127 @@ public class Main extends Application {
 		
 		importButton.setOnAction(e -> {
 			String name = "DataSet" + (environment.getEnvironmentDataTables().size() + 1);
-			if(importexporter.importCSV(environment.getEnvironmentDataTables(),name)) {
-				dataList.getItems().add(name);
+			File selectedFile = ImportChooser.showOpenDialog(null);
+			String filePath = null;
+			DataTable importedTable = null, finalImportedTable = new DataTable();
+			
+			if (selectedFile != null) {
+				try {
+					importedTable = importexporter.importCSV(environment.getEnvironmentDataTables(), selectedFile);
+					if (importedTable != null) {
+						int colCount = importedTable.getNumCol();
+						int rowCount = importedTable.getNumRow();
+						String[] importTableColNames = importedTable.getAllColName();
+						for (int i=0; i<colCount; i++) {
+							Object[] currColElements = importedTable.getCol(importTableColNames[i]).getData();
+							String currColTypeName = importedTable.getCol(importTableColNames[i]).getTypeName();
+							boolean isMissing = importexporter.checkMissingData(currColElements);
+							if (isMissing) {
+								//currColElements = replaceEmptyElements(currColElements, currColTypeName, importTableColNames[i]);
+								if(currColTypeName.equals(DataType.TYPE_NUMBER)) {
+									Number mean = importexporter.calculateMean(currColElements);
+									Number median = importexporter.calculateMedian(currColElements);
+									
+									chooseReplaceOption.setContentText("Replace missing data in column: " + importTableColNames[i]);
+									
+									Optional<String> returnedReplaceOption = chooseReplaceOption.showAndWait();
+									String selectedReplaceOption = null;
+									if (returnedReplaceOption.isPresent()) {
+										selectedReplaceOption = returnedReplaceOption.get();
+									} else {
+										selectedReplaceOption = replaceWithZeros;
+									}
+									for (int j=0; j<currColElements.length; j++) {
+										if (currColElements[j].equals("")) {
+											currColElements[j] = importexporter.replaceEmptyElement(currColElements[j], selectedReplaceOption, mean, median);
+										}
+									}
+									DataColumn replaceDataColumn = new DataColumn(importTableColNames[i], currColElements);
+									finalImportedTable.addCol(importTableColNames[i], replaceDataColumn);
+									
+									switch (selectedReplaceOption) {
+									case replaceWithZeros: replacedAlert.setContentText("Replaced missing data with zeros in column: " + importTableColNames[i]);
+									break;
+									case replaceWithMean: replacedAlert.setContentText("Replaced missing data with mean value in column: " + importTableColNames[i]);
+									break;
+									case replaceWithMedian: replacedAlert.setContentText("Replaced missing data with median value in column: " + importTableColNames[i]);
+									break;
+									default: replacedAlert.setContentText("Replaced missing data with zeros in column: " + importTableColNames[i]);
+									break;
+									}
+									replacedAlert.showAndWait();
+								} else {
+									finalImportedTable.addCol(importTableColNames[i], importedTable.getCol(importTableColNames[i]));
+									replacedAlert.setContentText("Replaced missing data with empty string in column: " + importTableColNames[i]);
+									replacedAlert.showAndWait();
+								}
+							} else {
+								finalImportedTable.addCol(importTableColNames[i], importedTable.getCol(importTableColNames[i]));
+							}
+						}
+						environment.getEnvironmentDataTables().put(name,finalImportedTable);
+						dataList.getItems().add(name);
+						System.out.println("importCSV: Imported table added");
+						tableAdded.showAndWait();
+					} else {
+						System.out.println("importCSV: Empty CSV File");
+						emptyCSV.showAndWait();
+					}
+				} catch (Exception e1) {
+					System.out.println("importCSV: Exception");
+					e1.printStackTrace();
+				}
+			} else {
+				System.out.println("importCSV: No file selected");
+				noFileChosen.showAndWait();
 			}
 		});
+		
 		exportButton.setOnAction(e -> {
-			importexporter.exportCSV(environment.getEnvironmentDataTables());
+			List<String> exportOptions = new ArrayList<String>();
+			if (environment.getEnvironmentDataTables().size() != 0) {
+				for (String key: environment.getEnvironmentDataTables().keySet()) {
+					exportOptions.add(key);
+				}
+	
+				ChoiceDialog<String> chooseExportDataSet = new ChoiceDialog<String>(exportOptions.get(0), exportOptions);
+				chooseExportDataSet.setTitle("Export");
+				chooseExportDataSet.setHeaderText("Please choose table to export");
+				chooseExportDataSet.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
+				Optional<String> returnedDataSetOption = chooseExportDataSet.showAndWait();
+				System.out.println("exportCSV: Selected tabled: " + returnedDataSetOption.get());
+				
+				String selectedDataSetName;
+				
+				if (returnedDataSetOption.isPresent()) {
+					selectedDataSetName = returnedDataSetOption.get();
+					ExportChooser.setInitialFileName(selectedDataSetName + ".csv");
+					System.out.println("exportCSV: Initial file name: " + ExportChooser.getInitialFileName());
+					
+					File selectedFile = ExportChooser.showSaveDialog(null);
+					
+					if (selectedFile != null) {
+						try {
+							importexporter.exportCSV(selectedFile, selectedDataSetName, environment.getEnvironmentDataTables());
+						} catch (Exception e1) {
+							System.out.println("exportCSV: Exception");
+							Path currFilePath = selectedFile.toPath();
+							try {
+								Files.deleteIfExists(currFilePath);
+							} catch (IOException e2) {
+								//e2.printStackTrace();
+							}
+							//e1.printStackTrace();
+						}
+					} else {
+						System.out.println("exportCSV: No file saved");
+						noFileExported.showAndWait();
+					}
+				}	
+			} else {
+				System.out.println("exportCSV: No data set for export");
+				noDataSets.showAndWait();
+			}
 		});
 
 		chartButton.setOnAction(e -> {
