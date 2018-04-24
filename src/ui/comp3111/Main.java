@@ -661,14 +661,7 @@ public class Main extends Application {
 			
 			
 			// Add all selected data into PieChart
-			if (pieChart.getData().size() == 0) {
-				System.out.println("pieChart.getData().size() == 0");
-				pieChart.setData(pieChartDataList);	
-			}else {
-				System.out.println("pieChart.getData().size() != 0");
-				pieChart.getData().clear();
-				pieChart.setData(pieChartDataList);
-			}
+			pieChart.setData(pieChartDataList);
 
 			PieChartClass t = new PieChartClass();
 			t.setList(pieChartDataList);
