@@ -261,10 +261,7 @@ public class Main extends Application {
 		chooseReplaceOption = new ChoiceDialog<String>(replaceWithZeros, replaceOptions);
 		chooseReplaceOption.setTitle("Replace Option");
 		chooseReplaceOption.setHeaderText("Please choose");
-		//chooseReplaceOption.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
-//		chooseReplaceOption.setOnCloseRequest(e -> {
-//			
-//		});
+		chooseReplaceOption.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
 		
 		SaveChooser = new FileChooser();
 		LoadChooser = new FileChooser();
@@ -358,7 +355,7 @@ public class Main extends Application {
 			
 			if (selectedFile != null) {
 				try {
-					importedTable = importexporter.importCSV(environment.getEnvironmentDataTables(), selectedFile);
+					importedTable = importexporter.importCSV(selectedFile);
 					if (importedTable != null) {
 						int colCount = importedTable.getNumCol();
 						int rowCount = importedTable.getNumRow();

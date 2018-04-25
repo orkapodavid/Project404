@@ -1,7 +1,5 @@
 package testing.comp3111;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

@@ -48,8 +48,6 @@ public class ImportExportCSV {
 	 * This functions reads a CSV file of the user's choice and
 	 * creates a DataTable according to the content provided by the CSV
 	 * 
-	 * @param datasets
-	 * 			-current collection of data tables
 	 * @param name
 	 * 			-name to be used by the imported table
 	 *
@@ -57,10 +55,10 @@ public class ImportExportCSV {
 	 * 			-true if CSV imported
 	 * 			-false otherwise
 	 */
-	public DataTable importCSV(Map<String, DataTable> datasets, File selectedFile) throws Exception {
+	public DataTable importCSV(File selectedFile) throws Exception {
 		
 		String filePath = selectedFile.getAbsolutePath();
-		System.out.println("importCSV: Selected file from: " + filePath);
+		//System.out.println("importCSV: Selected file from: " + filePath);
 
 		FileReader fileReader = null;
 		CSVParser csvParser = null;
@@ -134,7 +132,7 @@ public class ImportExportCSV {
 			allCols.put(allColNames[i], selectedDataTable.getCol(allColNames[i]));
 		}
 		
-		csvFilePrinter.printRecord(allColNames); //Create Header
+		csvFilePrinter.printRecord((Object[])allColNames); //Create Header
 		
 		for (int i=0; i<selectedDataTable.getNumRow(); i++) {
 			List<Object> currRecord = new ArrayList<Object>();
@@ -163,7 +161,7 @@ public class ImportExportCSV {
 		int colSize = currCol.length;
 		Boolean isNumber = false, isString = false;
 		for (int i=0; i<colSize; i++) {
-			System.out.println("checktype: " + currCol[i] + " getClass: " + currCol[i].getClass().toString());
+			//System.out.println("checktype: " + currCol[i] + " getClass: " + currCol[i].getClass().toString());
 			if (currCol[i].equals("")) {
 				//Do nothing if empty record
 			} else {
@@ -171,7 +169,7 @@ public class ImportExportCSV {
 					Number number = NumberFormat.getInstance().parse((String) currCol[i]);
 					currCol[i] = number;
 				} catch (ParseException e) {
-					System.out.println("importCSV: Cannot parse to Number");
+					//System.out.println("importCSV: Cannot parse to Number");
 					//e.printStackTrace();
 				} finally {
 					if (currCol[i] instanceof Number) {
@@ -246,7 +244,7 @@ public class ImportExportCSV {
 			}
 		}
 		mean = sum/objCount;
-		System.out.println("Mean: " + mean);
+		//System.out.println("Mean: " + mean);
 		return mean;
 	}
 	
@@ -271,12 +269,12 @@ public class ImportExportCSV {
 	    int middle = nonMissing.size()/2;
 	    if (nonMissing.size()%2 == 1) {
 	    	median = (double)(((Long)nonMissing.get(middle)).doubleValue());
-	    	System.out.println("Size of records: " + nonMissing.size());
+	    	//System.out.println("Size of records: " + nonMissing.size());
 	    } else {
 	        median = ((double)(((((Long)nonMissing.get(middle-1)).doubleValue()) + (((Long)nonMissing.get(middle)).doubleValue())) / 2.0));
 	    }
 		
-		System.out.println("Median: " + median);
+		//System.out.println("Median: " + median);
 		return median;
 	}
 }
