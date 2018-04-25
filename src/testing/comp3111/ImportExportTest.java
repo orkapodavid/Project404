@@ -1,6 +1,7 @@
 package testing.comp3111;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ class ImportExportTest {
 		testImportExport.exportCSV(testExportFile, testTableName, testTables);
 		
 		assert(testExportFile.exists() == true);
+		Files.deleteIfExists(testExportFile.toPath());
 	}
 	
 	@Test
