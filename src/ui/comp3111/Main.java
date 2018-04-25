@@ -3,6 +3,9 @@ package ui.comp3111;
 import javafx.geometry.Insets;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataType;
@@ -117,6 +120,7 @@ public class Main extends Application {
 	private Button splitComfirm = null;
 	private Label splitActionLabel = null;
 	private ComboBox<String> splitAction = null;
+	private Label splitPercentage = null;
 	private Label splitSliderLabel = null;
 	private Slider splitSlider = null;
 	// Screen 4: paneFilterDataScreen
@@ -176,6 +180,7 @@ public class Main extends Application {
 		initSubScreenHandlers();
 		initCreateChartHandlers();
 		initFliterDataHandlers();
+		initSplitDataHandler();
 		initTimer();
 		initAlertMsg();
 	}
@@ -203,7 +208,7 @@ public class Main extends Application {
 		notNum = new Alert(AlertType.WARNING);
 		notNum.setTitle("Warning Dialog");
 		notNum.setHeaderText(null);
-		notNum.setContentText("Please input a number for filtering");
+		notNum.setContentText("Please input a valid number for filtering");
 		
 		
 		SaveChooser = new FileChooser();
@@ -329,8 +334,14 @@ public class Main extends Application {
 			
 		});
 		splitButton.setOnAction(e -> {
-			splitHeader.setText(checkSelectedDataSet());
-			putSceneOnStage(SCENE_SPLIT_DATA);
+			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
+			if(currentDatasetName != null) {
+				splitHeader.setText("Selected Dataset: " + currentDatasetName);
+				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
+				putSceneOnStage(SCENE_SPLIT_DATA);
+			}else {
+				noDatasetAlert.showAndWait();
+			}
 		});
 		
 		showChartButton.setOnAction(e -> {
@@ -381,14 +392,8 @@ public class Main extends Application {
 		chartCancel.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
-		// split data screen
-		splitCancel.setOnAction(e -> {
-			putSceneOnStage(SCENE_MAIN_SCREEN);
-		});
-		// filter data screen
-		filterCancel.setOnAction(e -> {
-			putSceneOnStage(SCENE_MAIN_SCREEN);
-		});
+		
+		
 		showLineChartBack.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 			tl.stop();
@@ -530,11 +535,19 @@ public class Main extends Application {
 	 * Initialize event handlers of the sub screen - SCENE_FILTER_DATA
 	 */
 	private void initFliterDataHandlers() {
+		filterCancel.setOnAction(e -> {
+			filterAction.getSelectionModel().clearSelection();
+			filterSelectNumCol.getSelectionModel().clearSelection();
+			filterSelectOperator.getSelectionModel().clearSelection();
+			filterTextField.clear();
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		
 		filterComfirm.setOnAction(e -> {
 			String filterOption = filterAction.getValue();
 			String filterNumColName = filterSelectNumCol.getValue();
 			String filterOperator = filterSelectOperator.getValue();
-			Object filterThreshold = filterTextField.getText();
+			String filterThreshold = filterTextField.getText();
 			double threshold;
 			// Ensure all inputs are well-received
 			if(filterNumColName == null || filterOperator == null || filterThreshold == null || filterOption == null) {
@@ -542,18 +555,74 @@ public class Main extends Application {
 				return;
 			}
 			
-			// Ensure the input threshold is a number
-			if (filterThreshold instanceof Number) {
-				threshold = ((Number)filterThreshold).doubleValue();
-			}else {
+			// Ensure the input threshold is a valid double
+			try {
+				threshold = Double.parseDouble(filterThreshold);
+			} catch(NullPointerException | NumberFormatException ex) {
 				notNum.showAndWait();
 				return;
 			}
 			
-			// do the data filter
+			// filter the data 
+			if(filterOption == "Replacing the current dataset") {
+				
+				
+			}else {
+				
+		
+			}
 			
+			// clear all input informations
+			filterAction.getSelectionModel().clearSelection();
+			filterSelectNumCol.getSelectionModel().clearSelection();
+			filterSelectOperator.getSelectionModel().clearSelection();
+			filterTextField.clear();
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
+	}
+	
+	
+	private void initSplitDataHandler() {
+		splitSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+            	splitPercentage.setText(String.format("%.0f%%", new_val));
+            }
+        });
+		
+		// split data screen
+		splitCancel.setOnAction(e -> {
+			splitAction.getSelectionModel().clearSelection();
+			splitSlider.setValue(50);
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+
+		splitComfirm.setOnAction(e -> {
+			int splitRatio;
+			String splitOption = splitAction.getValue();
+			if(splitOption == null) {
+				notEnoughInput.showAndWait();
+				return;
+			}else {
+				// Get the input split ratio
+				splitRatio = ((Number)splitSlider.getValue()).intValue();
+
+				// split the data set
+				if(splitOption == "Replacing the current dataset") {
+					
+					
+				}else {
+					
+				}
+				
+				// clear all input informations
+				splitAction.getSelectionModel().clearSelection();
+				splitSlider.setValue(50);
+				
+				putSceneOnStage(SCENE_MAIN_SCREEN);
+			}
+			
+		});
+		
 	}
 	
 	/**
@@ -834,12 +903,12 @@ public class Main extends Application {
 		filterSelectOperator.getItems().addAll(">","<", ">=","<=", "==", "!=");
 		
 		
-		HBox selectionBoxes = new HBox();
+		HBox selectionBoxes = new HBox(20);
 		selectionBoxes.setSpacing(10);
 		selectionBoxes.setAlignment(Pos.TOP_LEFT);
 		selectionBoxes.getChildren().addAll(filterSelectNumLabel, filterSelectNumCol);
 		
-		HBox selectionBoxes2 = new HBox();
+		HBox selectionBoxes2 = new HBox(20);
 		selectionBoxes2.setSpacing(10);
 		selectionBoxes2.setAlignment(Pos.TOP_LEFT);
 		selectionBoxes2.getChildren().addAll(filterSelectOperatorLabel, filterSelectOperator, filterTextField);
@@ -878,28 +947,40 @@ public class Main extends Application {
 		
 		splitActionLabel = new Label("Select an effect after spliting");
 		splitActionLabel.setFont(labelFont);
-		splitSliderLabel = new Label("Slide the slider to control the percentage of split ");
+		splitSliderLabel = new Label("Percentage of random split: ");
 		splitSliderLabel.setFont(labelFont);
 		
 		splitAction  = new ComboBox<String>();
 		splitAction.getItems().addAll("Replacing the current dataset", "Creating a new dataset");
+		
 		splitSlider = new Slider();
 		splitSlider.setMin(0);
 		splitSlider.setMax(100);
-		splitSlider.setValue(40);
+		splitSlider.setValue(50);
 		splitSlider.setShowTickLabels(true);
 		splitSlider.setShowTickMarks(true);
-		splitSlider.setMajorTickUnit(50);
+		splitSlider.setSnapToTicks(true);
+		splitSlider.setMajorTickUnit(10);
 		splitSlider.setMinorTickCount(5);
 		splitSlider.setBlockIncrement(10);
-	
+		splitPercentage = new Label(((Number)splitSlider.getValue()).intValue()+"%");
+		splitPercentage.setFont(labelFont);
+		
+		HBox splitBar = new HBox(20);
+		splitBar.setAlignment(Pos.TOP_LEFT);
+		splitBar.getChildren().addAll(splitSliderLabel, splitPercentage);
+				
+		VBox container = new VBox(10);
+		container.setAlignment(Pos.TOP_LEFT);
+		container.getChildren().addAll(splitHeader, splitActionLabel,splitAction,splitBar,splitSlider);
 		
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
 		actionButtons.getChildren().addAll(splitCancel, splitComfirm);
 
 		BorderPane pane = new BorderPane();
-		pane.setTop(splitHeader);
+		pane.setPadding(new Insets(30, 30, 10, 20));
+		pane.setTop(container);
 		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
