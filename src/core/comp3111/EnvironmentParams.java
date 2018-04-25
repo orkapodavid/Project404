@@ -47,4 +47,26 @@ public class EnvironmentParams implements Serializable {
 	public Map<String, PieChartClass> getEnviornmentPieCharts() {
 		return pieChartsMap;
 	}
+
+	
+	/**
+	 * Replace/Create a data set by filtering numeric data of a column
+	 * Filter data using various comparison operators (e.g. ">","<", ">=","<=", "==", "!=")
+	 * @author kpor
+	 */
+	public void filterDataset(String datasetName, String colName, String operand, double threshold, boolean isReplaced) {
+		
+		
+	}
+	
+	/**
+	 * Randomly split a data set into 2 data sets
+	 * Replacing the current data set OR Creating a new data set(s)
+	 * After the split, both data sets should keep the same column names
+	 * @author kpor
+	 */
+	public void randSplitDataset(String datasetName, int splitRatio, boolean isReplaced) {
+		
+		
+	}
 }

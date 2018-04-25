@@ -565,11 +565,10 @@ public class Main extends Application {
 			
 			// filter the data 
 			if(filterOption == "Replacing the current dataset") {
-				
-				
+				environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
+				System.out.println("Replacing the current dataset");
 			}else {
-				
-		
+				environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);	
 			}
 			
 			// clear all input informations
@@ -608,10 +607,10 @@ public class Main extends Application {
 
 				// split the data set
 				if(splitOption == "Replacing the current dataset") {
-					
-					
+					System.out.println("Replacing the current dataset");
+					environment.randSplitDatasetByNum(currentDatasetName, splitRatio, true);
 				}else {
-					
+					environment.randSplitDatasetByNum(currentDatasetName, splitRatio, false);
 				}
 				
 				// clear all input informations

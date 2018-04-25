@@ -45,6 +45,23 @@ public class Environment{
 	}
 	
 	/**
+	 * Replace/Create a data set by filtering numeric data of a column
+	 * @author kpor
+	 */
+	public void filterDatasetByNum(String datasetName, String colName, String operand,  double threshold, boolean isReplaced) {
+		envParams.filterDataset(datasetName, colName, operand,  threshold, isReplaced);
+	}
+	
+	/**
+	 * Randomly split a data set into 2 data sets
+	 * @author kpor
+	 */
+	public void randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) {
+		envParams.randSplitDataset(datasetName, splitRatio, isReplaced);
+		
+	}
+	
+	/**
 	 * Returns the HashMap of data tables in the environment
 	 * @return HashMap<String, DataTable>
 	 */
