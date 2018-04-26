@@ -230,7 +230,7 @@ public class Main extends Application {
 		
 		// for SCENE SPLIT DATA
 		goodReplaceAlert = new Alert(AlertType.INFORMATION);
-		goodReplaceAlert.setTitle("Successful Replacement");
+		goodReplaceAlert.setTitle("Successful Operation");
 		goodReplaceAlert.setHeaderText(null);
 		noRowsReplaceAlert = new Alert(AlertType.ERROR);
 		noRowsReplaceAlert.setTitle("Error Message: Empty Dataset");
@@ -799,11 +799,13 @@ public class Main extends Application {
 				return;
 			}
 			
+			System.out.println("---------Original DataTable---------");
+			environment.getEnvironmentDataTables().get(currentDatasetName).print();
+			
 			// filter the data 
 			String newDataTableName = null;
 			if(filterOption == "Replacing the current dataset") {
 				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
-				System.out.println("Replacing the current dataset");
 			}else {
 				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);	
 			}
@@ -817,14 +819,15 @@ public class Main extends Application {
 				if(newDataTableName == null) {
 					System.out.println("---------Replaced DataTable---------");
 					environment.getEnvironmentDataTables().get(currentDatasetName).print();
+					goodReplaceAlert.setContentText(currentDatasetName + " has been replaced.");
 				}else {
 					// add the new DataTable onto the dataList
 					dataList.getItems().add(newDataTableName);
-					System.out.println("---------Original DataTable---------");
-					environment.getEnvironmentDataTables().get(currentDatasetName).print();
+					goodReplaceAlert.setContentText("A new dataset: "+newDataTableName + " has been created.");
 					System.out.println("---------New DataTable---------");
 					environment.getEnvironmentDataTables().get(newDataTableName).print();
 				}
+				goodReplaceAlert.showAndWait();
 			}
 
 			// clear all input informations
