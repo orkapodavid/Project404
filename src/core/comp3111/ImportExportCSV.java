@@ -39,6 +39,8 @@ public class ImportExportCSV {
 	
 	/**
 	 * Default constructor of ImportExportCSV class.
+	 * 
+	 * @author kwaleung
 	 */
 	public ImportExportCSV() {
 
@@ -54,6 +56,8 @@ public class ImportExportCSV {
 	 * @return boolean
 	 * 			-true if CSV imported
 	 * 			-false otherwise
+	 * 
+	 * @author kwaleung
 	 */
 	public DataTable importCSV(File selectedFile) throws Exception {
 		
@@ -113,6 +117,8 @@ public class ImportExportCSV {
 	 * 
 	 * @param datasets
 	 * 			-current collection of data tables
+	 * 
+	 * @author kwaleung
 	 */
 	public void exportCSV(File selectedFile, String selectedDataSetName, HashMap<String, DataTable> datasets) throws Exception {
 		DataTable selectedDataTable = null;
@@ -156,6 +162,8 @@ public class ImportExportCSV {
 	 * 
 	 * @return String
 	 * 			-Datatype of column
+	 * 
+	 * @author kwaleung
 	 */
 	public String checkTypeName(Object[] currCol) {
 		int colSize = currCol.length;
@@ -197,6 +205,8 @@ public class ImportExportCSV {
 	 * 
 	 * @return boolean
 	 * 			-true if there is missing data, otherwise false
+	 * 
+	 * @author kwaleung
 	 */
 	public boolean checkMissingData(Object[] currCol) {
 		for (int i=0; i<currCol.length; i++) {
@@ -215,6 +225,8 @@ public class ImportExportCSV {
 	 * 
 	 * @return boolean
 	 * 			-true if there is missing data, otherwise false
+	 * 
+	 * @author kwaleung
 	 */
 	public Object replaceEmptyElement(String selectedReplaceOption, Number mean, Number median) {
 		if (selectedReplaceOption != null) {
@@ -237,6 +249,8 @@ public class ImportExportCSV {
 	 * 			-Column data
 	 * @return Number
 	 * 			-mean of current column
+	 * 
+	 * @author kwaleung
 	 */
 	public Double calculateMean(Object[] currCol) {
 		Double sum = (double) 0, mean = (double) 0;
@@ -259,6 +273,8 @@ public class ImportExportCSV {
 	 * 			-Column data
 	 * @return Number
 	 * 			-median of current column
+	 * 
+	 * @author kwaleung
 	 */
 	public Double calculateMedian(Object[] currCol) {
 		Double median = (double) 0;

@@ -357,6 +357,8 @@ public class Environment{
 	/**
 	 * Returns the HashMap of data tables in the environment
 	 * @return HashMap<String, DataTable>
+	 * 
+	 * @author kwaleung
 	 */
 	public HashMap<String, DataTable> getEnvironmentDataTables() {
 		return envParams.getEnvironmentDataTables();
@@ -365,6 +367,8 @@ public class Environment{
 	/**
 	 * Returns the HashMap of line charts in the environment
 	 * @return Map<String, LineChartClass>
+	 * 
+	 * @author kwaleung
 	 */
 	public Map<String, LineChartClass> getEnviornmentLineCharts() {
 		return envParams.getEnviornmentLineCharts();
@@ -373,6 +377,8 @@ public class Environment{
 	/**
 	 * Returns the HashMap of pie charts in the environment
 	 * @return Map<String, PieChartClass>
+	 * 
+	 * @author kwaleung
 	 */
 	public Map<String, PieChartClass> getEnviornmentPieCharts() {
 		return envParams.getEnviornmentPieCharts();
@@ -381,6 +387,8 @@ public class Environment{
 	/**
 	 * This function saves the Environment Parameters to as a .comp3111 file in a user designated directory
 	 *  by serializing an EnvironmentParams object.
+	 *  
+	 *  @author kwaleung
 	 */
 	public String saveEnvironment(File selectedFile) throws Exception {
 		 
@@ -399,6 +407,8 @@ public class Environment{
 	
 	/**
 	 * This function loads a .comp3111 file selected by the user and de-serializes the file into an EnvironmentParams object
+	 * 
+	 * @author kwaleung
 	 */
 	public String loadEnvironment(File selectedFile) throws Exception {
 		

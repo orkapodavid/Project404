@@ -13,7 +13,13 @@ import core.comp3111.DataType;
 import core.comp3111.ImportExportCSV;
 
 
-class ImportExportTest {
+/**
+ * ImportExportCSV test using JUnit. Achieves 100% test coverage in the ImportExportCSV class.
+ * 
+ * @author kwaleung
+ *
+ */
+class ImportExportCSVTest {
 
 	private static final String replaceWithZeros = "Replace with zeros";
 	private static final String replaceWithMean = "Replace with column mean";
