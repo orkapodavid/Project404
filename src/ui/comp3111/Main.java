@@ -3,6 +3,7 @@ package ui.comp3111;
 import javafx.geometry.Insets;
 
 import java.io.File;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -56,6 +58,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -137,10 +141,29 @@ public class Main extends Application {
 	private Label splitHeader = null;
 	private Button splitCancel = null;
 	private Button splitComfirm = null;
+	private Label splitActionLabel = null;
+	private ComboBox<String> splitAction = null;
+	private Label splitPercentage = null;
+	private Label splitSliderLabel = null;
+	private Slider splitSlider = null;
+	private Alert noRowsReplaceAlert = null;
+	private Alert noRowsOneSuccessAlert = null;
+	private Alert goodReplaceAlert = null;
 	// Screen 4: paneFilterDataScreen
 	private Label filterHeader = null;
+	private Label filterSelectNumLabel = null;
+	private Label filterSelectOperatorLabel = null;
+	private Label fliterActionLabel = null;
 	private Button filterCancel = null;
 	private Button filterComfirm = null;
+	private TextField filterTextField = null;
+	private ComboBox<String> filterAction = null;
+	private ComboBox<String> filterSelectNumCol = null;
+	private ComboBox<String> filterSelectOperator = null;
+	private Alert notNum = null;
+	private Alert notEnoughInput = null;
+	private Alert noNumericalCol = null;
+	private Alert allRowsFilteredOut = null;
 	// Screen 5: paneShowLineChartScreen
 	private LineChart<Number, Number> lineChart = null;
 	private NumberAxis xAxis = null;
@@ -153,6 +176,7 @@ public class Main extends Application {
 	private PieChart pieChart = null;
 	private Button showPieChartBack = null;
 	private Label showPieChartHeader = null;
+	/* private PieChartClass currentPieChartClass = null; */
 
 	/**
 	 * create all scenes in this application
@@ -183,6 +207,8 @@ public class Main extends Application {
 		initMainScreenHandlers();
 		initSubScreenHandlers();
 		initCreateChartHandlers();
+		initFliterDataHandlers();
+		initSplitDataHandler();
 		initTimer();
 		initAlertMsg();
 	}
@@ -191,7 +217,7 @@ public class Main extends Application {
 		noDatasetAlert = new Alert(AlertType.INFORMATION);
 		noDatasetAlert.setTitle("Reminder Dialog");
 		noDatasetAlert.setHeaderText(null);
-		noDatasetAlert.setContentText("No dataset is available. Please import a dataset.");
+		noDatasetAlert.setContentText("No dataset is selected. Please select a dataset.");
 
 		noSelectedColAlert = new Alert(AlertType.WARNING);
 		noSelectedColAlert.setTitle("Warning Dialog");
@@ -200,7 +226,40 @@ public class Main extends Application {
 		noChartAlert = new Alert(AlertType.INFORMATION);
 		noChartAlert.setTitle("Reminder Dialog");
 		noChartAlert.setHeaderText(null);
-		noChartAlert.setContentText("No chart is available. Please create a chart.");
+		noChartAlert.setContentText("No chart is selected. Please select a chart.");
+		
+		// for SCENE SPLIT DATA
+		goodReplaceAlert = new Alert(AlertType.INFORMATION);
+		goodReplaceAlert.setTitle("Successful Replacement");
+		goodReplaceAlert.setHeaderText(null);
+		noRowsReplaceAlert = new Alert(AlertType.ERROR);
+		noRowsReplaceAlert.setTitle("Error Message: Empty Dataset");
+		noRowsReplaceAlert.setHeaderText("One of the newly created Dataset is empty.");
+		noRowsReplaceAlert.setContentText("Replacement cannot be done. The environment remains unchanged.");
+		noRowsOneSuccessAlert = new Alert(AlertType.ERROR);
+		noRowsOneSuccessAlert.setTitle("Error Message: Empty Dataset");
+		noRowsOneSuccessAlert.setHeaderText("One of the newly created Dataset is empty.");
+		noRowsOneSuccessAlert.setContentText("Only one new dataset will be created. ");
+		
+		
+		// for SCENE_Fliter_DATA
+		noNumericalCol = new Alert(AlertType.INFORMATION);
+		noNumericalCol.setTitle("Reminder Dialog");
+		noNumericalCol.setHeaderText(null);
+		noNumericalCol.setContentText("Selected dataset has no numerical column. Please select another dataset");
+		notEnoughInput = new Alert(AlertType.INFORMATION);
+		notEnoughInput.setTitle("Reminder Dialog");
+		notEnoughInput.setHeaderText(null);
+		notEnoughInput.setContentText("Incomplete information. Please fill out this form.");
+		notNum = new Alert(AlertType.WARNING);
+		notNum.setTitle("Warning Dialog");
+		notNum.setHeaderText(null);
+		notNum.setContentText("Please input a valid number for filtering");
+		allRowsFilteredOut = new Alert(AlertType.ERROR);
+		allRowsFilteredOut.setTitle("Error Message: Empty Dataset");
+		allRowsFilteredOut.setHeaderText("No row in the selected dataset meets the filtering requirement.");
+		allRowsFilteredOut.setContentText("The environment remains unchanged.");
+		
 		
 		ImportChooser = new FileChooser();
 		ExportChooser = new FileChooser();
@@ -322,7 +381,7 @@ public class Main extends Application {
 					filePath = environment.loadEnvironment(selectedFile);
 				} catch (Exception e1) {
 					System.out.println("loadEnv: Exception");
-					//e1.printStackTrace();
+					e1.printStackTrace();
 				}
 				dataList.getItems().remove(0, dataList.getItems().size());
 				chartList.getItems().remove(0, chartList.getItems().size());
@@ -477,11 +536,15 @@ public class Main extends Application {
 			if (currentDatasetName != null) {
 				chartSelectDataset.setText("Selected Dataset: " + currentDatasetName);
 				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
-				chartSelectXaxis.getItems().addAll(currentDataTable.getAllNumColName());
-				chartSelectYaxis.getItems().addAll(currentDataTable.getAllNumColName());
-				chartSelectTextCol.getItems().addAll(currentDataTable.getAllTextColName());
-				chartSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
-				putSceneOnStage(SCENE_CREATE_CHART);
+				if(currentDataTable.getNumOfNumCol() <= 0) {
+					noNumericalCol.showAndWait();
+				}else {
+					chartSelectXaxis.getItems().addAll(currentDataTable.getAllNumColName());
+					chartSelectYaxis.getItems().addAll(currentDataTable.getAllNumColName());
+					chartSelectTextCol.getItems().addAll(currentDataTable.getAllTextColName());
+					chartSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
+					putSceneOnStage(SCENE_CREATE_CHART);
+				}
 			} else {
 				noDatasetAlert.showAndWait();
 			}
@@ -489,13 +552,34 @@ public class Main extends Application {
 		});
 
 		filterButton.setOnAction(e -> {
-			filterHeader.setText(checkSelectedDataSet());
-			putSceneOnStage(SCENE_FILTER_DATA);
+			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
+			if(currentDatasetName != null) {
+				filterHeader.setText("Selected Dataset: " + currentDatasetName);
+				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
+				// check if selected dataset contains at least one numerical column
+				System.out.println("currentDataTable.getNumOfNumCol() = "+currentDataTable.getNumOfNumCol());
+				if(currentDataTable.getNumOfNumCol() <= 0) {
+					noNumericalCol.showAndWait();
+				}else {
+					filterSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
+					putSceneOnStage(SCENE_FILTER_DATA);
+				}
+			}else {
+				noDatasetAlert.showAndWait();
+			}
+			
 		});
 		splitButton.setOnAction(e -> {
-			splitHeader.setText(checkSelectedDataSet());
-			putSceneOnStage(SCENE_SPLIT_DATA);
+			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
+			if(currentDatasetName != null) {
+				splitHeader.setText("Selected Dataset: " + currentDatasetName);
+				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
+				putSceneOnStage(SCENE_SPLIT_DATA);
+			}else {
+				noDatasetAlert.showAndWait();
+			}
 		});
+		
 		showChartButton.setOnAction(e -> {
 			String name = chartList.getSelectionModel().getSelectedItem();
 			if (name != null) {
@@ -520,7 +604,14 @@ public class Main extends Application {
 					yAxis.setLabel(environment.getEnviornmentLineCharts().get(name).getYAxisName());
 					putSceneOnStage(SCENE_SHOW_LINECHART);
 				} else {
-
+					PieChartClass newPieChartClass = environment.getEnviornmentPieCharts().get(name);
+					ObservableList<PieChart.Data> newOList = newPieChartClass.getObserList();
+					
+					if(pieChart.getData() != newOList) {
+						pieChart.setData(newOList);
+					}
+					pieChart.setTitle(newPieChartClass.getTitle());
+					putSceneOnStage(SCENE_SHOW_PIECHART);
 				}
 			} else {
 				noChartAlert.showAndWait();
@@ -537,17 +628,14 @@ public class Main extends Application {
 		chartCancel.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
-		// split data screen
-		splitCancel.setOnAction(e -> {
-			putSceneOnStage(SCENE_MAIN_SCREEN);
-		});
-		// filter data screen
-		filterCancel.setOnAction(e -> {
-			putSceneOnStage(SCENE_MAIN_SCREEN);
-		});
+		
+		
 		showLineChartBack.setOnAction(e -> {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 			tl.stop();
+		});
+		showPieChartBack.setOnAction(e -> {
+			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
 	}
 
@@ -590,6 +678,8 @@ public class Main extends Application {
 					if (chartXaxisName != null && chartYaxisName != null) {
 						chartSelectXaxis.getItems().clear();
 						chartSelectYaxis.getItems().clear();
+						chartSelectNumCol.getItems().clear();
+						chartSelectTextCol.getItems().clear();
 						String name = initLineChart();
 						if (setAnimation.isSelected()) {
 							XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
@@ -605,10 +695,22 @@ public class Main extends Application {
 					}
 
 				} else {
+					// Initialize PieChart Screen
 					chartNumColName = chartSelectNumCol.getValue();
 					chartTextColName = chartSelectTextCol.getValue();
-					chartSelectNumCol.getItems().clear();
-					chartSelectTextCol.getItems().clear();
+					if(chartNumColName != null && chartTextColName != null) {
+						chartSelectXaxis.getItems().clear();
+						chartSelectYaxis.getItems().clear();
+						chartSelectNumCol.getItems().clear();
+						chartSelectTextCol.getItems().clear();
+						initPieChart();
+						// String name = initPieChart();
+						// currentPieChartClass = environment.getEnviornmentPieCharts().get(name);
+						putSceneOnStage(SCENE_SHOW_PIECHART);
+					}else {
+						noSelectedColAlert.showAndWait();
+						return;
+					}	
 				}
 
 			}
@@ -664,7 +766,163 @@ public class Main extends Application {
 		});
 
 	}
+	
+	/**
+	 * Initialize event handlers of the sub screen - SCENE_FILTER_DATA
+	 */
+	private void initFliterDataHandlers() {
+		filterCancel.setOnAction(e -> {
+			filterAction.getSelectionModel().clearSelection();
+			filterSelectNumCol.getItems().clear();
+			filterSelectOperator.getSelectionModel().clearSelection();
+			filterTextField.clear();
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+		
+		filterComfirm.setOnAction(e -> {
+			String filterOption = filterAction.getValue();
+			String filterNumColName = filterSelectNumCol.getValue();
+			String filterOperator = filterSelectOperator.getValue();
+			String filterThreshold = filterTextField.getText();
+			double threshold;
+			// Ensure all inputs are well-received
+			if(filterNumColName == null || filterOperator == null || filterThreshold == null || filterOption == null) {
+				notEnoughInput.showAndWait();
+				return;
+			}
+			
+			// Ensure the input threshold is a valid double
+			try {
+				threshold = Double.parseDouble(filterThreshold);
+			} catch(NullPointerException | NumberFormatException ex) {
+				notNum.showAndWait();
+				return;
+			}
+			
+			// filter the data 
+			String newDataTableName = null;
+			if(filterOption == "Replacing the current dataset") {
+				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
+				System.out.println("Replacing the current dataset");
+			}else {
+				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);	
+			}
+			
+			if(newDataTableName == "Empty DataTable") {
+				// Empty DataTable created after filtering
+				// handle the exception of all rows are filtered out and filterDataTable has no rows
+				allRowsFilteredOut.showAndWait();
+			}else {
+				// for debugging:
+				if(newDataTableName == null) {
+					System.out.println("---------Replaced DataTable---------");
+					environment.getEnvironmentDataTables().get(currentDatasetName).print();
+				}else {
+					// add the new DataTable onto the dataList
+					dataList.getItems().add(newDataTableName);
+					System.out.println("---------Original DataTable---------");
+					environment.getEnvironmentDataTables().get(currentDatasetName).print();
+					System.out.println("---------New DataTable---------");
+					environment.getEnvironmentDataTables().get(newDataTableName).print();
+				}
+			}
 
+			// clear all input informations
+			filterAction.getSelectionModel().clearSelection();
+			filterSelectNumCol.getItems().clear();
+			filterSelectOperator.getSelectionModel().clearSelection();
+			filterTextField.clear();
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+	}
+	
+	
+	private void initSplitDataHandler() {
+		splitSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+            	splitPercentage.setText(String.format("%.0f%%", new_val));
+            }
+        });
+		
+		// split data screen
+		splitCancel.setOnAction(e -> {
+			splitAction.getSelectionModel().clearSelection();
+			splitSlider.setValue(50);
+			putSceneOnStage(SCENE_MAIN_SCREEN);
+		});
+
+		splitComfirm.setOnAction(e -> {
+			int splitRatio;
+			String splitOption = splitAction.getValue();
+			if(splitOption == null) {
+				notEnoughInput.showAndWait();
+				return;
+			}else {
+				// Get the input split ratio
+				splitRatio = ((Number)splitSlider.getValue()).intValue();
+				System.out.println("splitRatio: " + splitRatio);
+				int splitedNum;
+				String[] newDatasetName;
+				// debug:
+				System.out.println("---------Original DataTable---------");
+				environment.getEnvironmentDataTables().get(currentDatasetName).print();
+				
+				// split the data set
+				if(splitOption == "Replacing the current dataset") {
+					System.out.println("Replacing the current dataset");
+					newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, true);
+					if(newDatasetName[0].equals(currentDatasetName)) {
+						// replacement is successful
+						goodReplaceAlert.setContentText(currentDatasetName + " has been replaced.");
+						// add the new DataTable onto the dataList
+						dataList.getItems().add(newDatasetName[1]);
+						goodReplaceAlert.showAndWait();
+					}else if(newDatasetName[0].equals("")) {
+						// replacement is unsuccessful because one of the splited dataset is empty
+						noRowsReplaceAlert.showAndWait();
+					}
+				}else {
+					newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, false);
+					if(!newDatasetName[0].equals("") && newDatasetName[1].equals("")) {
+						// only one dataset is not empty
+						dataList.getItems().add(newDatasetName[0]);
+						goodReplaceAlert.setContentText("Only one dataset: "+newDatasetName[0] + " has been created.");
+						noRowsOneSuccessAlert.showAndWait();
+					}else if (newDatasetName[0].equals("") && !newDatasetName[1].equals("")) {
+						// only one dataset is not empty
+						dataList.getItems().add(newDatasetName[1]);
+						goodReplaceAlert.setContentText("Only one dataset: "+newDatasetName[1] + " has been created.");
+						noRowsOneSuccessAlert.showAndWait();
+					}else if (!newDatasetName[0].equals("") && !newDatasetName[1].equals("")){
+						// two new datasets are not empty
+						dataList.getItems().add(newDatasetName[0]);
+						dataList.getItems().add(newDatasetName[1]);
+						goodReplaceAlert.setContentText("Two datasets: "+newDatasetName[0] + " & "+ newDatasetName[1]+ " has been created.");
+					}
+					goodReplaceAlert.showAndWait();
+				}
+				
+				// debug:
+				if(!newDatasetName[0].equals("")) {
+					System.out.println("---------"+newDatasetName[0] +"---------");
+					environment.getEnvironmentDataTables().get(newDatasetName[0]).print();
+				}
+				if(!newDatasetName[1].equals("")) {
+					System.out.println("---------"+newDatasetName[1] +"---------");
+					environment.getEnvironmentDataTables().get(newDatasetName[1]).print();
+				}
+				
+				// clear all input informations
+				splitAction.getSelectionModel().clearSelection();
+				splitSlider.setValue(50);
+				
+				putSceneOnStage(SCENE_MAIN_SCREEN);
+			}
+			
+		});
+		
+	}
+	
 	/**
 	 * Create the create chart screen and layout its UI components
 	 * 
@@ -807,9 +1065,10 @@ public class Main extends Application {
 	/**
 	 * Populate sample data table values to the pie chart view
 	 */
-	private void initPieChart() {
+	private String initPieChart() {
+		String name = null;
 		if (currentDatasetName == null) {
-			return;
+			return null;
 		}
 		// Get 2 columns
 		DataColumn numCol = currentDataTable.getCol(chartNumColName);
@@ -821,31 +1080,30 @@ public class Main extends Application {
 
 			ObservableList<PieChart.Data> pieChartDataList = FXCollections.observableArrayList();
 
-			Number[] numColValues = (Number[]) numCol.getData();
-			String[] textColValues = (String[]) textCol.getData();
+			Object[] numColValues = numCol.getData();
+			Object[] textColValues =  textCol.getData();
 
 			int len = numColValues.length;
 			for (int i = 0; i < len; i++) {
-				pieChartDataList.add(new PieChart.Data(textColValues[i], (double) numColValues[i]));
+				pieChartDataList.add(new PieChart.Data((String)textColValues[i], ((Number)numColValues[i]).doubleValue()));
 			}
 
 			pieChart.setTitle("Pie Chart of " + currentDatasetName);
+			pieChart.setLegendSide(Side.LEFT);
+			
+			
 			// Add all selected data into PieChart
-			if (pieChart.getData().size() == 0)
-				pieChart.getData().addAll(pieChartDataList);
-
-			else {
-				pieChart.getData().clear();
-				pieChart.getData().addAll(pieChartDataList);
-			}
+			pieChart.setData(pieChartDataList);
 
 			PieChartClass t = new PieChartClass();
 			t.setList(pieChartDataList);
-			t.setTitle("Line Chart of " + currentDatasetName);
-			String name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
+			t.setTitle("Pie Chart of " + currentDatasetName);
+			t.setAxisName(chartNumColName, chartTextColName);
+			name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
 			environment.getEnviornmentPieCharts().put(name, t);
 			chartList.getItems().add(name);
 		}
+		return name;
 	}
 
 	/**
@@ -854,8 +1112,29 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneShowPieChartScreen() {
+		pieChart = new PieChart();
+		
+		// Layout the UI components
+		showPieChartBack = new Button("Back");
+		showPieChartHeader = new Label();
+		showPieChartHeader.getStyleClass().add("Header");
+		
+		VBox chartContainer = new VBox(20);
+		chartContainer.getChildren().addAll(pieChart);
+		chartContainer.setAlignment(Pos.CENTER);
+		
+		HBox actionButtons = new HBox(20);
+		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
+		actionButtons.getChildren().add(showPieChartBack);
+		
 		BorderPane pane = new BorderPane();
-
+		pane.setTop(showPieChartHeader);
+		pane.setCenter(chartContainer);
+		pane.setBottom(actionButtons);
+		
+		// Apply CSS to style the GUI components
+		pane.getStyleClass().add("screen-background");
+				
 		return pane;
 	}
 
@@ -902,18 +1181,49 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneFilterDataScreen() {
-
+		Font labelFont = new Font(20);
 		filterHeader = new Label();
 		filterHeader.getStyleClass().add("Header");
 		filterComfirm = new Button("Comfirm");
 		filterCancel = new Button("Cancel");
-
+		
+		filterSelectNumLabel = new Label("Numerical Column:");
+		filterSelectNumLabel.setFont(labelFont);
+		filterTextField = new TextField();
+		filterSelectOperatorLabel = new Label("Filter Data");
+		filterSelectOperatorLabel.setFont(labelFont);
+		fliterActionLabel = new Label("Select an effect after sfiltering");
+		fliterActionLabel.setFont(labelFont);
+		
+		filterAction = new ComboBox<String>();
+		filterAction.getItems().addAll("Replacing the current dataset", "Creating a new dataset");
+		filterSelectNumCol = new ComboBox<String>();
+		filterSelectOperator = new ComboBox<String>();
+		filterSelectOperator.getItems().addAll(">","<", ">=","<=", "==", "!=");
+		
+		
+		HBox selectionBoxes = new HBox(20);
+		selectionBoxes.setSpacing(10);
+		selectionBoxes.setAlignment(Pos.TOP_LEFT);
+		selectionBoxes.getChildren().addAll(filterSelectNumLabel, filterSelectNumCol);
+		
+		HBox selectionBoxes2 = new HBox(20);
+		selectionBoxes2.setSpacing(10);
+		selectionBoxes2.setAlignment(Pos.TOP_LEFT);
+		selectionBoxes2.getChildren().addAll(filterSelectOperatorLabel, filterSelectOperator, filterTextField);
+		
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
 		actionButtons.getChildren().addAll(filterCancel, filterComfirm);
 
+		VBox container = new VBox();
+		container.setSpacing(10);
+		container.setAlignment(Pos.TOP_LEFT);
+		container.getChildren().addAll(filterHeader, fliterActionLabel, filterAction, selectionBoxes, selectionBoxes2);
+				
 		BorderPane pane = new BorderPane();
-		pane.setTop(filterHeader);
+		pane.setPadding(new Insets(30, 30, 10, 20));
+		pane.setTop(container);
 		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
@@ -928,18 +1238,48 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneSplitDataScreen() {
-
+		Font labelFont = new Font(20);
 		splitHeader = new Label();
 		splitHeader.getStyleClass().add("Header");
 		splitComfirm = new Button("Comfirm");
 		splitCancel = new Button("Cancel");
-
+		
+		splitActionLabel = new Label("Select an effect after spliting");
+		splitActionLabel.setFont(labelFont);
+		splitSliderLabel = new Label("Percentage of random split: ");
+		splitSliderLabel.setFont(labelFont);
+		
+		splitAction  = new ComboBox<String>();
+		splitAction.getItems().addAll("Replacing the current dataset", "Creating a new dataset");
+		
+		splitSlider = new Slider();
+		splitSlider.setMin(1);
+		splitSlider.setMax(99);
+		splitSlider.setValue(50);
+		splitSlider.setShowTickLabels(true);
+		splitSlider.setShowTickMarks(true);
+		splitSlider.setSnapToTicks(true);
+		splitSlider.setMajorTickUnit(10);
+		splitSlider.setMinorTickCount(5);
+		splitSlider.setBlockIncrement(10);
+		splitPercentage = new Label(((Number)splitSlider.getValue()).intValue()+"%");
+		splitPercentage.setFont(labelFont);
+		
+		HBox splitBar = new HBox(20);
+		splitBar.setAlignment(Pos.TOP_LEFT);
+		splitBar.getChildren().addAll(splitSliderLabel, splitPercentage);
+				
+		VBox container = new VBox(10);
+		container.setAlignment(Pos.TOP_LEFT);
+		container.getChildren().addAll(splitHeader, splitActionLabel,splitAction,splitBar,splitSlider);
+		
 		HBox actionButtons = new HBox(20);
 		actionButtons.setAlignment(Pos.BOTTOM_RIGHT);
 		actionButtons.getChildren().addAll(splitCancel, splitComfirm);
 
 		BorderPane pane = new BorderPane();
-		pane.setTop(splitHeader);
+		pane.setPadding(new Insets(30, 30, 10, 20));
+		pane.setTop(container);
 		pane.setBottom(actionButtons);
 
 		// Apply CSS to style the GUI components
@@ -954,7 +1294,7 @@ public class Main extends Application {
 	 * @return a Pane component to be displayed on a scene
 	 */
 	private Pane paneMainScreen() {
-
+		
 		MenuBar menuBar = new MenuBar();
 		Menu FileIO = new Menu("File");
 		Save = new MenuItem("Save");
