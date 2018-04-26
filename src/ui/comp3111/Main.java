@@ -124,6 +124,7 @@ public class Main extends Application {
 	private Label splitSliderLabel = null;
 	private Slider splitSlider = null;
 	private Alert noRowsReplaceAlert = null;
+	private Alert noRowsOneSuccessAlert = null;
 	private Alert goodReplaceAlert = null;
 	// Screen 4: paneFilterDataScreen
 	private Label filterHeader = null;
@@ -212,6 +213,11 @@ public class Main extends Application {
 		noRowsReplaceAlert.setTitle("Error Message: Empty Dataset");
 		noRowsReplaceAlert.setHeaderText("One of the newly created Dataset is empty.");
 		noRowsReplaceAlert.setContentText("Replacement cannot be done. The environment remains unchanged.");
+		noRowsOneSuccessAlert = new Alert(AlertType.ERROR);
+		noRowsOneSuccessAlert.setTitle("Error Message: Empty Dataset");
+		noRowsOneSuccessAlert.setHeaderText("One of the newly created Dataset is empty.");
+		noRowsOneSuccessAlert.setContentText("Only one new dataset will be created. ");
+		
 		
 		// for SCENE_Fliter_DATA
 		noNumericalCol = new Alert(AlertType.INFORMATION);
@@ -331,11 +337,15 @@ public class Main extends Application {
 			if (currentDatasetName != null) {
 				chartSelectDataset.setText("Selected Dataset: " + currentDatasetName);
 				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
-				chartSelectXaxis.getItems().addAll(currentDataTable.getAllNumColName());
-				chartSelectYaxis.getItems().addAll(currentDataTable.getAllNumColName());
-				chartSelectTextCol.getItems().addAll(currentDataTable.getAllTextColName());
-				chartSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
-				putSceneOnStage(SCENE_CREATE_CHART);
+				if(currentDataTable.getNumOfNumCol() <= 0) {
+					noNumericalCol.showAndWait();
+				}else {
+					chartSelectXaxis.getItems().addAll(currentDataTable.getAllNumColName());
+					chartSelectYaxis.getItems().addAll(currentDataTable.getAllNumColName());
+					chartSelectTextCol.getItems().addAll(currentDataTable.getAllTextColName());
+					chartSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
+					putSceneOnStage(SCENE_CREATE_CHART);
+				}
 			} else {
 				noDatasetAlert.showAndWait();
 			}
@@ -654,6 +664,10 @@ public class Main extends Application {
 				System.out.println("splitRatio: " + splitRatio);
 				int splitedNum;
 				String[] newDatasetName;
+				// debug:
+				System.out.println("---------Original DataTable---------");
+				environment.getEnvironmentDataTables().get(currentDatasetName).print();
+				
 				// split the data set
 				if(splitOption == "Replacing the current dataset") {
 					System.out.println("Replacing the current dataset");
@@ -674,10 +688,12 @@ public class Main extends Application {
 						// only one dataset is not empty
 						dataList.getItems().add(newDatasetName[0]);
 						goodReplaceAlert.setContentText("Only one dataset: "+newDatasetName[0] + " has been created.");
+						noRowsOneSuccessAlert.showAndWait();
 					}else if (newDatasetName[0].equals("") && !newDatasetName[1].equals("")) {
 						// only one dataset is not empty
 						dataList.getItems().add(newDatasetName[1]);
 						goodReplaceAlert.setContentText("Only one dataset: "+newDatasetName[1] + " has been created.");
+						noRowsOneSuccessAlert.showAndWait();
 					}else if (!newDatasetName[0].equals("") && !newDatasetName[1].equals("")){
 						// two new datasets are not empty
 						dataList.getItems().add(newDatasetName[0]);
@@ -688,8 +704,6 @@ public class Main extends Application {
 				}
 				
 				// debug:
-				System.out.println("---------Original DataTable---------");
-				environment.getEnvironmentDataTables().get(currentDatasetName).print();
 				if(!newDatasetName[0].equals("")) {
 					System.out.println("---------"+newDatasetName[0] +"---------");
 					environment.getEnvironmentDataTables().get(newDatasetName[0]).print();

@@ -329,10 +329,14 @@ public class EnvironmentParams implements Serializable {
 					e.printStackTrace();
 				}
 			}
+			
+			/*
 			System.out.println("---------A---------");
 			splitDataTableA.print();
 			System.out.println("---------B---------");
 			splitDataTableB.print();
+			*/
+			
 			if(isReplaced) {
 				// replace the original dataset with splitDataTableA 
 				DataTables.replace(datasetName,splitDataTableA);
