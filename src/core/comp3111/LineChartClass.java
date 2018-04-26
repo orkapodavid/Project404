@@ -8,14 +8,24 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.ArrayList;
-
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
+/**
+ * This class used for containing parameters of a Line Chart for clearer structure.
+ * 
+ * @author kpor
+ */
 public class LineChartClass implements Chart, Externalizable {
-
+	
+	private XYChart.Series<Number, Number> series;
+	private String xAxisName;
+	private String yAxisName;
+	private String title;
+	private boolean animation;
+	
 	/**
 	 * Construct - Create an empty copy of all the essential data in a line chart.
 	 */
@@ -144,10 +154,4 @@ public class LineChartClass implements Chart, Externalizable {
 	public void setTitle(String m_title) {
 		title = m_title;
 	}
-
-	private XYChart.Series<Number, Number> series;
-	private String xAxisName;
-	private String yAxisName;
-	private String title;
-	private boolean animation;
 }
