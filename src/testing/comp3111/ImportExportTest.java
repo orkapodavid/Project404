@@ -13,6 +13,12 @@ import core.comp3111.DataType;
 import core.comp3111.ImportExportCSV;
 
 
+/**
+ * ImportExport test using JUnit. Achieves 100% test coverage in the ImportExportCSV class.
+ * 
+ * @author kwaleung
+ *
+ */
 class ImportExportTest {
 
 	private static final String replaceWithZeros = "Replace with zeros";
@@ -26,7 +32,7 @@ class ImportExportTest {
 		File testImportFile = new File(fileDir);
 		
 		DataTable testImportTable = testImportExport.importCSV(testImportFile);
-		assert(testImportTable.getNumCol() == 7);
+		assert(testImportTable.getNumCol() == 8);
 	}
 	
 	@Test

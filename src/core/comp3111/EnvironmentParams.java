@@ -20,6 +20,8 @@ public class EnvironmentParams implements Serializable {
 	
 	/**
 	 * Default constructor for EnvironmentParams class.
+	 * 
+	 * @author kwaleung
 	 */
 	public EnvironmentParams() {
 		DataTables = new HashMap<String, DataTable>();
@@ -27,26 +29,59 @@ public class EnvironmentParams implements Serializable {
 		pieChartsMap = new HashMap<String, PieChartClass>();
 	}
 	
+	/**
+	 * Set the HashMap of data tables in the environment>
+	 * 
+	 * @author kwaleung
+	 */
 	public void setEnvironmentDataTables(HashMap<String, DataTable> newDataTables) {
 		DataTables = newDataTables;
 	}
 	
+	/**
+	 * Set the HashMap of line charts in the environment>
+	 * 
+	 * @author kwaleung
+	 */
 	public void setEnviornmentLineCharts(HashMap<String, LineChartClass> newLineCharts) {
 		lineChartsMap = newLineCharts;
 	}
 	
+	/**
+	 * Set the HashMap of pie charts in the environment>
+	 * 
+	 * @author kwaleung
+	 */
 	public void setEnviornmentPieCharts(HashMap<String, PieChartClass> newPieCharts) {
 		pieChartsMap = newPieCharts;
 	}
 	
+	/**
+	 * Returns the HashMap of data tables in the environment
+	 * @return HashMap<String, DataTable>
+	 * 
+	 * @author kwaleung
+	 */
 	public HashMap<String, DataTable> getEnvironmentDataTables() {
 		return DataTables;
 	}
 	
+	/**
+	 * Returns the HashMap of line charts in the environment
+	 * @return Map<String, LineChartClass>
+	 * 
+	 * @author kwaleung
+	 */
 	public Map<String, LineChartClass> getEnviornmentLineCharts() {
 		return lineChartsMap;
 	}
 	
+	/**
+	 * Returns the HashMap of pie charts in the environment
+	 * @return Map<String, PieChartClass>
+	 * 
+	 * @author kwaleung
+	 */
 	public Map<String, PieChartClass> getEnviornmentPieCharts() {
 		return pieChartsMap;
 	}	

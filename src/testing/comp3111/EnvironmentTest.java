@@ -16,6 +16,12 @@ import core.comp3111.DataTable;
 import core.comp3111.DataTableException;
 import core.comp3111.DataType;
 
+/**
+ * Environment test using JUnit. Achieves 100% test coverage in the Environment and EnvironmentParams class.
+ * 
+ * @author kwaleung
+ *
+ */
 class EnvironmentTest {
 
 	@Test
