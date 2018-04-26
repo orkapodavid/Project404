@@ -388,12 +388,14 @@ public class Main extends Application {
 				for (String datakey:environment.getEnvironmentDataTables().keySet()) {
 					dataList.getItems().add(datakey);
 				}
+				dataList.setItems(dataList.getItems().sorted());
 				for (String chartkey:environment.getEnviornmentLineCharts().keySet()) {
 					chartList.getItems().add(chartkey);
 				}
 				for (String chartkey:environment.getEnviornmentPieCharts().keySet()) {
 					chartList.getItems().add(chartkey);
 				}
+				chartList.setItems(chartList.getItems().sorted());
 				if (!loaded.equals(null)) {
 					loaded.setContentText("Environment has been loaded from: " + filePath);
 					loaded.showAndWait();
@@ -1195,7 +1197,7 @@ public class Main extends Application {
 		filterTextField = new TextField();
 		filterSelectOperatorLabel = new Label("Filter Data");
 		filterSelectOperatorLabel.setFont(labelFont);
-		fliterActionLabel = new Label("Select an effect after sfiltering");
+		fliterActionLabel = new Label("Select an effect after filtering");
 		fliterActionLabel.setFont(labelFont);
 		
 		filterAction = new ComboBox<String>();
