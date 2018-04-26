@@ -248,7 +248,7 @@ public class Main extends Application {
 		
 		emptyCSV.setTitle("ERROR");
 		emptyCSV.setHeaderText("Empty CSV");
-		emptyCSV.setContentText("Selected CSv file is empty");
+		emptyCSV.setContentText("Selected CSV file is empty");
 		
 		replacedAlert.setTitle("Information");
 		replacedAlert.setHeaderText("Replaced missing data");
@@ -261,7 +261,7 @@ public class Main extends Application {
 		chooseReplaceOption = new ChoiceDialog<String>(replaceWithZeros, replaceOptions);
 		chooseReplaceOption.setTitle("Replace Option");
 		chooseReplaceOption.setHeaderText("Please choose");
-		chooseReplaceOption.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
+		chooseReplaceOption.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
 		
 		SaveChooser = new FileChooser();
 		LoadChooser = new FileChooser();
@@ -355,7 +355,7 @@ public class Main extends Application {
 			
 			if (selectedFile != null) {
 				try {
-					importedTable = importexporter.importCSV(environment.getEnvironmentDataTables(), selectedFile);
+					importedTable = importexporter.importCSV(selectedFile);
 					if (importedTable != null) {
 						int colCount = importedTable.getNumCol();
 						int rowCount = importedTable.getNumRow();
@@ -381,7 +381,7 @@ public class Main extends Application {
 									}
 									for (int j=0; j<currColElements.length; j++) {
 										if (currColElements[j].equals("")) {
-											currColElements[j] = importexporter.replaceEmptyElement(currColElements[j], selectedReplaceOption, mean, median);
+											currColElements[j] = importexporter.replaceEmptyElement(selectedReplaceOption, mean, median);
 										}
 									}
 									DataColumn replaceDataColumn = new DataColumn(importTableColNames[i], currColElements);

@@ -48,8 +48,6 @@ public class ImportExportCSV {
 	 * This functions reads a CSV file of the user's choice and
 	 * creates a DataTable according to the content provided by the CSV
 	 * 
-	 * @param datasets
-	 * 			-current collection of data tables
 	 * @param name
 	 * 			-name to be used by the imported table
 	 *
@@ -57,10 +55,10 @@ public class ImportExportCSV {
 	 * 			-true if CSV imported
 	 * 			-false otherwise
 	 */
-	public DataTable importCSV(Map<String, DataTable> datasets, File selectedFile) throws Exception {
+	public DataTable importCSV(File selectedFile) throws Exception {
 		
 		String filePath = selectedFile.getAbsolutePath();
-		System.out.println("importCSV: Selected file from: " + filePath);
+		//System.out.println("importCSV: Selected file from: " + filePath);
 
 		FileReader fileReader = null;
 		CSVParser csvParser = null;
@@ -71,8 +69,8 @@ public class ImportExportCSV {
 		List<CSVRecord> csvContent = csvParser.getRecords();
 		
 		int rowCount = csvContent.size();
-		int colCount = csvContent.get(0).size();
 		if(rowCount != 0) {
+			int colCount = csvContent.get(0).size();
 			List<Object[]> newDataColumnElements = new ArrayList<Object[]>();
 			List<String> newDataColumnNames = new ArrayList<String>();
 			
@@ -119,7 +117,7 @@ public class ImportExportCSV {
 	public void exportCSV(File selectedFile, String selectedDataSetName, HashMap<String, DataTable> datasets) throws Exception {
 		DataTable selectedDataTable = null;
 		String filePath = selectedFile.getAbsolutePath();
-		System.out.println("exportCSV: Save file to: " + filePath);
+		//System.out.println("exportCSV: Save file to: " + filePath);
 		
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
@@ -134,7 +132,7 @@ public class ImportExportCSV {
 			allCols.put(allColNames[i], selectedDataTable.getCol(allColNames[i]));
 		}
 		
-		csvFilePrinter.printRecord(allColNames); //Create Header
+		csvFilePrinter.printRecord((Object[])allColNames); //Create Header
 		
 		for (int i=0; i<selectedDataTable.getNumRow(); i++) {
 			List<Object> currRecord = new ArrayList<Object>();
@@ -163,22 +161,21 @@ public class ImportExportCSV {
 		int colSize = currCol.length;
 		Boolean isNumber = false, isString = false;
 		for (int i=0; i<colSize; i++) {
-			System.out.println("checktype: " + currCol[i] + " getClass: " + currCol[i].getClass().toString());
+			//System.out.println("checktype: " + currCol[i] + " getClass: " + currCol[i].getClass().toString());
 			if (currCol[i].equals("")) {
 				//Do nothing if empty record
 			} else {
 				try {
 					Number number = NumberFormat.getInstance().parse((String) currCol[i]);
 					currCol[i] = number;
-				} catch (ParseException e) {
-					System.out.println("importCSV: Cannot parse to Number");
+				} catch (Exception e) {
+					//System.out.println("importCSV: Cannot parse to Number");
 					//e.printStackTrace();
-				} finally {
-					if (currCol[i] instanceof Number) {
-						isNumber = true;
-					} else if (currCol[i] instanceof String) {
-						isString = true;
-					}
+				}
+				if (currCol[i] instanceof Number) {
+					isNumber = true;
+				} else if (currCol[i] instanceof String) {
+					isString = true;
 				}
 			}
 		}
@@ -219,13 +216,18 @@ public class ImportExportCSV {
 	 * @return boolean
 	 * 			-true if there is missing data, otherwise false
 	 */
-	public Object replaceEmptyElement(Object currObj, String selectedReplaceOption, Number mean, Number median) {
-		switch (selectedReplaceOption) {
-		case replaceWithZeros: return 0;
-		case replaceWithMean: return mean;
-		case replaceWithMedian: return median;
-		default: return 0;
+	public Object replaceEmptyElement(String selectedReplaceOption, Number mean, Number median) {
+		if (selectedReplaceOption != null) {
+			if (selectedReplaceOption.equals(replaceWithZeros))
+				return 0;
+			else if (selectedReplaceOption.equals(replaceWithMean))
+				return mean;
+			else if (selectedReplaceOption.equals(replaceWithMedian))
+				return median;
+			else
+			    return 0;
 		}
+		return 0;
 	}
 	
 	/**
@@ -236,17 +238,17 @@ public class ImportExportCSV {
 	 * @return Number
 	 * 			-mean of current column
 	 */
-	public Number calculateMean(Object[] currCol) {
-		double sum = 0, mean = 0;
-		double objCount = 0;
+	public Double calculateMean(Object[] currCol) {
+		Double sum = (double) 0, mean = (double) 0;
+		Double objCount = (double) 0;
 		for (int i=0; i<currCol.length; i++) {
 			if (!currCol[i].equals("")) {
 				objCount++;
-				sum += (double)(((Long)currCol[i]).doubleValue());
+				sum += (Double)(((Number) currCol[i]).doubleValue());
 			}
 		}
 		mean = sum/objCount;
-		System.out.println("Mean: " + mean);
+		//System.out.println("Mean: " + mean);
 		return mean;
 	}
 	
@@ -258,25 +260,25 @@ public class ImportExportCSV {
 	 * @return Number
 	 * 			-median of current column
 	 */
-	public Number calculateMedian(Object[] currCol) {
-		double median = 0;
-		List<Object> nonMissing = new ArrayList<Object>();
+	public Double calculateMedian(Object[] currCol) {
+		Double median = (double) 0;
+		List<Number> nonMissing = new ArrayList<Number>();
 		
 		for (int i=0; i<currCol.length; i++) {
 			if (!currCol[i].equals("")) {
-				nonMissing.add(currCol[i]);
+				nonMissing.add((Number)currCol[i]);
 			}
 		}
-		
+		nonMissing.sort(null);
 	    int middle = nonMissing.size()/2;
 	    if (nonMissing.size()%2 == 1) {
-	    	median = (double)(((Long)nonMissing.get(middle)).doubleValue());
-	    	System.out.println("Size of records: " + nonMissing.size());
+	    	median = (Double)(((Number)nonMissing.get(middle)).doubleValue());
+	    	//System.out.println("Size of records: " + nonMissing.size());
 	    } else {
-	        median = ((double)(((((Long)nonMissing.get(middle-1)).doubleValue()) + (((Long)nonMissing.get(middle)).doubleValue())) / 2.0));
+	        median = ((Double)(((((Number)nonMissing.get(middle-1)).doubleValue()) + (((Number)nonMissing.get(middle)).doubleValue())) / 2.0));
 	    }
 		
-		System.out.println("Median: " + median);
+		//System.out.println("Median: " + median);
 		return median;
 	}
 }

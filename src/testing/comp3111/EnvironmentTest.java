@@ -1,8 +1,7 @@
 package testing.comp3111;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,23 +48,14 @@ class EnvironmentTest {
 	}
 	
 	@Test
-	void testSave() throws Exception {
+	void testSaveLoad() throws Exception {
 		Environment testEnv = new Environment();
-		String testFilePath = System.getProperty("user.dir") + "testenvr.3111";
+		String testFilePath = System.getProperty("user.dir") + "/saveloadtest.3111";
 		File testFile = new File(testFilePath);
-		
 		String returnTestPath = testEnv.saveEnvironment(testFile);
-		assert(returnTestPath.equals(testFilePath));
-	}
-	
-	@Test
-	void testLoad() throws Exception {
-		Environment testEnv = new Environment();
-		
-		String testFilePath = System.getProperty("user.dir") + "testenvr.3111";
-		File testFile = new File(testFilePath);
-		
-		String returnTestPath = testEnv.loadEnvironment(testFile);
-		assert(returnTestPath.equals(testFilePath));
+		assert(returnTestPath.equals(testFile.getAbsolutePath()));
+		returnTestPath = testEnv.loadEnvironment(testFile);
+		assert(returnTestPath.equals(testFile.getAbsolutePath()));
+		Files.deleteIfExists(testFile.toPath());
 	}
 }
