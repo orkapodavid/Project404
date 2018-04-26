@@ -4,6 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import core.comp3111.DataType;
 
+/**
+ * DataType test using JUnit. Achieves 100% test coverage in the DataType class.
+ * 
+ * @author kwaleung
+ *
+ */
 class DataTypeTest {
 
 	@Test

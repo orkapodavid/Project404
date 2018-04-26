@@ -14,12 +14,12 @@ import core.comp3111.ImportExportCSV;
 
 
 /**
- * ImportExportCSV test using JUnit. Achieves 100% test coverage in the ImportExportCSV class.
+ * ImportExport test using JUnit. Achieves 100% test coverage in the ImportExportCSV class.
  * 
  * @author kwaleung
  *
  */
-class ImportExportCSVTest {
+class ImportExportTest {
 
 	private static final String replaceWithZeros = "Replace with zeros";
 	private static final String replaceWithMean = "Replace with column mean";
@@ -32,7 +32,7 @@ class ImportExportCSVTest {
 		File testImportFile = new File(fileDir);
 		
 		DataTable testImportTable = testImportExport.importCSV(testImportFile);
-		assert(testImportTable.getNumCol() == 7);
+		assert(testImportTable.getNumCol() == 8);
 	}
 	
 	@Test
