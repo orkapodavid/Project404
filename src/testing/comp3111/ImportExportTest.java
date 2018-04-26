@@ -15,6 +15,10 @@ import core.comp3111.ImportExportCSV;
 
 class ImportExportTest {
 
+	private static final String replaceWithZeros = "Replace with zeros";
+	private static final String replaceWithMean = "Replace with column mean";
+	private static final String replaceWithMedian = "Replace with column median";
+	
 	@Test
 	void testImport() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -28,7 +32,7 @@ class ImportExportTest {
 	@Test
 	void testImportEmpty() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
-		String fileDir = System.getProperty("user.dir") + "/TestingCSV/TestEmpty.csv";		
+		String fileDir = System.getProperty("user.dir") + "/TestingCSV/TestEmpty.csv";
 		File testImportFile = new File(fileDir);
 		
 		DataTable testImportTable = testImportExport.importCSV(testImportFile);
@@ -58,26 +62,108 @@ class ImportExportTest {
 	
 	@Test
 	void testTypeCheckNumber() {
-		
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Object[] currCol = {"1", "2", "3"};
+		assert(testImportExport.checkTypeName(currCol).equals(DataType.TYPE_NUMBER));
 	}
 	
 	@Test
 	void testTypeCheckString() {
-		
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Object[] currCol = {"a", "b", "c"};
+		assert(testImportExport.checkTypeName(currCol).equals(DataType.TYPE_STRING));
 	}
 	
 	@Test
 	void testTypeCheckObject() {
-		
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Object a = new Object();
+		Object b = new Object();
+		Object c = new Object();
+		Object[] currCol = {a, b, c};
+		assert(testImportExport.checkTypeName(currCol).equals(DataType.TYPE_OBJECT));
 	}
 	
 	@Test
 	void testMean() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Number x = 19;
+		Number y = 34;
+		Double ans = 26.5;
+		Object[] currCol = {x, y};
 		
+		assert(testImportExport.calculateMean(currCol).equals(ans));
 	}
 	
 	@Test
-	void testmedian() {
+	void testMeanHaveEmpty() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Number x = 19;
+		Number y = 34;
+		Object z = "";
+		Double ans = 26.5;
+		Object[] currCol = {x, z, y};
 		
+		assert(testImportExport.calculateMean(currCol).equals(ans));
+	}
+	
+	@Test
+	void testmedianOddElements() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Number x = 19;
+		Number y = 34;
+		Number z = 0;
+		Double ans = (double) 19;
+		Object[] currCol = {x, y, z};
+		
+		assert(testImportExport.calculateMedian(currCol).equals(ans));
+	}
+	
+	@Test
+	void testmedianEvenElements() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Number x = 19;
+		Number y = 34;
+		Double ans = 26.5;
+		Object[] currCol = {x, y};
+		
+		assert(testImportExport.calculateMedian(currCol).equals(ans));
+	}
+	
+	@Test
+	void testmedianHaveEmpty() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Number x = 19;
+		Number y = 34;
+		Object z = "";
+		Double ans = 26.5;
+		Object[] currCol = {x, z, y};
+		
+		assert(testImportExport.calculateMedian(currCol).equals(ans));
+	}
+	
+	@Test
+	void testReplace() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Number mean = 1, median = 2;
+		assert(testImportExport.replaceEmptyElement(replaceWithZeros, mean, median) == (Object)0);
+		assert(testImportExport.replaceEmptyElement(replaceWithMean, mean, median) == (Object)mean);
+		assert(testImportExport.replaceEmptyElement(replaceWithMedian, mean, median) == (Object)median);
+		assert(testImportExport.replaceEmptyElement("", mean, median) == (Object)0);
+		assert(testImportExport.replaceEmptyElement(null, mean, median) == (Object)0);
+	}
+	
+	@Test
+	void testEmptyTrue() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Object[] currCol = {"", "0", "abc"};
+		assert(testImportExport.checkMissingData(currCol));
+	}
+	
+	@Test
+	void testEmptyFalse() {
+		ImportExportCSV testImportExport = new ImportExportCSV();
+		Object[] currCol = {"abc", "0", "abc"};
+		assert(!testImportExport.checkMissingData(currCol));
 	}
 }

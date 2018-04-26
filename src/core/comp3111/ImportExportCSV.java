@@ -117,7 +117,7 @@ public class ImportExportCSV {
 	public void exportCSV(File selectedFile, String selectedDataSetName, HashMap<String, DataTable> datasets) throws Exception {
 		DataTable selectedDataTable = null;
 		String filePath = selectedFile.getAbsolutePath();
-		System.out.println("exportCSV: Save file to: " + filePath);
+		//System.out.println("exportCSV: Save file to: " + filePath);
 		
 		FileWriter fileWriter = null;
 		CSVPrinter csvFilePrinter = null;
@@ -168,15 +168,14 @@ public class ImportExportCSV {
 				try {
 					Number number = NumberFormat.getInstance().parse((String) currCol[i]);
 					currCol[i] = number;
-				} catch (ParseException e) {
+				} catch (Exception e) {
 					//System.out.println("importCSV: Cannot parse to Number");
 					//e.printStackTrace();
-				} finally {
-					if (currCol[i] instanceof Number) {
-						isNumber = true;
-					} else if (currCol[i] instanceof String) {
-						isString = true;
-					}
+				}
+				if (currCol[i] instanceof Number) {
+					isNumber = true;
+				} else if (currCol[i] instanceof String) {
+					isString = true;
 				}
 			}
 		}
@@ -217,13 +216,18 @@ public class ImportExportCSV {
 	 * @return boolean
 	 * 			-true if there is missing data, otherwise false
 	 */
-	public Object replaceEmptyElement(Object currObj, String selectedReplaceOption, Number mean, Number median) {
-		switch (selectedReplaceOption) {
-		case replaceWithZeros: return 0;
-		case replaceWithMean: return mean;
-		case replaceWithMedian: return median;
-		default: return 0;
+	public Object replaceEmptyElement(String selectedReplaceOption, Number mean, Number median) {
+		if (selectedReplaceOption != null) {
+			if (selectedReplaceOption.equals(replaceWithZeros))
+				return 0;
+			else if (selectedReplaceOption.equals(replaceWithMean))
+				return mean;
+			else if (selectedReplaceOption.equals(replaceWithMedian))
+				return median;
+			else
+			    return 0;
 		}
+		return 0;
 	}
 	
 	/**
@@ -234,13 +238,13 @@ public class ImportExportCSV {
 	 * @return Number
 	 * 			-mean of current column
 	 */
-	public Number calculateMean(Object[] currCol) {
-		double sum = 0, mean = 0;
-		double objCount = 0;
+	public Double calculateMean(Object[] currCol) {
+		Double sum = (double) 0, mean = (double) 0;
+		Double objCount = (double) 0;
 		for (int i=0; i<currCol.length; i++) {
 			if (!currCol[i].equals("")) {
 				objCount++;
-				sum += (double)(((Long)currCol[i]).doubleValue());
+				sum += (Double)(((Number) currCol[i]).doubleValue());
 			}
 		}
 		mean = sum/objCount;
@@ -256,22 +260,22 @@ public class ImportExportCSV {
 	 * @return Number
 	 * 			-median of current column
 	 */
-	public Number calculateMedian(Object[] currCol) {
-		double median = 0;
-		List<Object> nonMissing = new ArrayList<Object>();
+	public Double calculateMedian(Object[] currCol) {
+		Double median = (double) 0;
+		List<Number> nonMissing = new ArrayList<Number>();
 		
 		for (int i=0; i<currCol.length; i++) {
 			if (!currCol[i].equals("")) {
-				nonMissing.add(currCol[i]);
+				nonMissing.add((Number)currCol[i]);
 			}
 		}
-		
+		nonMissing.sort(null);
 	    int middle = nonMissing.size()/2;
 	    if (nonMissing.size()%2 == 1) {
-	    	median = (double)(((Long)nonMissing.get(middle)).doubleValue());
+	    	median = (Double)(((Number)nonMissing.get(middle)).doubleValue());
 	    	//System.out.println("Size of records: " + nonMissing.size());
 	    } else {
-	        median = ((double)(((((Long)nonMissing.get(middle-1)).doubleValue()) + (((Long)nonMissing.get(middle)).doubleValue())) / 2.0));
+	        median = ((Double)(((((Number)nonMissing.get(middle-1)).doubleValue()) + (((Number)nonMissing.get(middle)).doubleValue())) / 2.0));
 	    }
 		
 		//System.out.println("Median: " + median);

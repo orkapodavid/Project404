@@ -381,7 +381,7 @@ public class Main extends Application {
 									}
 									for (int j=0; j<currColElements.length; j++) {
 										if (currColElements[j].equals("")) {
-											currColElements[j] = importexporter.replaceEmptyElement(currColElements[j], selectedReplaceOption, mean, median);
+											currColElements[j] = importexporter.replaceEmptyElement(selectedReplaceOption, mean, median);
 										}
 									}
 									DataColumn replaceDataColumn = new DataColumn(importTableColNames[i], currColElements);

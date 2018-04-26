@@ -96,6 +96,7 @@ public class Environment{
 		ObjectInputStream objIStream = null;
 		
 		String filePath = selectedFile.getAbsolutePath();
+		System.out.println("loadEnv: filePath = " + filePath);
 		iStream = new FileInputStream(filePath);
 		objIStream = new ObjectInputStream(iStream);
 		envParams = (EnvironmentParams)objIStream.readObject();
