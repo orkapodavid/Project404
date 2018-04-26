@@ -48,8 +48,8 @@ public class Environment{
 	 * Replace/Create a data set by filtering numeric data of a column
 	 * @author kpor
 	 */
-	public void filterDatasetByNum(String datasetName, String colName, String operand,  double threshold, boolean isReplaced) {
-		envParams.filterDataset(datasetName, colName, operand,  threshold, isReplaced);
+	public String filterDatasetByNum(String datasetName, String colName, String operand,  double threshold, boolean isReplaced) {
+		return envParams.filterDataset(datasetName, colName, operand,  threshold, isReplaced);
 	}
 	
 	/**

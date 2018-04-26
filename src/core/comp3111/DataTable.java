@@ -158,7 +158,7 @@ public class DataTable implements Serializable {
 		
 		return colsName.toArray(new String[0]);
 	}
-	
+
 	/**
 	 * Check whether the column exists by the given column name
 	 * 
@@ -167,6 +167,50 @@ public class DataTable implements Serializable {
 	 */
 	public boolean containsColumn(String colName) {
 		return dc.containsKey(colName);
+	}
+	
+	/**
+	 * Get the number of numerical columns
+	 * 
+	 * @return int or 0
+	 */
+	public int getNumOfNumCol() {
+		
+		if(dc.size() == 0) {
+			return 0;
+		}
+		
+		int num = 0;
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_NUMBER)) {
+				num += 1;
+			}
+		}
+		
+		return num;
+	}
+	
+	/**
+	 * Get the number of text columns
+	 * 
+	 * @return int or 0
+	 */
+	public int getNumOfTextCol() {
+		
+		if(dc.size() == 0) {
+			return 0;
+		}
+		
+		int num = 0;
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_STRING)) {
+				num += 1;
+			}
+		}
+		
+		return num;
 	}
 
 	/**

@@ -136,6 +136,8 @@ public class Main extends Application {
 	private ComboBox<String> filterSelectOperator = null;
 	private Alert notNum = null;
 	private Alert notEnoughInput = null;
+	private Alert noNumericalCol = null;
+	private Alert allRowsFilteredOut = null;
 	// Screen 5: paneShowLineChartScreen
 	private LineChart<Number, Number> lineChart = null;
 	private NumberAxis xAxis = null;
@@ -200,7 +202,11 @@ public class Main extends Application {
 		noChartAlert.setHeaderText(null);
 		noChartAlert.setContentText("No chart is selected. Please select a chart.");
 		
-		// for SCENE_SPLIT_DATA
+		// for SCENE_Fliter_DATA
+		noNumericalCol = new Alert(AlertType.INFORMATION);
+		noNumericalCol.setTitle("Reminder Dialog");
+		noNumericalCol.setHeaderText(null);
+		noNumericalCol.setContentText("Selected dataset has no numerical column. Please select another dataset");
 		notEnoughInput = new Alert(AlertType.INFORMATION);
 		notEnoughInput.setTitle("Reminder Dialog");
 		notEnoughInput.setHeaderText(null);
@@ -209,6 +215,10 @@ public class Main extends Application {
 		notNum.setTitle("Warning Dialog");
 		notNum.setHeaderText(null);
 		notNum.setContentText("Please input a valid number for filtering");
+		allRowsFilteredOut = new Alert(AlertType.ERROR);
+		allRowsFilteredOut.setTitle("Error Message");
+		allRowsFilteredOut.setHeaderText(null);
+		allRowsFilteredOut.setContentText("No row in the selected data set meets the filtering requirement. The environment remains unchanged.");
 		
 		
 		SaveChooser = new FileChooser();
@@ -326,8 +336,13 @@ public class Main extends Application {
 			if(currentDatasetName != null) {
 				filterHeader.setText("Selected Dataset: " + currentDatasetName);
 				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
-				filterSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
-				putSceneOnStage(SCENE_FILTER_DATA);
+				// check if selected dataset contains at least one numerical column
+				if(currentDataTable.getNumOfNumCol() <= 0) {
+					noNumericalCol.showAndWait();
+				}else {
+					filterSelectNumCol.getItems().addAll(currentDataTable.getAllNumColName());
+					putSceneOnStage(SCENE_FILTER_DATA);
+				}
 			}else {
 				noDatasetAlert.showAndWait();
 			}
@@ -564,13 +579,28 @@ public class Main extends Application {
 			}
 			
 			// filter the data 
+			String newDataTableName = null;
 			if(filterOption == "Replacing the current dataset") {
 				environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
 				System.out.println("Replacing the current dataset");
 			}else {
-				environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);	
+				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);	
 			}
 			
+			if(newDataTableName == "Empty DataTable") {
+				allRowsFilteredOut.showAndWait();
+			}else {
+				// for debugging:
+				if(newDataTableName == null) {
+					environment.getEnvironmentDataTables().get(currentDatasetName).print();
+				}else {
+					System.out.println("---------Original DataTable---------");
+					environment.getEnvironmentDataTables().get(currentDatasetName).print();
+					System.out.println("---------New DataTable---------");
+					environment.getEnvironmentDataTables().get(newDataTableName).print();
+				}
+			}
+
 			// clear all input informations
 			filterAction.getSelectionModel().clearSelection();
 			filterSelectNumCol.getSelectionModel().clearSelection();
