@@ -446,7 +446,7 @@ public class Main extends Application {
 										}
 									}
 									DataColumn replaceDataColumn = new DataColumn(importTableColNames[i], currColElements);
-									finalImportedTable.addCol(importTableColNames[i], replaceDataColumn);
+									finalImportedTable.addCol(currColTypeName, replaceDataColumn);
 									
 									switch (selectedReplaceOption) {
 									case replaceWithZeros: replacedAlert.setContentText("Replaced missing data with zeros in column: " + importTableColNames[i]);
@@ -460,12 +460,12 @@ public class Main extends Application {
 									}
 									replacedAlert.showAndWait();
 								} else {
-									finalImportedTable.addCol(importTableColNames[i], importedTable.getCol(importTableColNames[i]));
+									finalImportedTable.addCol(currColTypeName, importedTable.getCol(importTableColNames[i]));
 									replacedAlert.setContentText("Replaced missing data with empty string in column: " + importTableColNames[i]);
 									replacedAlert.showAndWait();
 								}
 							} else {
-								finalImportedTable.addCol(importTableColNames[i], importedTable.getCol(importTableColNames[i]));
+								finalImportedTable.addCol(currColTypeName, importedTable.getCol(importTableColNames[i]));
 							}
 						}
 						environment.getEnvironmentDataTables().put(name,finalImportedTable);
