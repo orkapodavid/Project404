@@ -337,6 +337,7 @@ public class Main extends Application {
 				filterHeader.setText("Selected Dataset: " + currentDatasetName);
 				currentDataTable = environment.getEnvironmentDataTables().get(currentDatasetName);
 				// check if selected dataset contains at least one numerical column
+				System.out.println("currentDataTable.getNumOfNumCol() = "+currentDataTable.getNumOfNumCol());
 				if(currentDataTable.getNumOfNumCol() <= 0) {
 					noNumericalCol.showAndWait();
 				}else {
@@ -552,7 +553,7 @@ public class Main extends Application {
 	private void initFliterDataHandlers() {
 		filterCancel.setOnAction(e -> {
 			filterAction.getSelectionModel().clearSelection();
-			filterSelectNumCol.getSelectionModel().clearSelection();
+			filterSelectNumCol.getItems().clear();
 			filterSelectOperator.getSelectionModel().clearSelection();
 			filterTextField.clear();
 			putSceneOnStage(SCENE_MAIN_SCREEN);
@@ -594,6 +595,8 @@ public class Main extends Application {
 				if(newDataTableName == null) {
 					environment.getEnvironmentDataTables().get(currentDatasetName).print();
 				}else {
+					// add the new DataTable onto the dataList
+					dataList.getItems().add(newDataTableName);
 					System.out.println("---------Original DataTable---------");
 					environment.getEnvironmentDataTables().get(currentDatasetName).print();
 					System.out.println("---------New DataTable---------");
@@ -603,7 +606,7 @@ public class Main extends Application {
 
 			// clear all input informations
 			filterAction.getSelectionModel().clearSelection();
-			filterSelectNumCol.getSelectionModel().clearSelection();
+			filterSelectNumCol.getItems().clear();
 			filterSelectOperator.getSelectionModel().clearSelection();
 			filterTextField.clear();
 			putSceneOnStage(SCENE_MAIN_SCREEN);

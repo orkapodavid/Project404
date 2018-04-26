@@ -245,18 +245,18 @@ public class DataTable implements Serializable {
 		
 		List<DataColumn> Columns = new ArrayList<DataColumn>();
 		for (String key: dc.keySet()) {
-			System.out.print(key + " ");
+			System.out.print(key + "\t");
 			Columns.add(dc.get(key));
 		}
 		System.out.println();
 		for (int i=0; i<rowcount; i++) {
 			for (int j=0; j<colcount; j++) {
-				System.out.print(Columns.get(j).getData()[i] + " ");
+				System.out.print(Columns.get(j).getData()[i] + "\t");
 			}
 			System.out.println();
 		}
 		for (int i=0; i<colcount; i++) {
-			System.out.print(Columns.get(i).getTypeName() + " ");
+			System.out.print(Columns.get(i).getTypeName() + "\t");
 		}
 		System.out.println();
 	}

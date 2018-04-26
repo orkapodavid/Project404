@@ -165,7 +165,7 @@ public class EnvironmentParams implements Serializable {
 		 */
 		for(int colIndex = 0 ;colIndex <originalDataColNum; ++colIndex) {
 			currentCol = new DataColumn();
-			currentCol.set(newDataColNames[colIndex], newDataColsContainer.get(colIndex).toArray());
+			currentCol.set(newDataColTypeNames[colIndex], newDataColsContainer.get(colIndex).toArray());
 			try {
 				filterDataTable.addCol(newDataColNames[colIndex], currentCol);
 			} catch (DataTableException e) {
