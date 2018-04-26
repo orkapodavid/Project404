@@ -56,8 +56,8 @@ public class Environment{
 	 * Randomly split a data set into 2 data sets
 	 * @author kpor
 	 */
-	public void randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) {
-		envParams.randSplitDataset(datasetName, splitRatio, isReplaced);
+	public String[] randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) {
+		return envParams.randSplitDataset(datasetName, splitRatio, isReplaced);
 		
 	}
 	

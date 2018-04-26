@@ -123,6 +123,8 @@ public class Main extends Application {
 	private Label splitPercentage = null;
 	private Label splitSliderLabel = null;
 	private Slider splitSlider = null;
+	private Alert noRowsReplaceAlert = null;
+	private Alert goodReplaceAlert = null;
 	// Screen 4: paneFilterDataScreen
 	private Label filterHeader = null;
 	private Label filterSelectNumLabel = null;
@@ -202,6 +204,15 @@ public class Main extends Application {
 		noChartAlert.setHeaderText(null);
 		noChartAlert.setContentText("No chart is selected. Please select a chart.");
 		
+		// for SCENE SPLIT DATA
+		goodReplaceAlert = new Alert(AlertType.INFORMATION);
+		goodReplaceAlert.setTitle("Successful Replacement");
+		goodReplaceAlert.setHeaderText(null);
+		noRowsReplaceAlert = new Alert(AlertType.ERROR);
+		noRowsReplaceAlert.setTitle("Error Message: Empty Dataset");
+		noRowsReplaceAlert.setHeaderText("One of the newly created Dataset is empty.");
+		noRowsReplaceAlert.setContentText("Replacement cannot be done. The environment remains unchanged.");
+		
 		// for SCENE_Fliter_DATA
 		noNumericalCol = new Alert(AlertType.INFORMATION);
 		noNumericalCol.setTitle("Reminder Dialog");
@@ -216,9 +227,9 @@ public class Main extends Application {
 		notNum.setHeaderText(null);
 		notNum.setContentText("Please input a valid number for filtering");
 		allRowsFilteredOut = new Alert(AlertType.ERROR);
-		allRowsFilteredOut.setTitle("Error Message");
-		allRowsFilteredOut.setHeaderText(null);
-		allRowsFilteredOut.setContentText("No row in the selected data set meets the filtering requirement. The environment remains unchanged.");
+		allRowsFilteredOut.setTitle("Error Message: Empty Dataset");
+		allRowsFilteredOut.setHeaderText("No row in the selected dataset meets the filtering requirement.");
+		allRowsFilteredOut.setContentText("The environment remains unchanged.");
 		
 		
 		SaveChooser = new FileChooser();
@@ -582,17 +593,20 @@ public class Main extends Application {
 			// filter the data 
 			String newDataTableName = null;
 			if(filterOption == "Replacing the current dataset") {
-				environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
+				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
 				System.out.println("Replacing the current dataset");
 			}else {
 				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);	
 			}
 			
 			if(newDataTableName == "Empty DataTable") {
+				// Empty DataTable created after filtering
+				// handle the exception of all rows are filtered out and filterDataTable has no rows
 				allRowsFilteredOut.showAndWait();
 			}else {
 				// for debugging:
 				if(newDataTableName == null) {
+					System.out.println("---------Replaced DataTable---------");
 					environment.getEnvironmentDataTables().get(currentDatasetName).print();
 				}else {
 					// add the new DataTable onto the dataList
@@ -637,13 +651,52 @@ public class Main extends Application {
 			}else {
 				// Get the input split ratio
 				splitRatio = ((Number)splitSlider.getValue()).intValue();
-
+				System.out.println("splitRatio: " + splitRatio);
+				int splitedNum;
+				String[] newDatasetName;
 				// split the data set
 				if(splitOption == "Replacing the current dataset") {
 					System.out.println("Replacing the current dataset");
-					environment.randSplitDatasetByNum(currentDatasetName, splitRatio, true);
+					newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, true);
+					if(newDatasetName[0].equals(currentDatasetName)) {
+						// replacement is successful
+						goodReplaceAlert.setContentText(currentDatasetName + " has been replaced.");
+						// add the new DataTable onto the dataList
+						dataList.getItems().add(newDatasetName[1]);
+						goodReplaceAlert.showAndWait();
+					}else if(newDatasetName[0].equals("")) {
+						// replacement is unsuccessful because one of the splited dataset is empty
+						noRowsReplaceAlert.showAndWait();
+					}
 				}else {
-					environment.randSplitDatasetByNum(currentDatasetName, splitRatio, false);
+					newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, false);
+					if(!newDatasetName[0].equals("") && newDatasetName[1].equals("")) {
+						// only one dataset is not empty
+						dataList.getItems().add(newDatasetName[0]);
+						goodReplaceAlert.setContentText("Only one dataset: "+newDatasetName[0] + " has been created.");
+					}else if (newDatasetName[0].equals("") && !newDatasetName[1].equals("")) {
+						// only one dataset is not empty
+						dataList.getItems().add(newDatasetName[1]);
+						goodReplaceAlert.setContentText("Only one dataset: "+newDatasetName[1] + " has been created.");
+					}else if (!newDatasetName[0].equals("") && !newDatasetName[1].equals("")){
+						// two new datasets are not empty
+						dataList.getItems().add(newDatasetName[0]);
+						dataList.getItems().add(newDatasetName[1]);
+						goodReplaceAlert.setContentText("Two datasets: "+newDatasetName[0] + " & "+ newDatasetName[1]+ " has been created.");
+					}
+					goodReplaceAlert.showAndWait();
+				}
+				
+				// debug:
+				System.out.println("---------Original DataTable---------");
+				environment.getEnvironmentDataTables().get(currentDatasetName).print();
+				if(!newDatasetName[0].equals("")) {
+					System.out.println("---------"+newDatasetName[0] +"---------");
+					environment.getEnvironmentDataTables().get(newDatasetName[0]).print();
+				}
+				if(!newDatasetName[1].equals("")) {
+					System.out.println("---------"+newDatasetName[1] +"---------");
+					environment.getEnvironmentDataTables().get(newDatasetName[1]).print();
 				}
 				
 				// clear all input informations
@@ -986,8 +1039,8 @@ public class Main extends Application {
 		splitAction.getItems().addAll("Replacing the current dataset", "Creating a new dataset");
 		
 		splitSlider = new Slider();
-		splitSlider.setMin(0);
-		splitSlider.setMax(100);
+		splitSlider.setMin(1);
+		splitSlider.setMax(99);
 		splitSlider.setValue(50);
 		splitSlider.setShowTickLabels(true);
 		splitSlider.setShowTickMarks(true);
