@@ -1103,7 +1103,12 @@ public class Main extends Application {
 
 			int len = numColValues.length;
 			for (int i = 0; i < len; i++) {
-				pieChartDataList.add(new PieChart.Data((String)textColValues[i], ((Number)numColValues[i]).doubleValue()));
+				if(((String)textColValues[i]).equals("")) {
+					pieChartDataList.add(new PieChart.Data(new String("Empty Input"), ((Number)numColValues[i]).doubleValue()));
+				}else{
+					pieChartDataList.add(new PieChart.Data((String)textColValues[i], ((Number)numColValues[i]).doubleValue()));
+				}
+				
 			}
 
 			pieChart.setTitle("Pie Chart of " + currentDatasetName);
