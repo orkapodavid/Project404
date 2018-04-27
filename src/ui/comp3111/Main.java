@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -385,17 +386,27 @@ public class Main extends Application {
 				}
 				dataList.getItems().remove(0, dataList.getItems().size());
 				chartList.getItems().remove(0, chartList.getItems().size());
+				List<String> dataSortList = new ArrayList<String>(environment.getEnviornmentLineCharts().size());
 				for (String datakey:environment.getEnvironmentDataTables().keySet()) {
-					dataList.getItems().add(datakey);
+					dataSortList.add(datakey);
 				}
-				dataList.setItems(dataList.getItems().sorted());
+				
+				// sort the ArrayList of datasets
+				Collections.sort(dataSortList);
+				// add the sorted ArrayList of datasets into ListView of dataList
+				dataList.getItems().addAll(dataSortList);
+				List<String> chartSortList = new ArrayList<String>(environment.getEnviornmentLineCharts().size());
 				for (String chartkey:environment.getEnviornmentLineCharts().keySet()) {
-					chartList.getItems().add(chartkey);
+					chartSortList.add(chartkey);
 				}
 				for (String chartkey:environment.getEnviornmentPieCharts().keySet()) {
-					chartList.getItems().add(chartkey);
+					chartSortList.add(chartkey);
 				}
-				chartList.setItems(chartList.getItems().sorted());
+				// sort the ArrayList of charts
+				Collections.sort(chartSortList);
+				// add the sorted ArrayList of charts into ListView of chartList
+				chartList.getItems().addAll(chartSortList);
+
 				if (!loaded.equals(null)) {
 					loaded.setContentText("Environment has been loaded from: " + filePath);
 					loaded.showAndWait();
@@ -489,10 +500,12 @@ public class Main extends Application {
 		exportButton.setOnAction(e -> {
 			List<String> exportOptions = new ArrayList<String>();
 			if (environment.getEnvironmentDataTables().size() != 0) {
+				List<String> exportSortList = new ArrayList<String>(environment.getEnvironmentDataTables().size());
 				for (String key: environment.getEnvironmentDataTables().keySet()) {
-					exportOptions.add(key);
+					exportSortList.add(key);
 				}
-	
+				Collections.sort(exportSortList);
+				exportOptions.addAll(exportSortList);
 				ChoiceDialog<String> chooseExportDataSet = new ChoiceDialog<String>(exportOptions.get(0), exportOptions);
 				chooseExportDataSet.setTitle("Export");
 				chooseExportDataSet.setHeaderText("Please choose table to export");
@@ -1104,8 +1117,12 @@ public class Main extends Application {
 			t.setList(pieChartDataList);
 			t.setTitle("Pie Chart of " + currentDatasetName);
 			t.setAxisName(chartNumColName, chartTextColName);
+			
 			name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
+			
+			System.out.println("name: " + name);
 			environment.getEnviornmentPieCharts().put(name, t);
+			System.out.println(chartList.getItems());
 			chartList.getItems().add(name);
 		}
 		return name;
