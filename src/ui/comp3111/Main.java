@@ -80,7 +80,7 @@ public class Main extends Application {
 
 	private ImportExportCSV importexporter = null;
 	private FileChooser ImportChooser, ExportChooser;
-	private Alert noFileChosen, emptyTable, tableAdded, wrongFileType, noFileExported, replacedAlert, noDataSets, emptyCSV;
+	private Alert noFileChosen, emptyTable, tableAdded, wrongFileType, noFileExported, replacedAlert, noDataSets, emptyCSV, noExport, noImport;
 	private ChoiceDialog<String> chooseReplaceOption;
 	private static final String replaceWithZeros = "Replace with zeros";
 	private static final String replaceWithMean = "Replace with column mean";
@@ -271,6 +271,8 @@ public class Main extends Application {
 		replacedAlert = new Alert(AlertType.INFORMATION);
 		emptyCSV = new Alert(AlertType.ERROR);
 		noDataSets = new Alert(AlertType.ERROR);
+		noExport = new Alert(AlertType.INFORMATION);
+		noImport = new Alert(AlertType.INFORMATION);
 		
 		ImportChooser.setTitle("Import CSV");
 		ExtensionFilter CSVfilter = new ExtensionFilter("CSV Files", "*.csv");
@@ -309,6 +311,14 @@ public class Main extends Application {
 		emptyCSV.setHeaderText("Empty CSV");
 		emptyCSV.setContentText("Selected CSV file is empty");
 		
+		noExport.setTitle("Cancelled");
+		noExport.setHeaderText("Export Cancelled");
+		noExport.setContentText("Returning to main window.");
+		
+		noImport.setTitle("Cancelled");
+		noImport.setHeaderText("Import Cancelled");
+		noImport.setContentText("Returning to main window.");
+		
 		replacedAlert.setTitle("Information");
 		replacedAlert.setHeaderText("Replaced missing data");
 		
@@ -320,7 +330,6 @@ public class Main extends Application {
 		chooseReplaceOption = new ChoiceDialog<String>(replaceWithZeros, replaceOptions);
 		chooseReplaceOption.setTitle("Replace Option");
 		chooseReplaceOption.setHeaderText("Please choose");
-		chooseReplaceOption.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
 		
 		SaveChooser = new FileChooser();
 		LoadChooser = new FileChooser();
@@ -413,6 +422,7 @@ public class Main extends Application {
 			File selectedFile = ImportChooser.showOpenDialog(null);
 			String filePath = null;
 			DataTable importedTable = null, finalImportedTable = new DataTable();
+			boolean isCancelled = false;
 			
 			if (selectedFile != null) {
 				try {
@@ -438,7 +448,8 @@ public class Main extends Application {
 									if (returnedReplaceOption.isPresent()) {
 										selectedReplaceOption = returnedReplaceOption.get();
 									} else {
-										selectedReplaceOption = replaceWithZeros;
+										isCancelled = true;
+										break;
 									}
 									for (int j=0; j<currColElements.length; j++) {
 										if (currColElements[j].equals("")) {
@@ -468,10 +479,15 @@ public class Main extends Application {
 								finalImportedTable.addCol(importTableColNames[i], importedTable.getCol(importTableColNames[i]));
 							}
 						}
-						environment.getEnvironmentDataTables().put(name,finalImportedTable);
-						dataList.getItems().add(name);
-						System.out.println("importCSV: Imported table added");
-						tableAdded.showAndWait();
+						if (isCancelled) {
+							System.out.println("importCSV: Import Cancelled");
+							noImport.showAndWait();
+						} else {
+							environment.getEnvironmentDataTables().put(name,finalImportedTable);
+							dataList.getItems().add(name);
+							System.out.println("importCSV: Imported table added");
+							tableAdded.showAndWait();
+						}
 					} else {
 						System.out.println("importCSV: Empty CSV File");
 						emptyCSV.showAndWait();
@@ -496,13 +512,12 @@ public class Main extends Application {
 				ChoiceDialog<String> chooseExportDataSet = new ChoiceDialog<String>(exportOptions.get(0), exportOptions);
 				chooseExportDataSet.setTitle("Export");
 				chooseExportDataSet.setHeaderText("Please choose table to export");
-				chooseExportDataSet.getDialogPane().lookupButton(ButtonType.CANCEL).setDisable(true);
 				Optional<String> returnedDataSetOption = chooseExportDataSet.showAndWait();
-				System.out.println("exportCSV: Selected tabled: " + returnedDataSetOption.get());
 				
 				String selectedDataSetName;
 				
 				if (returnedDataSetOption.isPresent()) {
+					System.out.println("exportCSV: Selected tabled: " + returnedDataSetOption.get());
 					selectedDataSetName = returnedDataSetOption.get();
 					ExportChooser.setInitialFileName(selectedDataSetName + ".csv");
 					System.out.println("exportCSV: Initial file name: " + ExportChooser.getInitialFileName());
@@ -526,9 +541,12 @@ public class Main extends Application {
 						System.out.println("exportCSV: No file saved");
 						noFileExported.showAndWait();
 					}
-				}	
+				} else {
+					System.out.println("exportCSV: No data selected");
+					noExport.showAndWait();
+				}
 			} else {
-				System.out.println("exportCSV: No data set for export");
+				System.out.println("exportCSV: No data sets");
 				noDataSets.showAndWait();
 			}
 		});
