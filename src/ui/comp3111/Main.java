@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -394,17 +395,28 @@ public class Main extends Application {
 				}
 				dataList.getItems().remove(0, dataList.getItems().size());
 				chartList.getItems().remove(0, chartList.getItems().size());
+				
+				//sort
+				List<String> dataSortList = new ArrayList<String>(environment.getEnviornmentLineCharts().size());
 				for (String datakey:environment.getEnvironmentDataTables().keySet()) {
-					dataList.getItems().add(datakey);
+					dataSortList.add(datakey);
 				}
-				dataList.setItems(dataList.getItems().sorted());
+				// sort the ArrayList of datasets
+				Collections.sort(dataSortList);
+				// add the sorted ArrayList of datasets into ListView of dataList
+				dataList.getItems().addAll(dataSortList);
+				List<String> chartSortList = new ArrayList<String>(environment.getEnviornmentLineCharts().size());
 				for (String chartkey:environment.getEnviornmentLineCharts().keySet()) {
-					chartList.getItems().add(chartkey);
+					chartSortList.add(chartkey);
 				}
 				for (String chartkey:environment.getEnviornmentPieCharts().keySet()) {
-					chartList.getItems().add(chartkey);
+					chartSortList.add(chartkey);
 				}
-				chartList.setItems(chartList.getItems().sorted());
+				// sort the ArrayList of charts
+				Collections.sort(chartSortList);
+				// add the sorted ArrayList of charts into ListView of chartList
+				chartList.getItems().addAll(chartSortList);
+				
 				if (!loaded.equals(null)) {
 					loaded.setContentText("Environment has been loaded from: " + filePath);
 					loaded.showAndWait();
@@ -661,7 +673,7 @@ public class Main extends Application {
 
 	private void initTimer() {
 		tl = new Timeline();
-		tl.getKeyFrames().add(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
+		tl.getKeyFrames().add(new KeyFrame(Duration.millis(250), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent actionEvent) {
 				int size = lineChart.getData().get(0).getData().size();
@@ -700,14 +712,27 @@ public class Main extends Application {
 						chartSelectYaxis.getItems().clear();
 						chartSelectNumCol.getItems().clear();
 						chartSelectTextCol.getItems().clear();
-						String name = initLineChart();
-						if (setAnimation.isSelected()) {
+						LineChartClass t = new LineChartClass(currentDataTable, chartXaxisName, chartYaxisName, currentDatasetName, setAnimation.isSelected());
+						String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
+						environment.getEnviornmentLineCharts().put(name, t);
+						if (t.get_animate()) {
 							XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
-							temp.setName(environment.getEnviornmentLineCharts().get(name).getSeries().getName());
-							lineChart.getData().set(0, temp);
+							temp.setName(t.getSeries().getName());
+							if (lineChart.getData().size() == 0)
+								lineChart.getData().add(temp);
+							else
+								lineChart.getData().set(0, temp);
 							current = environment.getEnviornmentLineCharts().get(name);
 							tl.play();
 						}
+						else {
+							if (lineChart.getData().size() == 0)
+								lineChart.getData().add(t.getSeries());
+
+							else
+								lineChart.getData().set(0, t.getSeries());
+						}
+						chartList.getItems().add(name);
 						putSceneOnStage(SCENE_SHOW_LINECHART);
 					} else {
 						noSelectedColAlert.showAndWait();
@@ -723,9 +748,13 @@ public class Main extends Application {
 						chartSelectYaxis.getItems().clear();
 						chartSelectNumCol.getItems().clear();
 						chartSelectTextCol.getItems().clear();
-						initPieChart();
-						// String name = initPieChart();
-						// currentPieChartClass = environment.getEnviornmentPieCharts().get(name);
+						PieChartClass t = new PieChartClass(currentDataTable,chartNumColName,chartTextColName,currentDatasetName);
+						String name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
+						environment.getEnviornmentPieCharts().put(name, t);
+						chartList.getItems().add(name);
+						pieChart.setTitle("Pie Chart of " + currentDatasetName);
+						pieChart.setLegendSide(Side.LEFT);
+						pieChart.setData(t.getObserList());
 						putSceneOnStage(SCENE_SHOW_PIECHART);
 					}else {
 						noSelectedColAlert.showAndWait();
@@ -1039,97 +1068,6 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Populate sample data table values to the line chart view
-	 */
-	private String initLineChart() {
-		// Get 2 columns
-		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
-		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
-
-		lineChart.setTitle("Line Chart of " + currentDatasetName);
-		xAxis.setLabel(chartXaxisName);
-		yAxis.setLabel(chartYaxisName);
-
-		// defining a series
-		XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
-
-		series.setName(currentDatasetName);
-		// populating the series with data
-		// In DataTable structure, both length must be the same
-		for (int i = 0; i < xCol.getSize(); i++) {
-			series.getData()
-					.add(new XYChart.Data<Number, Number>((Number) xCol.getData()[i], (Number) yCol.getData()[i]));
-		}
-
-		// add the new series as the only one series for this line chart
-		if (lineChart.getData().size() == 0)
-			lineChart.getData().add(series);
-
-		else if (lineChart.getData().get(0) != series) {
-			lineChart.getData().clear();
-			lineChart.getData().add(series);
-		}
-
-		// put linechart data into map
-		LineChartClass t = new LineChartClass();
-		t.setSeries(series);
-		t.setAxisName(chartXaxisName, chartYaxisName);
-		t.setTitle("Line Chart of " + currentDatasetName);
-		if (setAnimation.isSelected())
-			t.animate(true);
-		else
-			t.animate(false);
-		String name = "LineChart" + (environment.getEnviornmentLineCharts().size() + 1);
-		environment.getEnviornmentLineCharts().put(name, t);
-		chartList.getItems().add(name);
-		return name;
-	}
-
-	/**
-	 * Populate sample data table values to the pie chart view
-	 */
-	private String initPieChart() {
-		String name = null;
-		if (currentDatasetName == null) {
-			return null;
-		}
-		// Get 2 columns
-		DataColumn numCol = currentDataTable.getCol(chartNumColName);
-		DataColumn textCol = currentDataTable.getCol(chartTextColName);
-		// Ensure both columns exist and the type of numCol and textCol are Number and
-		// String respectively
-		if (numCol != null && textCol != null && numCol.getTypeName().equals(DataType.TYPE_NUMBER)
-				&& textCol.getTypeName().equals(DataType.TYPE_STRING)) {
-
-			ObservableList<PieChart.Data> pieChartDataList = FXCollections.observableArrayList();
-
-			Object[] numColValues = numCol.getData();
-			Object[] textColValues =  textCol.getData();
-
-			int len = numColValues.length;
-			for (int i = 0; i < len; i++) {
-				pieChartDataList.add(new PieChart.Data((String)textColValues[i], ((Number)numColValues[i]).doubleValue()));
-			}
-
-			pieChart.setTitle("Pie Chart of " + currentDatasetName);
-			pieChart.setLegendSide(Side.LEFT);
-			
-			
-			// Add all selected data into PieChart
-			pieChart.setData(pieChartDataList);
-
-			PieChartClass t = new PieChartClass();
-			t.setList(pieChartDataList);
-			t.setTitle("Pie Chart of " + currentDatasetName);
-			t.setAxisName(chartNumColName, chartTextColName);
-			name = "PieChart" + (environment.getEnviornmentPieCharts().size() + 1);
-			environment.getEnviornmentPieCharts().put(name, t);
-			chartList.getItems().add(name);
-		}
-		return name;
-	}
-
-	/**
 	 * Create the show pie chart screen and layout its UI components
 	 * 
 	 * @return a Pane component to be displayed on a scene
@@ -1408,8 +1346,5 @@ public class Main extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-
-	private String checkSelectedDataSet() {
-		return "Selected DataSet: DataSet" + dataList.getSelectionModel().getSelectedIndex();
-	}
+	
 }
