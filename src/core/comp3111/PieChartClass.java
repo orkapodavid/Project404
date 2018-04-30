@@ -105,12 +105,9 @@ public class PieChartClass implements Chart, Externalizable {
 
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(pieChartDataList.size());
-		out.writeChars(textColName);
-		out.writeChar('\n');
-		out.writeChars(numColName);
-		out.writeChar('\n');
-		out.writeChars(title);
-		out.writeChar('\n');
+		out.writeObject(textColName);
+		out.writeObject(numColName);
+		out.writeObject(title);
 		for (PieChart.Data data : pieChartDataList) {
 			out.writeObject(data.getName());
 			out.writeObject(data.getPieValue());
@@ -120,9 +117,9 @@ public class PieChartClass implements Chart, Externalizable {
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		int size = in.readInt();
-		textColName = in.readLine();
-		numColName = in.readLine();
-		title = in.readLine();
+		textColName = (String)in.readObject();
+		numColName = (String)in.readObject();
+		title = (String)in.readObject();
 		pieChartDataList = FXCollections.observableArrayList();
 		for (int i = 0; i < size; i++) {
 			pieChartDataList.add(new PieChart.Data((String) in.readObject(), ((Number) in.readObject()).doubleValue()));
