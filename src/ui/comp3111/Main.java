@@ -394,13 +394,13 @@ public class Main extends Application {
 					e1.printStackTrace();
 				}
 				dataList.getItems().remove(0, dataList.getItems().size());
-				chartList.getItems().remove(0, chartList.getItems().size());
-				
+				chartList.getItems().remove(0, chartList.getItems().size());	
 				//sort
 				List<String> dataSortList = new ArrayList<String>(environment.getEnviornmentLineCharts().size());
 				for (String datakey:environment.getEnvironmentDataTables().keySet()) {
 					dataSortList.add(datakey);
 				}
+
 				// sort the ArrayList of datasets
 				Collections.sort(dataSortList);
 				// add the sorted ArrayList of datasets into ListView of dataList
@@ -416,7 +416,7 @@ public class Main extends Application {
 				Collections.sort(chartSortList);
 				// add the sorted ArrayList of charts into ListView of chartList
 				chartList.getItems().addAll(chartSortList);
-				
+
 				if (!loaded.equals(null)) {
 					loaded.setContentText("Environment has been loaded from: " + filePath);
 					loaded.showAndWait();
@@ -517,10 +517,12 @@ public class Main extends Application {
 		exportButton.setOnAction(e -> {
 			List<String> exportOptions = new ArrayList<String>();
 			if (environment.getEnvironmentDataTables().size() != 0) {
+				List<String> exportSortList = new ArrayList<String>(environment.getEnvironmentDataTables().size());
 				for (String key: environment.getEnvironmentDataTables().keySet()) {
-					exportOptions.add(key);
+					exportSortList.add(key);
 				}
-	
+				Collections.sort(exportSortList);
+				exportOptions.addAll(exportSortList);
 				ChoiceDialog<String> chooseExportDataSet = new ChoiceDialog<String>(exportOptions.get(0), exportOptions);
 				chooseExportDataSet.setTitle("Export");
 				chooseExportDataSet.setHeaderText("Please choose table to export");
@@ -1067,7 +1069,9 @@ public class Main extends Application {
 		return pane;
 	}
 
+
 	/**
+
 	 * Create the show pie chart screen and layout its UI components
 	 * 
 	 * @return a Pane component to be displayed on a scene

@@ -73,14 +73,10 @@ public class LineChartClass implements Chart, Externalizable {
 	 */
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(series.getData().size());
-		out.writeChars(series.getName());
-		out.writeChar('\n');
-		out.writeChars(xAxisName);
-		out.writeChar('\n');
-		out.writeChars(yAxisName);
-		out.writeChar('\n');
-		out.writeChars(title);
-		out.writeChar('\n');
+		out.writeObject(series.getName());
+		out.writeObject(xAxisName);
+		out.writeObject(yAxisName);
+		out.writeObject(title);
 		out.writeBoolean(animation);
 		for (Data<Number, Number> data : series.getData()) {
 			out.writeObject(data.getXValue());
@@ -91,10 +87,10 @@ public class LineChartClass implements Chart, Externalizable {
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		int size = in.readInt();
 		series = new XYChart.Series<Number, Number>();
-		series.setName(in.readLine());
-		xAxisName = in.readLine();
-		yAxisName = in.readLine();
-		title = in.readLine();
+		series.setName((String)in.readObject());
+		xAxisName = (String)in.readObject();
+		yAxisName = (String)in.readObject();
+		title = (String)in.readObject();
 		animation = in.readBoolean();
 		for (int i = 0; i < size; i++) {
 			series.getData().add(new Data<Number, Number>((Number) in.readObject(), (Number) in.readObject()));
