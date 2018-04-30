@@ -14,18 +14,19 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
 /**
- * This class used for containing parameters of a Line Chart for clearer structure.
+ * This class used for containing parameters of a Line Chart for clearer
+ * structure.
  * 
  * @author kpor
  */
 public class LineChartClass implements Chart, Externalizable {
-	
+
 	private XYChart.Series<Number, Number> series;
 	private String xAxisName;
 	private String yAxisName;
 	private String title;
 	private boolean animation;
-	
+
 	/**
 	 * Construct - Create an empty copy of all the essential data in a line chart.
 	 */
@@ -37,18 +38,47 @@ public class LineChartClass implements Chart, Externalizable {
 		animation = false;
 	}
 
+	public LineChartClass(DataTable currentDataTable, String chartXaxisName,String chartYaxisName, String currentDatasetName, boolean animated) {
+		
+		// Get 2 columns
+		DataColumn xCol = currentDataTable.getCol(chartXaxisName);
+		DataColumn yCol = currentDataTable.getCol(chartYaxisName);
+		title = "Line Chart of " + currentDatasetName;
+		xAxisName = chartXaxisName;
+		yAxisName = chartYaxisName;
+		
+		// defining a series
+		series = new XYChart.Series<Number, Number>();
+
+		series.setName(currentDatasetName);
+		// populating the series with data
+		// In DataTable structure, both length must be the same
+		for (int i = 0; i < xCol.getSize(); i++) {
+			series.getData()
+					.add(new XYChart.Data<Number, Number>((Number) xCol.getData()[i], (Number) yCol.getData()[i]));
+		}
+		
+
+		if (animated)
+			animation = true;
+		else
+			animation = false;
+	}
+
+	/**
+	 * Encode all the data in the current environment into an ObjectOutput
+	 * 
+	 * @param out
+	 *            - ObjectOutput containing all the data in the current environment
+	 */
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(series.getData().size());
-		out.writeChars(series.getName());
-		out.writeChar('\n');
-		out.writeChars(xAxisName);
-		out.writeChar('\n');
-		out.writeChars(yAxisName);
-		out.writeChar('\n');
-		out.writeChars(title);
-		out.writeChar('\n');
+		out.writeObject(series.getName());
+		out.writeObject(xAxisName);
+		out.writeObject(yAxisName);
+		out.writeObject(title);
 		out.writeBoolean(animation);
-		for( Data<Number, Number> data: series.getData()) {
+		for (Data<Number, Number> data : series.getData()) {
 			out.writeObject(data.getXValue());
 			out.writeObject(data.getYValue());
 		}
@@ -57,13 +87,13 @@ public class LineChartClass implements Chart, Externalizable {
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		int size = in.readInt();
 		series = new XYChart.Series<Number, Number>();
-		series.setName(in.readLine());
-		xAxisName = in.readLine();
-		yAxisName = in.readLine();
-		title = in.readLine();
+		series.setName((String)in.readObject());
+		xAxisName = (String)in.readObject();
+		yAxisName = (String)in.readObject();
+		title = (String)in.readObject();
 		animation = in.readBoolean();
-		for(int i = 0 ; i < size; i++) {
-			series.getData().add(new Data<Number,Number>((Number) in.readObject(),(Number) in.readObject()));
+		for (int i = 0; i < size; i++) {
+			series.getData().add(new Data<Number, Number>((Number) in.readObject(), (Number) in.readObject()));
 		}
 	}
 
@@ -95,7 +125,7 @@ public class LineChartClass implements Chart, Externalizable {
 	public void animate(boolean state) {
 		animation = state;
 	}
-	
+
 	/**
 	 * Get the line chart's state.
 	 * 
@@ -154,4 +184,5 @@ public class LineChartClass implements Chart, Externalizable {
 	public void setTitle(String m_title) {
 		title = m_title;
 	}
+
 }
