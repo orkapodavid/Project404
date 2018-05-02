@@ -11,8 +11,14 @@ Team Leader:
 Team Member 1:
 
 	Leung Ka Wai Aidan
-	kwleung@connect.ust.hk
+	kwaleung@connect.ust.hk
 	Features 1 & 4
+	Best 3 commits:
+		
+		
+		
+	Best pull request:
+		
 
 Team Member 2:
 
