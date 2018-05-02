@@ -73,10 +73,12 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Duration;
 
 /**
- * The Main class of this GUI application
+ * The Main class of this GUI application.
  * 
  * @author cspeter
- *
+ * @author kwchiuab
+ * @author OR Ka Po, kpor
+ * @author kwaleung
  */
 public class Main extends Application {
 
@@ -181,7 +183,7 @@ public class Main extends Application {
 	/* private PieChartClass currentPieChartClass = null; */
 
 	/**
-	 * create all scenes in this application
+	 * Create all scenes in this application.
 	 */
 	private void initScenes() {
 		scenes = new Scene[SCENE_NUM];
@@ -199,7 +201,8 @@ public class Main extends Application {
 	}
 
 	/**
-	 * This method will be invoked after createScenes(). In this stage, all UI
+	 * This method will be invoked after createScenes(). 
+	 * <p>In this stage, all UI
 	 * components will be created with a non-NULL references for the UI components
 	 * that requires interaction (e.g. button click, or others).
 	 */
@@ -656,7 +659,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Initialize event handlers of all the return button
+	 * Initialize event handlers of all the return button.
 	 */
 	private void initSubScreenHandlers() {
 		// create chart screen
@@ -690,7 +693,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Initialize event handlers of the sub screen - SCENE_CREATE_CHART
+	 * Initialize event handlers of the sub screen - SCENE_CREATE_CHART.
 	 */
 	private void initCreateChartHandlers() {
 		// create chart screen
@@ -820,7 +823,7 @@ public class Main extends Application {
 	}
 	
 	/**
-	 * Initialize event handlers of the sub screen - SCENE_FILTER_DATA
+	 * Initialize event handlers of the sub screen - SCENE_FILTER_DATA.
 	 */
 	private void initFliterDataHandlers() {
 		filterCancel.setOnAction(e -> {
@@ -994,7 +997,7 @@ public class Main extends Application {
 	}
 	
 	/**
-	 * Create the create chart screen and layout its UI components
+	 * Create the create chart screen and layout its UI components.
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
@@ -1088,7 +1091,7 @@ public class Main extends Application {
 
 	/**
 
-	 * Create the show pie chart screen and layout its UI components
+	 * Create the show pie chart screen and layout its UI components.
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
@@ -1120,7 +1123,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Create the show line chart screen and layout its UI components
+	 * Create the show line chart screen and layout its UI components.
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
@@ -1157,7 +1160,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Create the Filter Data screen and layout its UI components
+	 * Create the Filter Data screen and layout its UI components.
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
@@ -1214,7 +1217,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Create the Split Data screen and layout its UI components
+	 * Create the Split Data screen and layout its UI components.
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
@@ -1270,7 +1273,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Creates the main screen and layout its UI components
+	 * Creates the main screen and layout its UI components.
 	 * 
 	 * @return a Pane component to be displayed on a scene
 	 */
@@ -1320,12 +1323,12 @@ public class Main extends Application {
 	}
 
 	/**
-	 * This method is used to pick anyone of the scene on the stage. It handles the
+	 * This method is used to pick anyone of the scene on the stage. 
+	 * <p>It handles the
 	 * hide and show order. In this application, only one active scene should be
 	 * displayed on stage.
 	 * 
-	 * @param sceneID
-	 *            - The sceneID defined above (see SCENE_XXX)
+	 * @param sceneID The sceneID defined above (see SCENE_XXX)
 	 */
 	private void putSceneOnStage(int sceneID) {
 
@@ -1340,7 +1343,8 @@ public class Main extends Application {
 	}
 
 	/**
-	 * All JavaFx GUI application needs to override the start method You can treat
+	 * All JavaFx GUI application needs to override the start method.
+	 * <p>You can treat
 	 * it as the main method (i.e. the entry point) of the GUI application
 	 */
 	@Override
@@ -1359,9 +1363,9 @@ public class Main extends Application {
 	}
 
 	/**
-	 * main method - only use if running via command line
+	 * Main method - only use if running via command line.
 	 * 
-	 * @param args
+	 * @param args default command-line argument
 	 */
 	public static void main(String[] args) {
 		launch(args);
