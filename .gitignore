@@ -1,8 +1,5 @@
 # Ignore binary files
 /bin/
 
-# Ignore JavaDoc
-/doc/
-
 # Ignore DS_Store in Mac OS X
 .DS_Store

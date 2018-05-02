@@ -50,12 +50,15 @@ public class ImportExportCSV {
 	 * This functions reads a CSV file of the user's choice and
 	 * creates a DataTable according to the content provided by the CSV
 	 * 
-	 * @param name
-	 * 			-name to be used by the imported table
+	 * @param selectedFile
+	 * 			-selected file object to be imported from
 	 *
-	 * @return boolean
+	 * @return 
 	 * 			-true if CSV imported
 	 * 			-false otherwise
+	 * 
+	 * @throws Exception
+	 * 			-throws exception when there is error while importing CSV
 	 * 
 	 * @author kwaleung
 	 */
@@ -115,8 +118,17 @@ public class ImportExportCSV {
 	/**
 	 * This functions writes a data table chosen by the user to a CSV format file.
 	 * 
+	 * @param selectedFile
+	 * 			-the selected file object for exporting to
+	 * 
+	 * @param selectedDataSetName
+	 * 			-Name of data table to be exported
+	 * 
 	 * @param datasets
 	 * 			-current collection of data tables
+	 * 
+	 * @throws Exception
+	 * 			-throws exception when there is error while exporting CSV
 	 * 
 	 * @author kwaleung
 	 */
@@ -203,7 +215,7 @@ public class ImportExportCSV {
 	 * @param currCol
 	 * 			-Column to be checked
 	 * 
-	 * @return boolean
+	 * @return 
 	 * 			-true if there is missing data, otherwise false
 	 * 
 	 * @author kwaleung
@@ -220,8 +232,14 @@ public class ImportExportCSV {
 	/**
 	 * This functions checks whether a column has missing data to be handled.
 	 * 
-	 * @param currCol
+	 * @param selectedReplaceOption
 	 * 			-Column to be checked
+	 * 
+	 * @param mean
+	 * 			-calculated mean value of column
+	 * 
+	 * @param median
+	 * 			-calculated median value of column
 	 * 
 	 * @return boolean
 	 * 			-true if there is missing data, otherwise false
