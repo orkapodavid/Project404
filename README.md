@@ -12,17 +12,11 @@ Team Leader:
 	    <th>Best 3 commits URLs</th>
 	</tr>
 	<tr>
-		<td rowspan="3">OR Ka Po</td>
-		<td rowspan="3">kpor@connect.ust.hk</td>
-		<td rowspan="3">2 & 5</td>
-		<td rowspan="3"><https://github.com/orkapodavid/Project404/pull/20></td>
-		<td><https://github.com/orkapodavid/Project404/commit/6312862c6ab161ae21c41de36dbf81c0a0aaf75d></td>
-	</tr>
-	<tr>
-		<td><https://github.com/orkapodavid/Project404/commit/d0091d684aceb73e7b3fb76361e7438adce6ce0f></td>
-	</tr>
-	<tr>
-		<td><https://github.com/orkapodavid/Project404/commit/99d0e9a3e4c993185c04baa01f77e4cdc0a8c395></td>
+		<td>OR Ka Po</td>
+		<td>kpor@connect.ust.hk</td>
+		<td>2 & 5</td>
+		<td><https://github.com/orkapodavid/Project404/pull/20></td>
+		<td><https://github.com/orkapodavid/Project404/commit/6312862c6ab161ae21c41de36dbf81c0a0aaf75d> <br/> <https://github.com/orkapodavid/Project404/commit/d0091d684aceb73e7b3fb76361e7438adce6ce0f> <br/> <td><https://github.com/orkapodavid/Project404/commit/99d0e9a3e4c993185c04baa01f77e4cdc0a8c395></td>
 	</tr>
 </table>
 
