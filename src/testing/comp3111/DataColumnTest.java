@@ -14,6 +14,11 @@ import core.comp3111.DataType;
  */
 class DataColumnTest {
 
+	/**
+	 * Test case for default constructor of the DataColumn class.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testCoverageEmptyDataColumnConstructor() {
 
@@ -22,6 +27,11 @@ class DataColumnTest {
 
 	}
 
+	/**
+	 * Test case for constructor of the DataColumn class with parameters.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testCoverageNonEmptyDataColumnConstructor() {
 
@@ -31,6 +41,11 @@ class DataColumnTest {
 
 	}
 
+	/**
+	 * Test case for methods getTypeName and getData in the DataColumn class.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testCoverageGetDataAndType() {
 
