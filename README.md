@@ -3,23 +3,22 @@
 Team Name: Project404
 
 Team Leader:
-
-	<table>
-    <tr>
-        <td>Name</td>
-        <td>ITSC email</td>
-        <td>Features</td>
-        <td>Best 3 commits URLs</td>
-        <td>Best pull request URL</td>
-    </tr>
-    <tr>
-    		<td>OR Ka Po</td>
-    		<td>kpor@connect.ust.hk</td>
-    		<td>2 & 5</td>
-    		<td></td>
-    		<td></td>
-    </tr>
-	</table>
+<table>
+	<tr>
+	    <td>Name</td>
+	    <td>ITSC email</td>
+	    <td>Features</td>
+	    <td>Best 3 commits URLs</td>
+	    <td>Best pull request URL</td>
+	</tr>
+	<tr>
+			<td>OR Ka Po</td>
+			<td>kpor@connect.ust.hk</td>
+			<td>2 & 5</td>
+			<td></td>
+			<td></td>
+	</tr>
+</table>
 
 Team Member 1:
 
