@@ -15,10 +15,10 @@ Team Leader:
 		<td>OR Ka Po</td>
 		<td>kpor@connect.ust.hk</td>
 		<td>2 & 5</td>
-		<td><https://github.com/orkapodavid/Project404/pull/20></td>
-		<td><a href=https://github.com/orkapodavid/Project404/commit/6312862c6ab161ae21c41de36dbf81c0a0aaf75d> https://github.com/orkapodavid/Project404/commit/6312862c6ab161ae21c41de36dbf81c0a0aaf75d></a> <br/> 
-		<a href= https://github.com/orkapodavid/Project404/commit/d0091d684aceb73e7b3fb76361e7438adce6ce0f>https://github.com/orkapodavid/Project404/commit/d0091d684aceb73e7b3fb76361e7438adce6ce0f</a>  <br/> 
-		<a href= https://github.com/orkapodavid/Project404/commit/99d0e9a3e4c993185c04baa01f77e4cdc0a8c395>https://github.com/orkapodavid/Project404/commit/99d0e9a3e4c993185c04baa01f77e4cdc0a8c395</a>  </td>
+		<td><a href=https://github.com/orkapodavid/Project404/pull/20>Finish building functions of filtering and splitting dataset</a></td>
+		<td><a href=https://github.com/orkapodavid/Project404/commit/6312862c6ab161ae21c41de36dbf81c0a0aaf75d> Fixed bugs of filtering dataset and splitting dataset</a> <br/> 
+		<a href= https://github.com/orkapodavid/Project404/commit/d0091d684aceb73e7b3fb76361e7438adce6ce0f>Finalize UI of all screen</a>  <br/> 
+		<a href= https://github.com/orkapodavid/Project404/commit/99d0e9a3e4c993185c04baa01f77e4cdc0a8c395>Handling PieChart</a>  </td>
 	</tr>
 </table>
 
