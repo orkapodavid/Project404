@@ -12,6 +12,11 @@ import core.comp3111.DataType;
  */
 class DataTypeTest {
 
+	/**
+	 * Test case for default constructor of DataType class.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testDataType(){
 		DataType testDataType = new DataType();

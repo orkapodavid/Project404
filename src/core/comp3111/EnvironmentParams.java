@@ -30,7 +30,9 @@ public class EnvironmentParams implements Serializable {
 	}
 	
 	/**
-	 * Set the HashMap of data tables in the environment>
+	 * Set the HashMap of data tables in the environment
+	 * 
+	 * @param newDataTables - data tables to be put into environment
 	 * 
 	 * @author kwaleung
 	 */
@@ -39,7 +41,9 @@ public class EnvironmentParams implements Serializable {
 	}
 	
 	/**
-	 * Set the HashMap of line charts in the environment>
+	 * Set the HashMap of line charts in the environment
+	 * 
+	 * @param newLineCharts - line charts to be put into environment
 	 * 
 	 * @author kwaleung
 	 */
@@ -48,7 +52,9 @@ public class EnvironmentParams implements Serializable {
 	}
 	
 	/**
-	 * Set the HashMap of pie charts in the environment>
+	 * Set the HashMap of pie charts in the environment
+	 * 
+	 * @param newPieCharts - pie charts to be put into environment
 	 * 
 	 * @author kwaleung
 	 */
@@ -58,7 +64,7 @@ public class EnvironmentParams implements Serializable {
 	
 	/**
 	 * Returns the HashMap of data tables in the environment
-	 * @return HashMap<String, DataTable>
+	 * @return HashMap of data tables
 	 * 
 	 * @author kwaleung
 	 */
@@ -68,7 +74,7 @@ public class EnvironmentParams implements Serializable {
 	
 	/**
 	 * Returns the HashMap of line charts in the environment
-	 * @return Map<String, LineChartClass>
+	 * @return Map of line charts
 	 * 
 	 * @author kwaleung
 	 */
@@ -78,7 +84,7 @@ public class EnvironmentParams implements Serializable {
 	
 	/**
 	 * Returns the HashMap of pie charts in the environment
-	 * @return Map<String, PieChartClass>
+	 * @return Map of pie charts
 	 * 
 	 * @author kwaleung
 	 */

@@ -25,6 +25,14 @@ class ImportExportTest {
 	private static final String replaceWithMean = "Replace with column mean";
 	private static final String replaceWithMedian = "Replace with column median";
 	
+	/**
+	 * Test case for importCSV function in the ImportExportCSV class.
+	 * CSV file used for this test case can be found in TestingCSV under project directory.
+	 * This test case covers the import case where a normal CSV file with content is chosen by the user to import.
+	 * The CSV file will be imported nonrmally as a DataTable.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testImport() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -35,6 +43,14 @@ class ImportExportTest {
 		assert(testImportTable.getNumCol() == 8);
 	}
 	
+	/**
+	 * Test case for importCSV function in the ImportExportCSV class.
+	 * CSV file used for this test case can be found in TesingCSV under project directory.
+	 * This test case covers the import case where an empty CSV file without content is chosen by the user to import.
+	 * The empty CSV file will not be imported.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testImportEmpty() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -45,6 +61,13 @@ class ImportExportTest {
 		assert(testImportTable == null);
 	}
 	
+	/**
+	 * Test case for exportCSV function in the ImportExportCSV class.
+	 * This test case covers the export case where a DataTable is exported as an excel UTF-8 format CSV file.
+	 * The CSV file generated will be deleted automatically upon completetion of the test case.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testExport() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -66,6 +89,12 @@ class ImportExportTest {
 		Files.deleteIfExists(testExportFile.toPath());
 	}
 	
+	/**
+	 * Test case for method checkTypeName in the ImportExportCSV class.
+	 * This test case covers the case where a column containing numbers is checked.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testTypeCheckNumber() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -73,6 +102,12 @@ class ImportExportTest {
 		assert(testImportExport.checkTypeName(currCol).equals(DataType.TYPE_NUMBER));
 	}
 	
+	/**
+	 * Test case for method checkTypeName in the ImportExportCSV class.
+	 * This test case covers the case where a column containing strings is checked.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testTypeCheckString() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -80,6 +115,12 @@ class ImportExportTest {
 		assert(testImportExport.checkTypeName(currCol).equals(DataType.TYPE_STRING));
 	}
 	
+	/**
+	 * Test case for method checkTypeName in the ImportExportCSV class.
+	 * This test case covers the case where a column containing Java Objects is checked.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testTypeCheckObject() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -90,6 +131,12 @@ class ImportExportTest {
 		assert(testImportExport.checkTypeName(currCol).equals(DataType.TYPE_OBJECT));
 	}
 	
+	/**
+	 * Test case for method calculateMean in the ImportExportCSV class.
+	 * This test case covers the case where the mean of a complete column containing numbers is calculated.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testMean() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -101,6 +148,12 @@ class ImportExportTest {
 		assert(testImportExport.calculateMean(currCol).equals(ans));
 	}
 	
+	/**
+	 * Test case for method calculateMean in the ImportExportCSV class.
+	 * This test case covers the case where the mean of a column containing numbers with missing data is calculated.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testMeanHaveEmpty() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -113,6 +166,12 @@ class ImportExportTest {
 		assert(testImportExport.calculateMean(currCol).equals(ans));
 	}
 	
+	/**
+	 * Test case for method calculateMedian in the ImportExportCSV class.
+	 * This test case covers the case where the median of a complete column with odd count elements containing numbers is calculated.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testmedianOddElements() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -125,6 +184,12 @@ class ImportExportTest {
 		assert(testImportExport.calculateMedian(currCol).equals(ans));
 	}
 	
+	/**
+	 * Test case for method calculateMedian in the ImportExportCSV class.
+	 * This test case covers the case where the median of a complete column with even count elements containing numbers is calculated.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testmedianEvenElements() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -136,6 +201,12 @@ class ImportExportTest {
 		assert(testImportExport.calculateMedian(currCol).equals(ans));
 	}
 	
+	/**
+	 * Test case for method calculateMedian in the ImportExportCSV class.
+	 * This test case covers the case where the median of a column containing numbers with missing data is calculated.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testmedianHaveEmpty() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -148,6 +219,14 @@ class ImportExportTest {
 		assert(testImportExport.calculateMedian(currCol).equals(ans));
 	}
 	
+	/**
+	 * Test case for method replaceEmptyElement in the ImportExportCSV class.
+	 * This test case covers all cases where the user:
+	 * 1. Chooses any of the three replace options
+	 * 2. Default case where an empty or null choice is selected 
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testReplace() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -159,6 +238,12 @@ class ImportExportTest {
 		assert(testImportExport.replaceEmptyElement(null, mean, median) == (Object)0);
 	}
 	
+	/**
+	 * Test case for method checkMissingData in the ImportExportCSV class.
+	 * This test case covers the case where the column being checked contains missing data.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testEmptyTrue() {
 		ImportExportCSV testImportExport = new ImportExportCSV();
@@ -166,6 +251,12 @@ class ImportExportTest {
 		assert(testImportExport.checkMissingData(currCol));
 	}
 	
+	/**
+	 * Test case for method checkMissingData in the ImportExportCSV class.
+	 * This test case covers the case where the column being checked does not have missing data.
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testEmptyFalse() {
 		ImportExportCSV testImportExport = new ImportExportCSV();

@@ -26,6 +26,11 @@ import core.comp3111.DataType;
  */
 class EnvironmentTest {
 
+	/**
+	 * Test case for constructor of Environment class
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testEnvironmentConstructor() {
 		Environment testEnv = new Environment();
@@ -34,6 +39,11 @@ class EnvironmentTest {
 		assert (testEnv.getEnviornmentPieCharts().size() == 0);
 	}
 	
+	/**
+	 * Test case for get and set methods for DataTable Map in the EnvironmentParams class
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testEnviornmentgetsetDataTables() throws DataTableException {
 		Environment testEnv = new Environment();
@@ -43,6 +53,11 @@ class EnvironmentTest {
 		assert (testEnv.getEnvironmentDataTables().size() == 0);
 	}
 	
+	/**
+	 * Test case for get and set methods for the LineChartClass and PieChartClass Maps in the EnvironmentParams class
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testEnviornmentgetsetLinePieCharts() {
 		Environment testEnv = new Environment();
@@ -55,6 +70,11 @@ class EnvironmentTest {
 		assert (testEnv.getEnviornmentPieCharts().size() == 0);
 	}
 	
+	/**
+	 * Test case for methods saveEnvironment and loadEnvironment in the Environment class
+	 * 
+	 * @author kwaleung
+	 */
 	@Test
 	void testSaveLoad() throws Exception {
 		Environment testEnv = new Environment();
