@@ -1,22 +1,19 @@
 package testing.comp3111;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import core.comp3111.Environment;
-import core.comp3111.EnvironmentParams;
+import core.comp3111.DataColumn;
+import core.comp3111.DataTable;
+import core.comp3111.DataTableException;
+import core.comp3111.DataType;
 import core.comp3111.LineChartClass;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -30,6 +27,29 @@ public class LineChartClassTest {
 		assert (test.getYAxisName().equals(""));
 		assert (test.getTitle().equals(""));
 		assert (test.get_animate() == false);
+	}
+	
+	@Test
+	void testLineChartClassConstructor2() throws DataTableException {
+		DataTable currentDataTable = new DataTable();
+		Object[] objArr = {1};
+		Object[] objArr2 = {1};
+		DataColumn newCol = new DataColumn(DataType.TYPE_NUMBER, objArr);
+		DataColumn newCol2 = new DataColumn(DataType.TYPE_NUMBER, objArr2);
+		currentDataTable.addCol("objArr", newCol);
+		currentDataTable.addCol("objArr2", newCol2);
+		LineChartClass test = new LineChartClass(currentDataTable, "objArr", "objArr2","testDataset", true);
+		assert(test.get_animate()==true);
+		assert (test.getXAxisName().equals("objArr"));
+		assert (test.getYAxisName().equals("objArr2"));
+		assert (test.getTitle().equals("Line Chart of testDataset"));
+		for( Data<Number, Number> data: test.getSeries().getData()) {
+			assert(data.getXValue().equals((Number)1));
+			assert(data.getYValue().equals((Number)1));
+		}
+		LineChartClass test2 = new LineChartClass(currentDataTable, "objArr", "objArr2","testDataset", false);
+		assert(test2.get_animate()==false);
+		
 	}
 	
 	@Test
