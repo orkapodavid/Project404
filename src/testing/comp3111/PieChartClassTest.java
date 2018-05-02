@@ -3,6 +3,7 @@ package testing.comp3111;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -19,8 +20,20 @@ import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart.Data;
 
+/**
+ * PieChartClass test cases written by JUnit. It achieves 100% test
+ * coverage on the PieChartClass class
+ * 
+ * @author OR Ka Po, kpor
+ *
+ */
 public class PieChartClassTest {
 	
+	/**
+	 * Test case for default constructor in the PieChartClass class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 */
 	@Test
 	void testDefaultConstructer() {
 		PieChartClass test = new PieChartClass();
@@ -30,6 +43,12 @@ public class PieChartClassTest {
 		assert(test.getObserList() == null);
 	}
 	
+	/**
+	 * Test case for constructor in the PieChartClass class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 * @throws DataTableException if operation on DataTable is invalid
+	 */
 	@Test
 	void testConstructer() throws DataTableException {
 		DataTable currentDataTable = new DataTable(); 
@@ -49,6 +68,11 @@ public class PieChartClassTest {
 		}
 	}
 	
+	/**
+	 * Test case for the method setList in the PieChartClass class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 */
 	@Test 
 	void testSetList() {
 		PieChartClass test = new PieChartClass();
@@ -61,6 +85,11 @@ public class PieChartClassTest {
 		}
 	}
 	
+	/**
+	 * Test case for the method setTitle in the PieChartClass class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 */
 	@Test
 	void testSetTitle() {
 		PieChartClass test = new PieChartClass();
@@ -68,6 +97,11 @@ public class PieChartClassTest {
 		assert(test.getTitle().equals("Pie Chart of Test"));
 	}
 	
+	/**
+	 * Test case for the method setAxisName in the PieChartClass class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 */
 	@Test
 	void testSetAxisName() {
 		PieChartClass test = new PieChartClass();
@@ -76,8 +110,16 @@ public class PieChartClassTest {
 		assert(test.getTextColName().equals("text"));
 	}
 	
+	/**
+	 * Test case for the methods readExternal and writeExternal in the PieChartClass class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 * @throws IOException Includes any I/O exceptions that may occur
+	 * @throws ClassNotFoundException If the class for an object being restored cannot be found
+	 * @throws DataTableException if operation on DataTable is invalid
+	 */
 	@Test
-	void testReadWriteExternal() throws Exception{
+	void testReadWriteExternal() throws IOException, ClassNotFoundException, DataTableException{
 		// Initialize a LineChartClass object for testing
 		DataTable currentDataTable = new DataTable(); 
 		Object[] objArr = {"ab"};

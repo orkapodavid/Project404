@@ -9,7 +9,7 @@ import core.comp3111.DataType;
  * A sample DataColumn test case written using JUnit. It achieves 100% test
  * coverage on the DataColumn class
  * 
- * @author cspeter
+ * @author kwaleung
  *
  */
 class DataColumnTest {
