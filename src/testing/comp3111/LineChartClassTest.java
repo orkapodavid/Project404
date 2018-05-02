@@ -1,17 +1,12 @@
 package testing.comp3111;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +14,6 @@ import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
 import core.comp3111.DataTableException;
 import core.comp3111.DataType;
-import core.comp3111.Environment;
-import core.comp3111.EnvironmentParams;
 import core.comp3111.LineChartClass;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;

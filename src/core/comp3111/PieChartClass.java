@@ -38,11 +38,14 @@ public class PieChartClass implements Chart, Externalizable {
 	 */
 	public PieChartClass(DataTable currentDataTable, String chartNumColName, String chartTextColName,
 			String currentDatasetName) {
-
+		
+		
+		numColName = chartNumColName;
+		textColName = chartTextColName;	
 		// Get 2 columns
 		DataColumn numCol = currentDataTable.getCol(chartNumColName);
 		DataColumn textCol = currentDataTable.getCol(chartTextColName);
-
+		
 		pieChartDataList = FXCollections.observableArrayList();
 
 		Object[] numColValues = numCol.getData();
