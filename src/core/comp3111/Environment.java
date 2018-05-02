@@ -59,7 +59,7 @@ public class Environment{
 	 * @return boolean
 	 * 			-true if operand is supported and value operand threshold
 	 * 			-false otherwise 
-	 * @author OR Ka Po
+	 * @author OR Ka Po， kpor
 	 */
 	public boolean operandsCompare(double value, String operand, double threshold) {
 		switch(operand) {
@@ -112,7 +112,7 @@ public class Environment{
 	 * 			- name of a new DataTable if a new DataTable is put on the HashMap "DataTables"
 	 * 			- "Empty DataTable" if all rows in the selected DataTable are filtered out
 	 * 			- null if no new DataTable is put on the HashMap "DataTables"
-	 * @author kpor
+	 * @author OR Ka Po， kpor
 	 * @throws DataTableException 
 	 */
 	public String filterDatasetByNum(String datasetName, String colName, String operand,  double threshold, boolean isReplaced) throws DataTableException {
@@ -184,8 +184,8 @@ public class Environment{
 	 * @return String[] or null
 	 * 			- first String in the array will be name of first new dataset
 	 * 			- second String in the array will be name of second new dataset
-	 * 			- "" String in the first/second index of array if first/second new dataset is empty
-	 * @author kpor
+	 * 			- "" (Empty String) in the first/second index of array if first/second new dataset is empty
+	 * @author OR Ka Po， kpor
 	 * @throws DataTableException 
 	 */
 	public String[] randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) throws DataTableException {

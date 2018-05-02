@@ -21,7 +21,7 @@ import core.comp3111.DataType;
 /**
  * Environment test using JUnit. Achieves 100% test coverage in the Environment and EnvironmentParams class.
  * 
- * @author kwaleung
+ * @author kwaleung 
  *
  */
 class EnvironmentTest {
