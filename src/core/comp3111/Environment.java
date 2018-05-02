@@ -61,7 +61,7 @@ public class Environment{
 	 * 			-false otherwise 
 	 * @author OR Ka Po
 	 */
-	private boolean operandsCompare(double value, String operand, double threshold) {
+	public boolean operandsCompare(double value, String operand, double threshold) {
 		switch(operand) {
 			case ">":
 				if(value > threshold) {
@@ -113,8 +113,9 @@ public class Environment{
 	 * 			- "Empty DataTable" if all rows in the selected DataTable are filtered out
 	 * 			- null if no new DataTable is put on the HashMap "DataTables"
 	 * @author kpor
+	 * @throws DataTableException 
 	 */
-	public String filterDatasetByNum(String datasetName, String colName, String operand,  double threshold, boolean isReplaced) {
+	public String filterDatasetByNum(String datasetName, String colName, String operand,  double threshold, boolean isReplaced) throws DataTableException {
 		// Create a new DataTable
 		DataTable filterDataTable  = new DataTable();
 		String newDataTableName = null;
@@ -163,11 +164,7 @@ public class Environment{
 		for(int colIndex = 0 ;colIndex <originalDataColNum; ++colIndex) {
 			currentCol = new DataColumn();
 			currentCol.set(newDataColTypeNames[colIndex], newDataColsContainer.get(colIndex).toArray());
-			try {
-				filterDataTable.addCol(newDataColNames[colIndex], currentCol);
-			} catch (DataTableException e) {
-				e.printStackTrace();
-			}
+			filterDataTable.addCol(newDataColNames[colIndex], currentCol);
 		}
 		
 		if(isReplaced) {
@@ -189,8 +186,9 @@ public class Environment{
 	 * 			- second String in the array will be name of second new dataset
 	 * 			- "" String in the first/second index of array if first/second new dataset is empty
 	 * @author kpor
+	 * @throws DataTableException 
 	 */
-	public String[] randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) {
+	public String[] randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) throws DataTableException {
 		int splittedNum;
 		DataTable splitDataTableA  = new DataTable();
 		DataTable splitDataTableB  = new DataTable();
@@ -213,9 +211,10 @@ public class Environment{
 			// set true for new random index
 			if(!rowIndexMap.containsKey(randIndex)) {
 				rowIndexMap.put(randIndex, true);
-				System.out.println("Seting " + randIndex + " to be true");
+				//System.out.println("Seting " + randIndex + " to be true");
 			}else {
 			// Loop one more time if a random index has been already generated
+				//System.out.println("Repeated Index = " + randIndex);
 				num -= 1;
 			}
 		}
@@ -276,11 +275,7 @@ public class Environment{
 			for(int colIndex = 0 ;colIndex <originalDataColNum; ++colIndex) {
 				currentCol = new DataColumn();
 				currentCol.set(newDataColTypeNames[colIndex], newDataColsContainerB.get(colIndex).toArray());
-				try {
-					splitDataTableB.addCol(newDataColNames[colIndex], currentCol);
-				} catch (DataTableException e) {
-					e.printStackTrace();
-				}
+				splitDataTableB.addCol(newDataColNames[colIndex], currentCol);
 			}
 			if(!isReplaced) {
 				newDataTableNameB = "DataSet" + (envParams.getEnvironmentDataTables().size() + 1);
@@ -291,11 +286,7 @@ public class Environment{
 			for(int colIndex = 0 ;colIndex <originalDataColNum; ++colIndex) {
 				currentCol = new DataColumn();
 				currentCol.set(newDataColTypeNames[colIndex], newDataColsContainerA.get(colIndex).toArray());
-				try {
-					splitDataTableA.addCol(newDataColNames[colIndex], currentCol);
-				} catch (DataTableException e) {
-					e.printStackTrace();
-				}
+				splitDataTableA.addCol(newDataColNames[colIndex], currentCol);
 			}
 			if(!isReplaced) {
 				newDataTableNameA = "DataSet" + (envParams.getEnvironmentDataTables().size() + 1);
@@ -308,21 +299,13 @@ public class Environment{
 			for(int colIndex = 0 ;colIndex <originalDataColNum; ++colIndex) {
 				currentCol = new DataColumn();
 				currentCol.set(newDataColTypeNames[colIndex], newDataColsContainerA.get(colIndex).toArray());
-				try {
-					splitDataTableA.addCol(newDataColNames[colIndex], currentCol);
-				} catch (DataTableException e) {
-					e.printStackTrace();
-				}
+				splitDataTableA.addCol(newDataColNames[colIndex], currentCol);
 			}
 			// Initialize splitDataTableB with newDataColsContainerB
 			for(int colIndex = 0 ;colIndex <originalDataColNum; ++colIndex) {
 				currentCol = new DataColumn();
 				currentCol.set(newDataColTypeNames[colIndex], newDataColsContainerB.get(colIndex).toArray());
-				try {
-					splitDataTableB.addCol(newDataColNames[colIndex], currentCol);
-				} catch (DataTableException e) {
-					e.printStackTrace();
-				}
+				splitDataTableB.addCol(newDataColNames[colIndex], currentCol);
 			}
 			
 			/*
