@@ -48,7 +48,7 @@ public class LineChartClassTest {
 			assert(data.getYValue().equals((Number)1));
 		}
 		LineChartClass test2 = new LineChartClass(currentDataTable, "objArr", "objArr2","testDataset", false);
-		assert(test.get_animate()==false);
+		assert(test2.get_animate()==false);
 		
 	}
 	

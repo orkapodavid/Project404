@@ -29,6 +29,7 @@ import core.comp3111.Environment;
 import core.comp3111.LineChartClass;
 import core.comp3111.PieChartClass;
 import core.comp3111.ImportExportCSV;
+import core.comp3111.DataTableException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -856,9 +857,17 @@ public class Main extends Application {
 			// filter the data 
 			String newDataTableName = null;
 			if(filterOption == "Replacing the current dataset") {
-				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
+				try {
+					newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, true);
+				} catch (DataTableException e1) {
+					e1.printStackTrace();
+				}
 			}else {
-				newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);	
+				try {
+					newDataTableName = environment.filterDatasetByNum(currentDatasetName, filterNumColName, filterOperator, threshold, false);
+				} catch (DataTableException e1) {
+					e1.printStackTrace();
+				}	
 			}
 			
 			if(newDataTableName == "Empty DataTable") {
@@ -915,8 +924,7 @@ public class Main extends Application {
 				// Get the input split ratio
 				splitRatio = ((Number)splitSlider.getValue()).intValue();
 				System.out.println("splitRatio: " + splitRatio);
-				int splitedNum;
-				String[] newDatasetName;
+				String[] newDatasetName = null;
 				// debug:
 				System.out.println("---------Original DataTable---------");
 				environment.getEnvironmentDataTables().get(currentDatasetName).print();
@@ -924,7 +932,11 @@ public class Main extends Application {
 				// split the data set
 				if(splitOption == "Replacing the current dataset") {
 					System.out.println("Replacing the current dataset");
-					newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, true);
+					try {
+						newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, true);
+					} catch (DataTableException e1) {
+						e1.printStackTrace();
+					}
 					if(newDatasetName[0].equals(currentDatasetName)) {
 						// replacement is successful
 						goodReplaceAlert.setContentText(currentDatasetName + " has been replaced.");
@@ -936,7 +948,11 @@ public class Main extends Application {
 						noRowsReplaceAlert.showAndWait();
 					}
 				}else {
-					newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, false);
+					try {
+						newDatasetName = environment.randSplitDatasetByNum(currentDatasetName, splitRatio, false);
+					} catch (DataTableException e1) {
+						e1.printStackTrace();
+					}
 					if(!newDatasetName[0].equals("") && newDatasetName[1].equals("")) {
 						// only one dataset is not empty
 						dataList.getItems().add(newDatasetName[0]);
