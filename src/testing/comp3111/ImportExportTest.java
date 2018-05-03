@@ -30,6 +30,7 @@ class ImportExportTest {
 	 * This test case covers the import case where a normal CSV file with content is chosen by the user to import.
 	 * The CSV file will be imported nonrmally as a DataTable.
 	 * 
+	 * @throws Exception
 	 * @author kwaleung
 	 */
 	@Test
@@ -48,6 +49,7 @@ class ImportExportTest {
 	 * This test case covers the import case where an empty CSV file without content is chosen by the user to import.
 	 * The empty CSV file will not be imported.
 	 * 
+	 * @throws Exception
 	 * @author kwaleung
 	 */
 	@Test
@@ -65,6 +67,7 @@ class ImportExportTest {
 	 * This test case covers the export case where a DataTable is exported as an excel UTF-8 format CSV file.
 	 * The CSV file generated will be deleted automatically upon completion of the test case.
 	 * 
+	 * @throws Exception
 	 * @author kwaleung
 	 */
 	@Test

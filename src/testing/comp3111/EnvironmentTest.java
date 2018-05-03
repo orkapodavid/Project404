@@ -41,6 +41,7 @@ class EnvironmentTest {
 	/**
 	 * Test case for get and set methods for DataTable Map in the EnvironmentParams class
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -72,6 +73,7 @@ class EnvironmentTest {
 	/**
 	 * Test case for methods saveEnvironment and loadEnvironment in the Environment class
 	 * 
+	 * @throws Exception
 	 * @author kwaleung
 	 */
 	@Test
