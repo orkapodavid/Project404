@@ -23,16 +23,24 @@ Team Leader:
 </table>
 
 Team Member 1:
-
-	Leung Ka Wai Aidan
-	kwaleung@connect.ust.hk
-	Features 1 & 4
-	Best 3 commits:
-		https://github.com/orkapodavid/Project404/commit/04d0194f966cbbe4191632a540a0be35fa6fe2b5
-		https://github.com/orkapodavid/Project404/commit/46be235aef10875964b476c2fb9aba5b6d961531
-		https://github.com/orkapodavid/Project404/commit/75715e3d82089bff1301de3833dc38374e4750c6
-	Best pull request:
-		https://github.com/orkapodavid/Project404/pull/8
+<table>
+	<tr>
+	    <th	>Name</th>
+	    <th>ITSC email</th>
+	    <th>Features</th>
+	    <th>Best pull request URL</th>
+	    <th>Best 3 commits URLs</th>
+	</tr>
+	<tr>
+		<td align="center" valign="middle">Leung Ka Wai Aidan</td>
+		<td align="center" valign="middle">kwaleung@connect.ust.hk</td>
+		<td align="center" valign="middle">1 & 4</td>
+		<td align="center" valign="middle"><a href=https://github.com/orkapodavid/Project404/pull/8>ImportExportCSV completed + included CSV file for testing</a></td>
+		<td align="center" valign="middle"><a href=https://github.com/orkapodavid/Project404/commit/04d0194f966cbbe4191632a540a0be35fa6fe2b5>Implemented Save and Load functions</a> <br/> 
+		<a href= https://github.com/orkapodavid/Project404/commit/46be235aef10875964b476c2fb9aba5b6d961531>Added EnvironmentParams class for better separation between data and methods</a>  <br/> 
+		<a href= https://github.com/orkapodavid/Project404/commit/75715e3d82089bff1301de3833dc38374e4750c6>Modified save and load function structures, completed test cases for Environment and Environment Parameters</a>  </td>
+	</tr>
+</table>
 
 Team Member 2:
 
@@ -50,5 +58,5 @@ Team Member 2:
 References:
 
 	Library used for CSV Parsing and Printing: Apache Commons CSV 
-		https://commons.apache.org/proper/commons-csv/
+		<a href=https://commons.apache.org/proper/commons-csv/>
 		
