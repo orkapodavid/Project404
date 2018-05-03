@@ -26,7 +26,7 @@ import javafx.scene.chart.PieChart;
  * @author kpor
  *
  */
-public class PieChartClassTest {
+class PieChartClassTest {
 	
 	/**
 	 * Test case for default constructor in the PieChartClass class.
