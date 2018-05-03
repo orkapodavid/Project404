@@ -189,10 +189,8 @@ public class ImportExportCSV {
 		
 		if (isNumber && !isString) {
 			return DataType.TYPE_NUMBER;
-		} else if (!isNumber && isString) {
-			return DataType.TYPE_STRING;
 		} else {
-			return DataType.TYPE_OBJECT;
+			return DataType.TYPE_STRING;
 		}
 	}
 	
