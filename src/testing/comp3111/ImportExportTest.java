@@ -36,7 +36,7 @@ class ImportExportTest {
 	@Test
 	void testImport() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
-		String fileDir = System.getProperty("user.dir") + "/TestingCSV/Test.csv";		
+		String fileDir = System.getProperty("user.dir") + "/dataset/Test.csv";		
 		File testImportFile = new File(fileDir);
 		
 		DataTable testImportTable = testImportExport.importCSV(testImportFile);
@@ -55,7 +55,7 @@ class ImportExportTest {
 	@Test
 	void testImportEmpty() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
-		String fileDir = System.getProperty("user.dir") + "/TestingCSV/TestEmpty.csv";
+		String fileDir = System.getProperty("user.dir") + "/dataset/TestEmpty.csv";
 		File testImportFile = new File(fileDir);
 		
 		DataTable testImportTable = testImportExport.importCSV(testImportFile);
@@ -73,7 +73,7 @@ class ImportExportTest {
 	@Test
 	void testExport() throws Exception {
 		ImportExportCSV testImportExport = new ImportExportCSV();
-		String fileDir = System.getProperty("user.dir") + "/TestingCSV/testExport.csv";
+		String fileDir = System.getProperty("user.dir") + "/dataset/testExport.csv";
 		File testExportFile = new File(fileDir);
 		
 		DataTable testTable = new DataTable();
