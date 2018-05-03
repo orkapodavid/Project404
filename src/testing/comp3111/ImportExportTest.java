@@ -118,22 +118,6 @@ class ImportExportTest {
 	}
 	
 	/**
-	 * Test case for method checkTypeName in the ImportExportCSV class.
-	 * This test case covers the case where a column containing Java Objects is checked.
-	 * 
-	 * @author kwaleung
-	 */
-	@Test
-	void testTypeCheckObject() {
-		ImportExportCSV testImportExport = new ImportExportCSV();
-		Object a = new Object();
-		Object b = new Object();
-		Object c = new Object();
-		Object[] currCol = {a, b, c};
-		assert(testImportExport.checkTypeName(currCol).equals(DataType.TYPE_OBJECT));
-	}
-	
-	/**
 	 * Test case for method calculateMean in the ImportExportCSV class.
 	 * This test case covers the case where the mean of a complete column containing numbers is calculated.
 	 * 
