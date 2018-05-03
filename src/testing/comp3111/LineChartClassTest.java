@@ -26,7 +26,7 @@ import javafx.scene.chart.XYChart.Data;
  * @author kpor
  *
  */
-public class LineChartClassTest {
+class LineChartClassTest {
 	
 	/**
 	 * Test case for default constructor in the LineChartClass class.
