@@ -106,6 +106,7 @@ public class Main extends Application {
 	private ListView<String> chartList;
 	private Alert noDatasetAlert = null;
 	private Alert noChartAlert = null;
+	
 	// Screen 2: paneCreateChartScreen
 	private Boolean isLineChart = null;
 	private CheckBox setAnimation = null;
@@ -129,6 +130,7 @@ public class Main extends Application {
 	private Label chartSelectNumLabel = null;
 	private ComboBox<String> chartSelectNumCol = null;
 	private Alert noSelectedColAlert = null;
+	
 	// Screen 3: paneSplitDataScreen
 	private Label splitHeader = null;
 	private Button splitCancel = null;
@@ -141,6 +143,7 @@ public class Main extends Application {
 	private Alert noRowsReplaceAlert = null;
 	private Alert noRowsOneSuccessAlert = null;
 	private Alert goodReplaceAlert = null;
+	
 	// Screen 4: paneFilterDataScreen
 	private Label filterHeader = null;
 	private Label filterSelectNumLabel = null;
@@ -156,6 +159,7 @@ public class Main extends Application {
 	private Alert notEnoughInput = null;
 	private Alert noNumericalCol = null;
 	private Alert allRowsFilteredOut = null;
+	
 	// Screen 5: paneShowLineChartScreen
 	private LineChart<Number, Number> lineChart = null;
 	private NumberAxis xAxis = null;
@@ -164,11 +168,11 @@ public class Main extends Application {
 	private Button showLineChartBack = null;
 	private Timeline tl = null;
 	private LineChartClass current = null;
+	
 	// Screen 6: paneShowPieChartScreen
 	private PieChart pieChart = null;
 	private Button showPieChartBack = null;
 	private Label showPieChartHeader = null;
-	/* private PieChartClass currentPieChartClass = null; */
 
 	/**
 	 * Create all scenes in this application.
@@ -205,8 +209,14 @@ public class Main extends Application {
 		initTimer();
 		initAlertMsg();
 	}
-
+	
+	/**
+	 * <p>In this stage, all UI Alert
+	 * components will be created with a non-NULL references containing the
+	 * respective alert message.
+	 */
 	private void initAlertMsg() {
+		// for Main Scene
 		noDatasetAlert = new Alert(AlertType.INFORMATION);
 		noDatasetAlert.setTitle("Reminder Dialog");
 		noDatasetAlert.setHeaderText(null);
@@ -216,6 +226,7 @@ public class Main extends Application {
 		noSelectedColAlert.setTitle("Warning Dialog");
 		noSelectedColAlert.setHeaderText(null);
 		noSelectedColAlert.setContentText("Incomplete selection of data columns. Please complete your selection");
+		
 		noChartAlert = new Alert(AlertType.INFORMATION);
 		noChartAlert.setTitle("Reminder Dialog");
 		noChartAlert.setHeaderText(null);
@@ -225,10 +236,12 @@ public class Main extends Application {
 		goodReplaceAlert = new Alert(AlertType.INFORMATION);
 		goodReplaceAlert.setTitle("Successful Operation");
 		goodReplaceAlert.setHeaderText(null);
+		
 		noRowsReplaceAlert = new Alert(AlertType.ERROR);
 		noRowsReplaceAlert.setTitle("Error Message: Empty Dataset");
 		noRowsReplaceAlert.setHeaderText("One of the newly created Dataset is empty.");
 		noRowsReplaceAlert.setContentText("Replacement cannot be done. The environment remains unchanged.");
+		
 		noRowsOneSuccessAlert = new Alert(AlertType.ERROR);
 		noRowsOneSuccessAlert.setTitle("Error Message: Empty Dataset");
 		noRowsOneSuccessAlert.setHeaderText("One of the newly created Dataset is empty.");
@@ -240,20 +253,23 @@ public class Main extends Application {
 		noNumericalCol.setTitle("Reminder Dialog");
 		noNumericalCol.setHeaderText(null);
 		noNumericalCol.setContentText("Selected dataset has no numerical column. Please select another dataset");
+		
 		notEnoughInput = new Alert(AlertType.INFORMATION);
 		notEnoughInput.setTitle("Reminder Dialog");
 		notEnoughInput.setHeaderText(null);
 		notEnoughInput.setContentText("Incomplete information. Please fill out this form.");
+		
 		notNum = new Alert(AlertType.WARNING);
 		notNum.setTitle("Warning Dialog");
 		notNum.setHeaderText(null);
 		notNum.setContentText("Please input a valid number for filtering");
+		
 		allRowsFilteredOut = new Alert(AlertType.ERROR);
 		allRowsFilteredOut.setTitle("Error Message: Empty Dataset");
 		allRowsFilteredOut.setHeaderText("No row in the selected dataset meets the filtering requirement.");
 		allRowsFilteredOut.setContentText("The environment remains unchanged.");
 		
-		
+		//For Import and Export
 		ImportChooser = new FileChooser();
 		ExportChooser = new FileChooser();
 		noFileChosen = new Alert(AlertType.ERROR);
@@ -324,6 +340,7 @@ public class Main extends Application {
 		chooseReplaceOption.setTitle("Replace Option");
 		chooseReplaceOption.setHeaderText("Please choose");
 		
+		//For Save and Load
 		SaveChooser = new FileChooser();
 		LoadChooser = new FileChooser();
 		LoadChooser.setTitle("Load Environment");
@@ -594,6 +611,7 @@ public class Main extends Application {
 			}
 			
 		});
+		
 		splitButton.setOnAction(e -> {
 			currentDatasetName = dataList.getSelectionModel().getSelectedItem();
 			if(currentDatasetName != null) {
@@ -611,6 +629,7 @@ public class Main extends Application {
 				String checking = name.substring(0, 9);
 				System.out.println(checking);
 				if (checking.equals(new String("LineChart"))) {
+					//if an animated chart is selected, enable the timer
 					if (environment.getEnviornmentLineCharts().get(name).get_animate()) {
 						XYChart.Series<Number, Number> temp = new XYChart.Series<Number, Number>();
 						temp.setName(environment.getEnviornmentLineCharts().get(name).getSeries().getName());
@@ -663,7 +682,9 @@ public class Main extends Application {
 			putSceneOnStage(SCENE_MAIN_SCREEN);
 		});
 	}
-
+	/**
+	 * Initialize the timer for animated chart
+	 */
 	private void initTimer() {
 		tl = new Timeline();
 		tl.getKeyFrames().add(new KeyFrame(Duration.millis(250), new EventHandler<ActionEvent>() {
@@ -889,7 +910,9 @@ public class Main extends Application {
 		});
 	}
 	
-	
+	/**
+	 * Initialize event handlers of the sub screen - SCENE_SPLIT_DATA.
+	 */
 	private void initSplitDataHandler() {
 		splitSlider.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
