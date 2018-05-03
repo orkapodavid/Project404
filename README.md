@@ -71,5 +71,5 @@ References: </br>
 		
 Extras:
 
-100% Coverage in JUnit test </br>
+100% JUnit Test Coverage in core.comp3111</br>
 ![100% Coverage](404Coverage.JPG)
