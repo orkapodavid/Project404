@@ -83,8 +83,6 @@ public class ImportExportCSV {
 						//Set ColumnValues
 						Object[] currDataColumnElement = newDataColumnElements.get(j);
 						currDataColumnElement[i-1] = csvContent.get(i).get(j);
-<<<<<<< HEAD
-=======
 					}
 				}
 			}
@@ -101,23 +99,11 @@ public class ImportExportCSV {
 				} else if (currColTypeName.equals(DataType.TYPE_STRING)) {
 					for (int j=0; j<currColElements.length; j++) {
 						currColElements[j] = currColElements[j].toString();
->>>>>>> origin/master
 					}
 				}
 				DataColumn newCol = new DataColumn(currColTypeName, currColElements);
 				importedTable.addCol(newDataColumnNames.get(i), newCol);
 			}
-<<<<<<< HEAD
-			fileReader.close();
-			csvParser.close();
-			for (int i=0; i<colCount; i++) {
-				Object[] currColElements = newDataColumnElements.get(i);
-				String currColTypeName = checkTypeName(currColElements);
-				DataColumn newCol = new DataColumn(currColTypeName, currColElements);
-				importedTable.addCol(newDataColumnNames.get(i), newCol);
-			}
-=======
->>>>>>> origin/master
 			return importedTable;
 		} else {
 			fileReader.close();
