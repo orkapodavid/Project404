@@ -3,7 +3,7 @@ package core.comp3111;
 /**
  * The Chart interface provides two methods for access to titles of charts.
  * 
- * @author OR Ka Po, kpor
+ * @author kpor
  * @see LineChartClass
  * @see PieChartClass
  */

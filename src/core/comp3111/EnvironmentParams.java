@@ -1,11 +1,8 @@
 package core.comp3111;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This class used for containing parameters of the environment for clearer structure.

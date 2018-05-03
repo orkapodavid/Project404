@@ -3,24 +3,14 @@ package ui.comp3111;
 import javafx.geometry.Insets;
 
 import java.io.File;
-
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 
 import core.comp3111.DataColumn;
 import core.comp3111.DataTable;
@@ -36,7 +26,6 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -50,7 +39,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
@@ -77,7 +65,7 @@ import javafx.util.Duration;
  * 
  * @author cspeter
  * @author kwchiuab
- * @author OR Ka Po, kpor
+ * @author kpor
  * @author kwaleung
  */
 public class Main extends Application {
@@ -436,7 +424,6 @@ public class Main extends Application {
 		importButton.setOnAction(e -> {
 			String name = "DataSet" + (environment.getEnvironmentDataTables().size() + 1);
 			File selectedFile = ImportChooser.showOpenDialog(null);
-			String filePath = null;
 			DataTable importedTable = null, finalImportedTable = new DataTable();
 			boolean isCancelled = false;
 			
