@@ -17,6 +17,7 @@ import java.util.Objects;
  * (6) Suitable exception handling is implemented
  * 
  * @author cspeter
+ * @author OR Ka Po, kpor
  *
  */
 public class DataTable implements Serializable {
@@ -35,11 +36,11 @@ public class DataTable implements Serializable {
 	 * Add a data column to the table.
 	 * 
 	 * @param colName
-	 *            - name of the column. It should be a unique identifier
+	 *            name of the column. It should be a unique identifier
 	 * @param newCol
-	 *            - the data column
+	 *            the data column
 	 * @throws DataTableException
-	 *             - It throws DataTableException if a column is already exist, or
+	 *             It throws DataTableException if a column is already exist, or
 	 *             the row size does not match.
 	 */
 	public void addCol(String colName, DataColumn newCol) throws DataTableException {
@@ -69,9 +70,9 @@ public class DataTable implements Serializable {
 	 * Remove a column from the data table
 	 * 
 	 * @param colName
-	 *            - The column name. It should be a unique identifier
+	 *            The column name. It should be a unique identifier
 	 * @throws DataTableException
-	 *            - It throws DataTableException if the column does not exist
+	 *            It throws DataTableException if the column does not exist
 	 */
 	public void removeCol(String colName) throws DataTableException {
 		if (containsColumn(colName)) {
@@ -82,8 +83,8 @@ public class DataTable implements Serializable {
 	}
 
 	/**
-	 * Get the DataColumn object based on the give colName. Return null if the
-	 * column does not exist
+	 * Get the DataColumn object based on the give colName. 
+	 * <p>Return null if the column does not exist
 	 * 
 	 * @param colName
 	 *            The column name
@@ -99,6 +100,7 @@ public class DataTable implements Serializable {
 	 * Get a String array of the names of all numerical columns
 	 * 
 	 * @return String[] or null
+	 * @author OR Ka Po, kpor
 	 */
 	public String[] getAllNumColName() {
 		
@@ -121,6 +123,7 @@ public class DataTable implements Serializable {
 	 * Get a String array of the names of all text columns
 	 * 
 	 * @return String[] or null
+	 * @author OR Ka Po, kpor
 	 */
 	public String[] getAllTextColName() {
 		
@@ -143,6 +146,7 @@ public class DataTable implements Serializable {
 	 * Get a String array of the names of all columns
 	 * 
 	 * @return String[] or null
+	 * @author OR Ka Po, kpor
 	 */
 	public String[] getAllColName() {
 		
@@ -170,9 +174,10 @@ public class DataTable implements Serializable {
 	}
 	
 	/**
-	 * Get the number of numerical columns
+	 * Get the number of all numerical columns
 	 * 
 	 * @return int or 0
+	 * @author OR Ka Po, kpor
 	 */
 	public int getNumOfNumCol() {
 		
@@ -192,9 +197,10 @@ public class DataTable implements Serializable {
 	}
 	
 	/**
-	 * Get the number of text columns
+	 * Get the number of all text columns
 	 * 
 	 * @return int or 0
+	 * @author OR Ka Po, kpor
 	 */
 	public int getNumOfTextCol() {
 		
@@ -238,6 +244,9 @@ public class DataTable implements Serializable {
 		return dc.get(entry.getKey()).getSize();
 	}
 	
+	/**
+	 * A function used to print the DataTable in Console for debugging.
+	 */
 	public void print() {
 		int colcount = this.getNumCol();
 		int rowcount = this.getNumRow();

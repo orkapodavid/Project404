@@ -21,6 +21,7 @@ import java.io.*;
  * It also provides save and load functions which serializes the EnvironmentParams class using a custom file extension ".comp3111"
  * 
  * @author kwaleung
+ * @author OR Ka Po, kpor
  *
  */
 public class Environment{
@@ -47,22 +48,20 @@ public class Environment{
 	}
 	
 	/**
-	 * This function reads an operand in String and translate it into real comparison operation
+	 * This function reads an operator in String and translate it into real comparison operation
 	 * and return the result in boolean.
 	 * @param value
-	 * 			-value (Type: double) to be compared with the threshold
-	 * @param operand
-	 * 			-operand (Type: String) to be used for comparison
-	 * 			-operands ">","<", ">=","<=", "==", "!="
+	 * 			value (Type: double) to be compared with the threshold
+	 * @param operator
+	 * 			operand ("&#62;","&#60;", "&#62;=","&#60;=", "==", "!=") to be used for comparison
 	 * @param threshold
-	 * 			-threshold (Type: double) to be use for compared
+	 * 			threshold (Type: double) to be use for compared
 	 * @return boolean
-	 * 			-true if operand is supported and value operand threshold
-	 * 			-false otherwise 
-	 * @author OR Ka Po
+	 * 			true if the operation of "value operator threshold" returns true, false otherwise 
+	 * @author OR Ka Po， kpor
 	 */
-	public boolean operandsCompare(double value, String operand, double threshold) {
-		switch(operand) {
+	public boolean operandsCompare(double value, String operator, double threshold) {
+		switch(operator) {
 			case ">":
 				if(value > threshold) {
 					return true;
@@ -106,16 +105,25 @@ public class Environment{
 	}
 	
 	/**
-	 * Replace/Create a data set by filtering numeric data of a column
-	 * Filter data using various comparison operators (">","<", ">=","<=", "==", "!=")
-	 * @return String or null
-	 * 			- name of a new DataTable if a new DataTable is put on the HashMap "DataTables"
-	 * 			- "Empty DataTable" if all rows in the selected DataTable are filtered out
-	 * 			- null if no new DataTable is put on the HashMap "DataTables"
-	 * @author kpor
-	 * @throws DataTableException 
+	 * Return the name of a new DataTable.
+	 * <p>Replace/Create a data set by filtering numeric data of a column.
+	 * <p>Filter data using various comparison operators ("&#62;","&#60;", "&#62;=","&#60;=", "==", "!=").
+	 * @param datasetName 
+	 * 			name of the selected DataTable
+	 * @param colName
+	 * 			name of the column being filtered
+	 * @param operator
+	 * 			operator to be used for comparison
+	 * @param threshold
+	 * 			value to be used for comparison
+	 * @param isReplaced
+	 * 			set true to replace the selected DataTable with the filtered DataTable
+	 * 			<p>set false to create a new DataTable with the filtered rows
+	 * @return String or null name of a new DataTable, "Empty DataTable" or null
+	 * @author OR Ka Po， kpor
+	 * @throws DataTableException if operation on DataTable is invalid
 	 */
-	public String filterDatasetByNum(String datasetName, String colName, String operand,  double threshold, boolean isReplaced) throws DataTableException {
+	public String filterDatasetByNum(String datasetName, String colName, String operator,  double threshold, boolean isReplaced) throws DataTableException {
 		// Create a new DataTable
 		DataTable filterDataTable  = new DataTable();
 		String newDataTableName = null;
@@ -141,7 +149,7 @@ public class Environment{
 		 * loop through all rows in selectedCol and do the comparison for filter
 		*/ 
 		for(int rowIndex = 0; rowIndex <origninalDataRowNum; ++rowIndex) {
-			if(operandsCompare(((Number)selectedCol[rowIndex]).doubleValue(), operand, threshold)) {
+			if(operandsCompare(((Number)selectedCol[rowIndex]).doubleValue(), operator, threshold)) {
 				// loop all columns to keep this row of data 
 				for(int colIndex = 0; colIndex < originalDataColNum ; ++colIndex) {
 					// get a column from the selected DataTable
@@ -178,15 +186,21 @@ public class Environment{
 	}
 	
 	/**
-	 * Randomly split a data set into 2 data sets
-	 * Replacing the current data set OR Creating a new data set(s)
-	 * After the split, both data sets should keep the same column names
+	 * Return an array of String of two split DataTable
+	 * <p>Randomly split a data set into 2 data sets by rows.
+	 * <p>Set the parameters, isReplaced, to replace the current data set OR to create new DataTable(s).
+	 * <p>After the split, both data sets should keep the same column names.
+	 * @param datasetName name of the selected DataTable
+	 * @param splitRatio the percentage of split (0% to 100%)
+	 * @param isReplaced
+	 * 			set true to replace the selected DataTable with one of the new DataTable
+	 * 			<p>set false to create a new DataTable with the filtered rows
 	 * @return String[] or null
-	 * 			- first String in the array will be name of first new dataset
-	 * 			- second String in the array will be name of second new dataset
-	 * 			- "" String in the first/second index of array if first/second new dataset is empty
-	 * @author kpor
-	 * @throws DataTableException 
+	 * 			First String in the array will be name of first new DataTable
+	 * 			<p>Second String in the array will be name of second new DataTable
+	 * 			<p>"" (Empty String) in the first/second index of array if the first/second new DataTable is empty
+	 * @author OR Ka Po， kpor
+	 * @throws DataTableException if operation on DataTable is invalid
 	 */
 	public String[] randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) throws DataTableException {
 		int splittedNum;

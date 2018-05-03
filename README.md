@@ -3,10 +3,24 @@
 Team Name: Project404
 
 Team Leader:
-
-	OR Ka Po
-	kpor@connect.ust.hk
-	Features 2 & 5
+<table>
+	<tr>
+	    <th	>Name</th>
+	    <th>ITSC email</th>
+	    <th>Features</th>
+	    <th>Best pull request URL</th>
+	    <th>Best 3 commits URLs</th>
+	</tr>
+	<tr>
+		<td align="center" valign="middle">OR Ka Po</td>
+		<td align="center" valign="middle">kpor@connect.ust.hk</td>
+		<td align="center" valign="middle">2 & 5</td>
+		<td align="center" valign="middle"><a href=https://github.com/orkapodavid/Project404/pull/20>Finish building functions of filtering and splitting dataset</a></td>
+		<td align="center" valign="middle"><a href=https://github.com/orkapodavid/Project404/commit/6312862c6ab161ae21c41de36dbf81c0a0aaf75d> Fixed bugs of filtering dataset and splitting dataset</a> <br/> 
+		<a href= https://github.com/orkapodavid/Project404/commit/d0091d684aceb73e7b3fb76361e7438adce6ce0f>Finalize UI of all screen</a>  <br/> 
+		<a href= https://github.com/orkapodavid/Project404/commit/99d0e9a3e4c993185c04baa01f77e4cdc0a8c395>Handling PieChart</a>  </td>
+	</tr>
+</table>
 
 Team Member 1:
 

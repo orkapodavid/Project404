@@ -1,6 +1,5 @@
 package core.comp3111;
 
-import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -14,10 +13,11 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
 /**
- * This class used for containing parameters of a Line Chart for clearer
- * structure.
+ * This class used for containing parameters of a Line Chart for clearer structure.
  * 
- * @author kpor
+ * @author OR Ka Po, kpor
+ * @see DataTable
+ * @see DataColumn
  */
 public class LineChartClass implements Chart, Externalizable {
 
@@ -28,7 +28,7 @@ public class LineChartClass implements Chart, Externalizable {
 	private boolean animation;
 
 	/**
-	 * Construct - Create an empty copy of all the essential data in a line chart.
+	 * Construct an empty line chart with no animation.
 	 */
 	public LineChartClass() {
 		series = null;
@@ -37,7 +37,17 @@ public class LineChartClass implements Chart, Externalizable {
 		title = "";
 		animation = false;
 	}
-
+	
+	/**
+	 * Construct a line chart with selected X-axis and Y-axis of a selected DataTable.
+	 * <p>Set the parameter, animated, to create an animated line chart.
+	 * <p>The title of the line chart will be "Line Chart of " plus the name of selected DataTable.
+	 * @param currentDataTable the selected DataTable
+	 * @param chartXaxisName name of the selected DataColumn for X-axis
+	 * @param chartYaxisName name of the selected DataColumn for Y-axis
+	 * @param currentDatasetName name of the selected DataTable
+	 * @param animated set true to create an animated line chart
+	 */
 	public LineChartClass(DataTable currentDataTable, String chartXaxisName,String chartYaxisName, String currentDatasetName, boolean animated) {
 		
 		// Get 2 columns
@@ -49,7 +59,6 @@ public class LineChartClass implements Chart, Externalizable {
 		
 		// defining a series
 		series = new XYChart.Series<Number, Number>();
-
 		series.setName(currentDatasetName);
 		// populating the series with data
 		// In DataTable structure, both length must be the same
@@ -57,8 +66,6 @@ public class LineChartClass implements Chart, Externalizable {
 			series.getData()
 					.add(new XYChart.Data<Number, Number>((Number) xCol.getData()[i], (Number) yCol.getData()[i]));
 		}
-		
-
 		if (animated)
 			animation = true;
 		else
@@ -66,10 +73,11 @@ public class LineChartClass implements Chart, Externalizable {
 	}
 
 	/**
-	 * Encode all the data in the current environment into an ObjectOutput
+	 * The LineChartClass implements the writeExternal method to save its contents by 
+	 * calling the writeObject method of ObjectOutput for strings and numbers.
 	 * 
-	 * @param out
-	 *            - ObjectOutput containing all the data in the current environment
+	 * @param out the stream to write the object to
+	 * @throws IOException Includes any I/O exceptions that may occur
 	 */
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(series.getData().size());
@@ -83,7 +91,16 @@ public class LineChartClass implements Chart, Externalizable {
 			out.writeObject(data.getYValue());
 		}
 	}
-
+	
+	/**
+	 * The LineChartClass implements the readExternal method to restore its contents by 
+	 * calling the readObject method of ObjectOutput for strings and numbers. 
+	 * <p>The readExternal method must read the values in the same sequence and with the same types as were written by writeExternal.
+	 * 
+	 * @param in the stream to read data from in order to restore the object
+	 * @throws IOException Includes any I/O exceptions that may occur
+	 * @throws ClassNotFoundException If the class for an object being restored cannot be found
+	 */
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		int size = in.readInt();
 		series = new XYChart.Series<Number, Number>();
@@ -100,15 +117,14 @@ public class LineChartClass implements Chart, Externalizable {
 	/**
 	 * Associate a XYChart.Series to the line chart.
 	 * 
-	 * @param m_series
-	 *            - a XYChart.Series containing all the content of a line chart.
+	 * @param m_series a named series of data items of the line chart
 	 */
 	public void setSeries(XYChart.Series<Number, Number> m_series) {
 		series = m_series;
 	}
 
 	/**
-	 * Retrieve the XYChart.Series of the line chart.
+	 * Return the XYChart.Series of the line chart.
 	 * 
 	 * @return XYChart.Series reference or null.
 	 */
@@ -117,58 +133,55 @@ public class LineChartClass implements Chart, Externalizable {
 	}
 
 	/**
-	 * Record the line chart's state.
+	 * Set option of animation of the line chart.
 	 * 
-	 * @param state
-	 *            - either animated line chart or static line chart.
+	 * @param state true if an animated line chart is desired, false otherwise
 	 */
 	public void animate(boolean state) {
 		animation = state;
 	}
 
 	/**
-	 * Get the line chart's state.
+	 * Return the option of animation of the line chart.
 	 * 
-	 * @return boolean
+	 * @return boolean true if the line chart is animated, false otherwise
 	 */
 	public boolean get_animate() {
 		return animation;
 	}
 
 	/**
-	 * Get the line chart's XAxis name.
+	 * Return the line chart's X-axis name.
 	 * 
-	 * @return String
+	 * @return String or Empty String
 	 */
 	public String getXAxisName() {
 		return xAxisName;
 	}
 
 	/**
-	 * Get the line chart's YAxis name.
+	 * Return the line chart's Y-axis name.
 	 * 
-	 * @return String
+	 * @return String or Empty String
 	 */
 	public String getYAxisName() {
 		return yAxisName;
 	}
 
 	/**
-	 * Get the line chart's title.
+	 * Return the line chart's title.
 	 * 
-	 * @return String
+	 * @return String or Empty String
 	 */
 	public String getTitle() {
 		return title;
 	}
 
 	/**
-	 * Record the line chart's Axis name.
+	 * Return the line chart's Axis name.
 	 * 
-	 * @param x
-	 *            -the X axis name of the line chart.
-	 * @param y
-	 *            -the Y axis name of the line chart.
+	 * @param x the name of X axis of the line chart.
+	 * @param y the name of Y axis of the line chart.
 	 */
 	public void setAxisName(String x, String y) {
 		xAxisName = x;
@@ -176,10 +189,9 @@ public class LineChartClass implements Chart, Externalizable {
 	}
 
 	/**
-	 * Record the line chart's title.
+	 * Return the line chart's title.
 	 * 
-	 * @param m_title
-	 *            -the title of the line chart.
+	 * @param m_title the title of the line chart.
 	 */
 	public void setTitle(String m_title) {
 		title = m_title;

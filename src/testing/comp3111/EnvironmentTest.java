@@ -19,9 +19,10 @@ import core.comp3111.DataTableException;
 import core.comp3111.DataType;
 
 /**
- * Environment test using JUnit. Achieves 100% test coverage in the Environment and EnvironmentParams class.
+ * Environment test using JUnit. Achieve 100% test coverage in the Environment and EnvironmentParams class.
  * 
- * @author kwaleung
+ * @author kwaleung 
+ * @author OR Ka Po, kpor
  *
  */
 class EnvironmentTest {
@@ -87,6 +88,11 @@ class EnvironmentTest {
 		Files.deleteIfExists(testFile.toPath());
 	}
 	
+	/**
+	 * Test case for method operandsCompare in the Environment class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 */
 	@Test
 	void testOperandsCompare() {
 		Environment testEnv = new Environment();
@@ -112,6 +118,12 @@ class EnvironmentTest {
 		assert(testEnv.operandsCompare(2.0, "\0!=", 2.0) == false);
 	}
 	
+	/**
+	 * Test case for method filterDatasetByNum in the Environment class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 * @throws DataTableException if operation on DataTable is invalid
+	 */
 	@Test 
 	void testFilterDatasetByNum() throws DataTableException {
 		// Setup:
@@ -153,6 +165,12 @@ class EnvironmentTest {
 		assert((int)resultReplacedArr[1] == 4);
 	}
 	
+	/**
+	 * Test case for method randSplitDatasetByNum in the Environment class.
+	 * 
+	 * @author OR Ka Po, kpor
+	 * @throws DataTableException if operation on DataTable is invalid
+	 */
 	@Test
 	void testRandSplitDatasetByNum() throws DataTableException {
 		// Setup:
