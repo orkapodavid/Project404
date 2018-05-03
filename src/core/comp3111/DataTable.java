@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 2D array of data values with the following requirements: (1) There are 0 to
- * many columns (2) The number of row for each column is the same (3) 2 columns
- * may have different type (e.g. String and Number). (4) A column can be
- * uniquely identified by its column name (5) add/remove a column is supported
- * (6) Suitable exception handling is implemented
+ * 2D array of data values with the following requirements: <p>(1) There are 0 to
+ * many columns <p>(2) The number of row for each column is the same <p>(3) 2 columns
+ * may have different type (e.g. String and Number). <p>(4) A column can be
+ * uniquely identified by its column name <p>(5) add/remove a column is supported
+ * <p>(6) Suitable exception handling is implemented
  * 
  * @author cspeter
  * @author kpor
