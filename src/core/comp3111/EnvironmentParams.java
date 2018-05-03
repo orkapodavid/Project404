@@ -1,11 +1,8 @@
 package core.comp3111;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This class used for containing parameters of the environment for clearer structure.
@@ -32,7 +29,7 @@ public class EnvironmentParams implements Serializable {
 	/**
 	 * Set the HashMap of data tables in the environment
 	 * 
-	 * @param newDataTables - data tables to be put into environment
+	 * @param newDataTables data tables to be put into environment
 	 * 
 	 * @author kwaleung
 	 */
@@ -43,7 +40,7 @@ public class EnvironmentParams implements Serializable {
 	/**
 	 * Set the HashMap of line charts in the environment
 	 * 
-	 * @param newLineCharts - line charts to be put into environment
+	 * @param newLineCharts   line charts to be put into environment
 	 * 
 	 * @author kwaleung
 	 */
@@ -54,7 +51,7 @@ public class EnvironmentParams implements Serializable {
 	/**
 	 * Set the HashMap of pie charts in the environment
 	 * 
-	 * @param newPieCharts - pie charts to be put into environment
+	 * @param newPieCharts   pie charts to be put into environment
 	 * 
 	 * @author kwaleung
 	 */

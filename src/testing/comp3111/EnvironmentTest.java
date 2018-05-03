@@ -5,12 +5,10 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import core.comp3111.Environment;
-import core.comp3111.EnvironmentParams;
 import core.comp3111.LineChartClass;
 import core.comp3111.PieChartClass;
 import core.comp3111.DataColumn;
@@ -22,7 +20,7 @@ import core.comp3111.DataType;
  * Environment test using JUnit. Achieve 100% test coverage in the Environment and EnvironmentParams class.
  * 
  * @author kwaleung 
- * @author OR Ka Po, kpor
+ * @author kpor
  *
  */
 class EnvironmentTest {
@@ -91,7 +89,7 @@ class EnvironmentTest {
 	/**
 	 * Test case for method operandsCompare in the Environment class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testOperandsCompare() {
@@ -121,7 +119,7 @@ class EnvironmentTest {
 	/**
 	 * Test case for method filterDatasetByNum in the Environment class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 * @throws DataTableException if operation on DataTable is invalid
 	 */
 	@Test 
@@ -168,7 +166,7 @@ class EnvironmentTest {
 	/**
 	 * Test case for method randSplitDatasetByNum in the Environment class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 * @throws DataTableException if operation on DataTable is invalid
 	 */
 	@Test

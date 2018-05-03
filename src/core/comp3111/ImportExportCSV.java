@@ -3,23 +3,11 @@ package core.comp3111;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 import org.apache.commons.csv.*;
 
@@ -51,14 +39,13 @@ public class ImportExportCSV {
 	 * creates a DataTable according to the content provided by the CSV
 	 * 
 	 * @param selectedFile
-	 * 			-selected file object to be imported from
+	 * 			 selected file object to be imported from
 	 *
 	 * @return 
-	 * 			-true if CSV imported
-	 * 			-false otherwise
+	 * 			 true if CSV imported, otherwise false
 	 * 
 	 * @throws Exception
-	 * 			-throws exception when there is error while importing CSV
+	 * 			 throws exception when there is error while importing CSV
 	 * 
 	 * @author kwaleung
 	 */
@@ -119,16 +106,16 @@ public class ImportExportCSV {
 	 * This functions writes a data table chosen by the user to a CSV format file.
 	 * 
 	 * @param selectedFile
-	 * 			-the selected file object for exporting to
+	 * 			 the selected file object for exporting to
 	 * 
 	 * @param selectedDataSetName
-	 * 			-Name of data table to be exported
+	 * 			 Name of data table to be exported
 	 * 
 	 * @param datasets
-	 * 			-current collection of data tables
+	 * 			 current collection of data tables
 	 * 
 	 * @throws Exception
-	 * 			-throws exception when there is error while exporting CSV
+	 * 			 throws exception when there is error while exporting CSV
 	 * 
 	 * @author kwaleung
 	 */
@@ -170,10 +157,10 @@ public class ImportExportCSV {
 	 * This functions checks the data type of a column
 	 * 
 	 * @param currCol
-	 * 			-Column to be checked
+	 * 			 Column to be checked
 	 * 
 	 * @return String
-	 * 			-Datatype of column
+	 * 			 Datatype of column
 	 * 
 	 * @author kwaleung
 	 */
@@ -213,10 +200,10 @@ public class ImportExportCSV {
 	 * This functions checks whether a column has missing data to be handled.
 	 * 
 	 * @param currCol
-	 * 			-Column to be checked
+	 * 			 Column to be checked
 	 * 
 	 * @return 
-	 * 			-true if there is missing data, otherwise false
+	 * 			 true if there is missing data, otherwise false
 	 * 
 	 * @author kwaleung
 	 */
@@ -233,16 +220,16 @@ public class ImportExportCSV {
 	 * This functions checks whether a column has missing data to be handled.
 	 * 
 	 * @param selectedReplaceOption
-	 * 			-Column to be checked
+	 * 			 Column to be checked
 	 * 
 	 * @param mean
-	 * 			-calculated mean value of column
+	 * 			 calculated mean value of column
 	 * 
 	 * @param median
-	 * 			-calculated median value of column
+	 * 			 calculated median value of column
 	 * 
 	 * @return boolean
-	 * 			-true if there is missing data, otherwise false
+	 * 			 true if there is missing data, otherwise false
 	 * 
 	 * @author kwaleung
 	 */
@@ -264,9 +251,9 @@ public class ImportExportCSV {
 	 * This function returns the mean of a number column.
 	 * 
 	 * @param currCol
-	 * 			-Column data
+	 * 			 Column data
 	 * @return Number
-	 * 			-mean of current column
+	 * 			 mean of current column
 	 * 
 	 * @author kwaleung
 	 */
@@ -288,9 +275,9 @@ public class ImportExportCSV {
 	 * This function returns the median of a number column.
 	 * 
 	 * @param currCol
-	 * 			-Column data
+	 * 			 Column data
 	 * @return Number
-	 * 			-median of current column
+	 * 			 median of current column
 	 * 
 	 * @author kwaleung
 	 */

@@ -1,18 +1,9 @@
 package core.comp3111;
 
-import ui.comp3111.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
-
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ListView;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 import java.io.*;
 
@@ -21,7 +12,7 @@ import java.io.*;
  * It also provides save and load functions which serializes the EnvironmentParams class using a custom file extension ".comp3111"
  * 
  * @author kwaleung
- * @author OR Ka Po, kpor
+ * @author kpor
  *
  */
 public class Environment{
@@ -58,7 +49,7 @@ public class Environment{
 	 * 			threshold (Type: double) to be use for compared
 	 * @return boolean
 	 * 			true if the operation of "value operator threshold" returns true, false otherwise 
-	 * @author OR Ka Po， kpor
+	 * @author kpor
 	 */
 	public boolean operandsCompare(double value, String operator, double threshold) {
 		switch(operator) {
@@ -120,7 +111,7 @@ public class Environment{
 	 * 			set true to replace the selected DataTable with the filtered DataTable
 	 * 			<p>set false to create a new DataTable with the filtered rows
 	 * @return String or null name of a new DataTable, "Empty DataTable" or null
-	 * @author OR Ka Po， kpor
+	 * @author kpor
 	 * @throws DataTableException if operation on DataTable is invalid
 	 */
 	public String filterDatasetByNum(String datasetName, String colName, String operator,  double threshold, boolean isReplaced) throws DataTableException {
@@ -199,7 +190,7 @@ public class Environment{
 	 * 			First String in the array will be name of first new DataTable
 	 * 			<p>Second String in the array will be name of second new DataTable
 	 * 			<p>"" (Empty String) in the first/second index of array if the first/second new DataTable is empty
-	 * @author OR Ka Po， kpor
+	 * @author kpor
 	 * @throws DataTableException if operation on DataTable is invalid
 	 */
 	public String[] randSplitDatasetByNum(String datasetName, int splitRatio, boolean isReplaced) throws DataTableException {
@@ -385,11 +376,11 @@ public class Environment{
 	 * This function saves the Environment Parameters to as a .comp3111 file in a user designated directory
 	 *  by serializing an EnvironmentParams object.
 	 *  
-	 *  @param selectedFile - selected file object to be saved to
+	 *  @param selectedFile  selected file object to be saved to
 	 *  
 	 *  @return file path where the environment is saved to
 	 *  
-	 *  @throws Exception - throws exceptions when there is error while saving
+	 *  @throws Exception  throws exceptions when there is error while saving
 	 *  
 	 *  @author kwaleung
 	 */
@@ -411,11 +402,11 @@ public class Environment{
 	/**
 	 * This function loads a .comp3111 file selected by the user and de-serializes the file into an EnvironmentParams object
 	 * 
-	 * @param selectedFile - selected file object to be loaded from
+	 * @param selectedFile  selected file object to be loaded from
 	 *  
 	 * @return file path where the environment is loaded from
 	 *  
-	 * @throws Exception - throws exceptions when there is error while loading
+	 * @throws Exception  throws exceptions when there is error while loading
 	 * 
 	 * @author kwaleung
 	 */

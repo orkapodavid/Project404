@@ -23,7 +23,7 @@ import javafx.scene.chart.XYChart.Data;
  * LineChartClass test cases written by JUnit. It achieves 100% test
  * coverage on the LineChartClass class
  * 
- * @author OR Ka Po, kpor
+ * @author kpor
  *
  */
 public class LineChartClassTest {
@@ -31,7 +31,7 @@ public class LineChartClassTest {
 	/**
 	 * Test case for default constructor in the LineChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testLineChartClassConstructor() {
@@ -46,7 +46,7 @@ public class LineChartClassTest {
 	/**
 	 * Test case for constructor in the LineChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 * @throws DataTableException if operation on DataTable is invalid
 	 */
 	@Test
@@ -75,7 +75,7 @@ public class LineChartClassTest {
 	/**
 	 * Test case for the method setSeries in the LineChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testSetSeries() {
@@ -88,7 +88,7 @@ public class LineChartClassTest {
 	/**
 	 * Test case for the method setAnimate in the LineChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testSetAnimate() {
@@ -100,7 +100,7 @@ public class LineChartClassTest {
 	/**
 	 * Test case for the method setAxisName in the LineChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test 
 	void testSetAxisName() {
@@ -113,7 +113,7 @@ public class LineChartClassTest {
 	/**
 	 * Test case for the method setTitle in the LineChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testSetTitle() {
@@ -125,7 +125,7 @@ public class LineChartClassTest {
 	/**
 	 * Test case for the methods readExternal and writeExternal in the LineChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 * @throws IOException Includes any I/O exceptions that may occur
 	 * @throws ClassNotFoundException If the class for an object being restored cannot be found
 	 */

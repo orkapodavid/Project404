@@ -3,7 +3,6 @@ package testing.comp3111;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +63,7 @@ class ImportExportTest {
 	/**
 	 * Test case for exportCSV function in the ImportExportCSV class.
 	 * This test case covers the export case where a DataTable is exported as an excel UTF-8 format CSV file.
-	 * The CSV file generated will be deleted automatically upon completetion of the test case.
+	 * The CSV file generated will be deleted automatically upon completion of the test case.
 	 * 
 	 * @author kwaleung
 	 */

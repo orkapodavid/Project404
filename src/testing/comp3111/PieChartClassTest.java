@@ -18,13 +18,12 @@ import core.comp3111.PieChartClass;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart.Data;
 
 /**
  * PieChartClass test cases written by JUnit. It achieves 100% test
  * coverage on the PieChartClass class
  * 
- * @author OR Ka Po, kpor
+ * @author kpor
  *
  */
 public class PieChartClassTest {
@@ -32,7 +31,7 @@ public class PieChartClassTest {
 	/**
 	 * Test case for default constructor in the PieChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testDefaultConstructer() {
@@ -46,7 +45,7 @@ public class PieChartClassTest {
 	/**
 	 * Test case for constructor in the PieChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 * @throws DataTableException if operation on DataTable is invalid
 	 */
 	@Test
@@ -71,7 +70,7 @@ public class PieChartClassTest {
 	/**
 	 * Test case for the method setList in the PieChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test 
 	void testSetList() {
@@ -88,7 +87,7 @@ public class PieChartClassTest {
 	/**
 	 * Test case for the method setTitle in the PieChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testSetTitle() {
@@ -100,7 +99,7 @@ public class PieChartClassTest {
 	/**
 	 * Test case for the method setAxisName in the PieChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	@Test
 	void testSetAxisName() {
@@ -113,7 +112,7 @@ public class PieChartClassTest {
 	/**
 	 * Test case for the methods readExternal and writeExternal in the PieChartClass class.
 	 * 
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 * @throws IOException Includes any I/O exceptions that may occur
 	 * @throws ClassNotFoundException If the class for an object being restored cannot be found
 	 * @throws DataTableException if operation on DataTable is invalid
