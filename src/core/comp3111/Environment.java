@@ -376,11 +376,11 @@ public class Environment{
 	 * This function saves the Environment Parameters to as a .comp3111 file in a user designated directory
 	 *  by serializing an EnvironmentParams object.
 	 *  
-	 *  @param selectedFile - selected file object to be saved to
+	 *  @param selectedFile  selected file object to be saved to
 	 *  
 	 *  @return file path where the environment is saved to
 	 *  
-	 *  @throws Exception - throws exceptions when there is error while saving
+	 *  @throws Exception  throws exceptions when there is error while saving
 	 *  
 	 *  @author kwaleung
 	 */
@@ -402,11 +402,11 @@ public class Environment{
 	/**
 	 * This function loads a .comp3111 file selected by the user and de-serializes the file into an EnvironmentParams object
 	 * 
-	 * @param selectedFile - selected file object to be loaded from
+	 * @param selectedFile  selected file object to be loaded from
 	 *  
 	 * @return file path where the environment is loaded from
 	 *  
-	 * @throws Exception - throws exceptions when there is error while loading
+	 * @throws Exception  throws exceptions when there is error while loading
 	 * 
 	 * @author kwaleung
 	 */

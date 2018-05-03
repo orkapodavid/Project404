@@ -15,13 +15,13 @@ import java.util.Set;
  * (6) Suitable exception handling is implemented
  * 
  * @author cspeter
- * @author OR Ka Po, kpor
+ * @author kpor
  *
  */
 public class DataTable implements Serializable {
 
 	/**
-	 * Construct - Create an empty DataTable
+	 * Construct  Create an empty DataTable
 	 */
 	public DataTable() {
 
@@ -98,7 +98,7 @@ public class DataTable implements Serializable {
 	 * Get a String array of the names of all numerical columns
 	 * 
 	 * @return String[] or null
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	public String[] getAllNumColName() {
 		
@@ -121,7 +121,7 @@ public class DataTable implements Serializable {
 	 * Get a String array of the names of all text columns
 	 * 
 	 * @return String[] or null
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	public String[] getAllTextColName() {
 		
@@ -144,7 +144,7 @@ public class DataTable implements Serializable {
 	 * Get a String array of the names of all columns
 	 * 
 	 * @return String[] or null
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	public String[] getAllColName() {
 		
@@ -164,7 +164,7 @@ public class DataTable implements Serializable {
 	/**
 	 * Check whether the column exists by the given column name
 	 * 
-	 * @param colName - selected column name
+	 * @param colName  selected column name
 	 * @return true if the column exists, false otherwise
 	 */
 	public boolean containsColumn(String colName) {
@@ -175,7 +175,7 @@ public class DataTable implements Serializable {
 	 * Get the number of all numerical columns
 	 * 
 	 * @return int or 0
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	public int getNumOfNumCol() {
 		
@@ -198,7 +198,7 @@ public class DataTable implements Serializable {
 	 * Get the number of all text columns
 	 * 
 	 * @return int or 0
-	 * @author OR Ka Po, kpor
+	 * @author kpor
 	 */
 	public int getNumOfTextCol() {
 		

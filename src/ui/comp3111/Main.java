@@ -1350,7 +1350,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Main method - only use if running via command line.
+	 * Main method only use if running via command line.
 	 * 
 	 * @param args default command-line argument
 	 */
