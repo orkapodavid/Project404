@@ -91,6 +91,16 @@ public class ImportExportCSV {
 			for (int i=0; i<colCount; i++) {
 				Object[] currColElements = newDataColumnElements.get(i);
 				String currColTypeName = checkTypeName(currColElements);
+				if (currColTypeName.equals(DataType.TYPE_NUMBER)) {
+					for (int j=0; j<currColElements.length; j++) {
+						if (!currColElements[j].equals(""))
+							currColElements[j] = NumberFormat.getInstance().parse(currColElements[j].toString());
+					}
+				} else if (currColTypeName.equals(DataType.TYPE_STRING)) {
+					for (int j=0; j<currColElements.length; j++) {
+						currColElements[j] = currColElements[j].toString();
+					}
+				}
 				DataColumn newCol = new DataColumn(currColTypeName, currColElements);
 				importedTable.addCol(newDataColumnNames.get(i), newCol);
 			}
