@@ -33,6 +33,7 @@ class DataTableTest {
 	 * Test case for the addCol method in the DataTable class.
 	 * This test case covers the case where DataColumns are inserted into a DataTable successfully.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -55,6 +56,7 @@ class DataTableTest {
 	 * Test case for the addCol method in the DataTable class.
 	 * This test case covers the case where a DataColumn is inserted into a DataTable unsuccessfully due to having an identical name with an existing DataColumn in the DataTable.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -71,6 +73,7 @@ class DataTableTest {
 	 * Test case for the addCol method in the DataTable class.
 	 * This test case covers the case where a DataColumn is inserted into a DataTable unsuccessfully due to having a different row count when compared to existing DataColumns in the DataTable.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -92,6 +95,7 @@ class DataTableTest {
 	 * Test case for the removeCol method in the DataTable class.
 	 * This test case covers the case where a DataColumn is successfully removed from a DataTable.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -111,6 +115,7 @@ class DataTableTest {
 	 * Test case for the removeCol method in the DataTable class.
 	 * This test case covers the case where a DataColumn is unsuccessfully removed from a DataTable as it does not exists in the DataTable.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -125,6 +130,7 @@ class DataTableTest {
 	 * Test case for the getCol method in the DataTable class.
 	 * This test case covers the case where a DataColumn is successfully retrieved from a DataTable.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -143,6 +149,7 @@ class DataTableTest {
 	 * Test case for the getCol method in the DataTable class.
 	 * This test case covers the case where a DataColumn is not retrieved from a DataTable as it does not exist.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -161,6 +168,7 @@ class DataTableTest {
 	 * Test case for the getAllNumColName method in the DataTable class.
 	 * This test case covers the case where the names of all numeric columns in a DataTable is retrieved.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -196,6 +204,7 @@ class DataTableTest {
 	 * Test case for the getAllTextColName method in the DataTable class.
 	 * This test case covers the case where the names of all string columns in a DataTable is retrieved.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -231,6 +240,7 @@ class DataTableTest {
 	 * Test case for the getNumOfNumCol method in the DataTable class.
 	 * This test case covers the case where the number of numeric columns in a DataTable is retrieved.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -266,6 +276,7 @@ class DataTableTest {
 	 * Test case for the getNumOfTextCol method in the DataTable class.
 	 * This test case covers the case where the number of string columns in a DataTable is retrieved.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -301,6 +312,7 @@ class DataTableTest {
 	 * Test case for the getAllColName method in the DataTable class.
 	 * This test case covers the case where the names of all columns in a DataTable is retrieved.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
@@ -336,6 +348,7 @@ class DataTableTest {
 	 * Test case for the print method in the DataTable class.
 	 * This test case simply prints out a DataTable.
 	 * 
+	 * @throws DataTableException
 	 * @author kwaleung
 	 */
 	@Test
