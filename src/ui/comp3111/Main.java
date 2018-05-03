@@ -158,6 +158,7 @@ public class Main extends Application {
 	private Alert notNum = null;
 	private Alert notEnoughInput = null;
 	private Alert noNumericalCol = null;
+	private Alert negValueInCol = null;
 	private Alert allRowsFilteredOut = null;
 	
 	// Screen 5: paneShowLineChartScreen
@@ -247,6 +248,11 @@ public class Main extends Application {
 		noRowsOneSuccessAlert.setHeaderText("One of the newly created Dataset is empty.");
 		noRowsOneSuccessAlert.setContentText("Only one new dataset will be created. ");
 		
+		//for SCENE_CREATE_CHART
+		negValueInCol = new Alert(AlertType.ERROR);
+		negValueInCol.setTitle("Error Message: Negative value is not allowed");
+		negValueInCol.setHeaderText(null);
+		negValueInCol.setContentText("Selected column has negative value(s). Please select another column.");
 		
 		// for SCENE_Fliter_DATA
 		noNumericalCol = new Alert(AlertType.INFORMATION);
@@ -758,6 +764,13 @@ public class Main extends Application {
 					chartNumColName = chartSelectNumCol.getValue();
 					chartTextColName = chartSelectTextCol.getValue();
 					if(chartNumColName != null && chartTextColName != null) {
+						// Detect negative value
+						for(Object val :currentDataTable.getCol(chartNumColName).getData()) {
+							if(((Number)val).doubleValue() < 0.0) {
+								negValueInCol.showAndWait();
+								return;
+							}
+						}
 						chartSelectXaxis.getItems().clear();
 						chartSelectYaxis.getItems().clear();
 						chartSelectNumCol.getItems().clear();
@@ -768,7 +781,7 @@ public class Main extends Application {
 						chartList.getItems().add(name);
 						pieChart.setTitle("Pie Chart of " + currentDatasetName);
 						pieChart.setLegendSide(Side.LEFT);
-						pieChart.setData(t.getObserList());
+						pieChart.setData(t.getObserList());		
 						putSceneOnStage(SCENE_SHOW_PIECHART);
 					}else {
 						noSelectedColAlert.showAndWait();
