@@ -26,14 +26,35 @@ public class Environment{
 		envParams = new EnvironmentParams();
 	}
 	
+	/**
+	 * Set the HashMap of data tables in the environment
+	 * 
+	 * @param newDataTables data tables to be put into environment
+	 * 
+	 * @author kwaleung
+	 */
 	public void setEnvironmentDataTables(HashMap<String, DataTable> newDataTables) {
 		envParams.setEnvironmentDataTables(newDataTables);
 	}
-	
+
+	/**
+	 * Set the HashMap of line charts in the environment
+	 * 
+	 * @param newLineCharts   line charts to be put into environment
+	 * 
+	 * @author kwaleung
+	 */
 	public void setEnviornmentLineCharts(HashMap<String, LineChartClass> newLineCharts) {
 		envParams.setEnviornmentLineCharts(newLineCharts);
 	}
 	
+	/**
+	 * Set the HashMap of pie charts in the environment
+	 * 
+	 * @param newPieCharts   pie charts to be put into environment
+	 * 
+	 * @author kwaleung
+	 */
 	public void setEnviornmentPieCharts(HashMap<String, PieChartClass> newPieCharts) {
 		envParams.setEnviornmentPieCharts(newPieCharts);
 	}
