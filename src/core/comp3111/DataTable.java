@@ -1,27 +1,27 @@
 package core.comp3111;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Objects;
 
 /**
- * 2D array of data values with the following requirements: (1) There are 0 to
- * many columns (2) The number of row for each column is the same (3) 2 columns
- * may have different type (e.g. String and Number). (4) A column can be
- * uniquely identified by its column name (5) add/remove a column is supported
- * (6) Suitable exception handling is implemented
+ * 2D array of data values with the following requirements: <p>(1) There are 0 to
+ * many columns <p>(2) The number of row for each column is the same <p>(3) 2 columns
+ * may have different type (e.g. String and Number). <p>(4) A column can be
+ * uniquely identified by its column name <p>(5) add/remove a column is supported
+ * <p>(6) Suitable exception handling is implemented
  * 
  * @author cspeter
+ * @author kpor
  *
  */
-public class DataTable {
+public class DataTable implements Serializable {
 
 	/**
-	 * Construct - Create an empty DataTable
+	 * Construct  Create an empty DataTable
 	 */
 	public DataTable() {
 
@@ -34,11 +34,11 @@ public class DataTable {
 	 * Add a data column to the table.
 	 * 
 	 * @param colName
-	 *            - name of the column. It should be a unique identifier
+	 *            name of the column. It should be a unique identifier
 	 * @param newCol
-	 *            - the data column
+	 *            the data column
 	 * @throws DataTableException
-	 *             - It throws DataTableException if a column is already exist, or
+	 *             It throws DataTableException if a column is already exist, or
 	 *             the row size does not match.
 	 */
 	public void addCol(String colName, DataColumn newCol) throws DataTableException {
@@ -68,9 +68,9 @@ public class DataTable {
 	 * Remove a column from the data table
 	 * 
 	 * @param colName
-	 *            - The column name. It should be a unique identifier
-	 * @throws DataTableException.
-	 *             It throws DataTableException if the column does not exist
+	 *            The column name. It should be a unique identifier
+	 * @throws DataTableException
+	 *            It throws DataTableException if the column does not exist
 	 */
 	public void removeCol(String colName) throws DataTableException {
 		if (containsColumn(colName)) {
@@ -81,8 +81,8 @@ public class DataTable {
 	}
 
 	/**
-	 * Get the DataColumn object based on the give colName. Return null if the
-	 * column does not exist
+	 * Get the DataColumn object based on the give colName. 
+	 * <p>Return null if the column does not exist
 	 * 
 	 * @param colName
 	 *            The column name
@@ -98,6 +98,7 @@ public class DataTable {
 	 * Get a String array of the names of all numerical columns
 	 * 
 	 * @return String[] or null
+	 * @author kpor
 	 */
 	public String[] getAllNumColName() {
 		
@@ -108,7 +109,7 @@ public class DataTable {
 		ArrayList<String> colsName = new ArrayList<String>(dc.size());
 		Set<String> colsSet =  dc.keySet();
 		for(String col:colsSet) {
-			if(dc.get(col).getTypeName() == DataType.TYPE_NUMBER) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_NUMBER)) {
 				colsName.add(col);
 			}
 		}
@@ -120,6 +121,7 @@ public class DataTable {
 	 * Get a String array of the names of all text columns
 	 * 
 	 * @return String[] or null
+	 * @author kpor
 	 */
 	public String[] getAllTextColName() {
 		
@@ -130,7 +132,7 @@ public class DataTable {
 		ArrayList<String> colsName = new ArrayList<String>(dc.size());
 		Set<String> colsSet =  dc.keySet();
 		for(String col:colsSet) {
-			if(dc.get(col).getTypeName() == DataType.TYPE_STRING) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_STRING)) {
 				colsName.add(col);
 			}
 		}
@@ -139,13 +141,80 @@ public class DataTable {
 	}
 	
 	/**
+	 * Get a String array of the names of all columns
+	 * 
+	 * @return String[] or null
+	 * @author kpor
+	 */
+	public String[] getAllColName() {
+		
+		if(dc.size() == 0) {
+			return null;
+		}
+		
+		ArrayList<String> colsName = new ArrayList<String>(dc.size());
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			colsName.add(col);
+		}
+		
+		return colsName.toArray(new String[0]);
+	}
+
+	/**
 	 * Check whether the column exists by the given column name
 	 * 
-	 * @param colName
+	 * @param colName  selected column name
 	 * @return true if the column exists, false otherwise
 	 */
 	public boolean containsColumn(String colName) {
 		return dc.containsKey(colName);
+	}
+	
+	/**
+	 * Get the number of all numerical columns
+	 * 
+	 * @return int or 0
+	 * @author kpor
+	 */
+	public int getNumOfNumCol() {
+		
+		if(dc.size() == 0) {
+			return 0;
+		}
+		
+		int num = 0;
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_NUMBER)) {
+				num += 1;
+			}
+		}
+		
+		return num;
+	}
+	
+	/**
+	 * Get the number of all text columns
+	 * 
+	 * @return int or 0
+	 * @author kpor
+	 */
+	public int getNumOfTextCol() {
+		
+		if(dc.size() == 0) {
+			return 0;
+		}
+		
+		int num = 0;
+		Set<String> colsSet =  dc.keySet();
+		for(String col:colsSet) {
+			if(dc.get(col).getTypeName().equals(DataType.TYPE_STRING)) {
+				num += 1;
+			}
+		}
+		
+		return num;
 	}
 
 	/**
@@ -173,6 +242,9 @@ public class DataTable {
 		return dc.get(entry.getKey()).getSize();
 	}
 	
+	/**
+	 * A function used to print the DataTable in Console for debugging.
+	 */
 	public void print() {
 		int colcount = this.getNumCol();
 		int rowcount = this.getNumRow();
@@ -180,18 +252,18 @@ public class DataTable {
 		
 		List<DataColumn> Columns = new ArrayList<DataColumn>();
 		for (String key: dc.keySet()) {
-			System.out.print(key + " ");
+			System.out.print(key + "\t");
 			Columns.add(dc.get(key));
 		}
 		System.out.println();
 		for (int i=0; i<rowcount; i++) {
 			for (int j=0; j<colcount; j++) {
-				System.out.print(Columns.get(j).getData()[i] + " ");
+				System.out.print(Columns.get(j).getData()[i] + "\t");
 			}
 			System.out.println();
 		}
 		for (int i=0; i<colcount; i++) {
-			System.out.print(Columns.get(i).getTypeName() + " ");
+			System.out.print(Columns.get(i).getTypeName() + "\t");
 		}
 		System.out.println();
 	}
